@@ -11,8 +11,9 @@ export default function Navbar() {
       {/* Links */}
       <div style={{ display: "flex", gap: "32px" }}>
         <a href="#features" style={{ color: "#fff", fontSize: "18px", textDecoration: "none" }}>Features</a>
+        <a href="/hotels" style={{ color: "#fff", fontSize: "18px", textDecoration: "none" }}>Hotels</a>
         <a href="#download" style={{ color: "#fff", fontSize: "18px", textDecoration: "none" }}>Download</a>
-        <a href="mailto:ahmadado6002@gmail.com" style={{ color: "#fff", fontSize: "18px", textDecoration: "none" }}>Contact</a>
+        <a href="/contact" style={{ color: "#fff", fontSize: "18px", textDecoration: "none" }}>Contact</a>
       </div>
 
       {/* Download button */}

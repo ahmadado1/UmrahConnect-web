@@ -12,7 +12,7 @@ export default function Footer() {
       <div style={{ display: "flex", gap: "24px" }}>
         <a href="/privacy" style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", textDecoration: "none" }}>Privacy Policy</a>
         <a href="/terms" style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", textDecoration: "none" }}>Terms of Service</a>
-        <a href="mailto:ahmadado6002@gmail.com" style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", textDecoration: "none" }}>Contact</a>
+        <a href="/contact" style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", textDecoration: "none" }}>Contact</a>
       </div>
 
       {/* Made with */}
