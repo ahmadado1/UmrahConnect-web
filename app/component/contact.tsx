@@ -58,7 +58,7 @@ export default function ContactForm() {
   };
 
   return (
-    <div style={{ maxWidth: '560px', margin: '0 auto' }}>
+    <div className="contact-form-wrap">
       {status === 'success' ? (
         <div
           style={{

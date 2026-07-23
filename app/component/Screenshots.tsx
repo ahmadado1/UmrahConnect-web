@@ -19,24 +19,9 @@ const screens = [
 
 function PhoneMockup({ src, label }: { src: string; label: string }) {
   return (
-    <div style={{ textAlign: "center" }}>
-      <div
-        style={{
-          width: "220px",
-          padding: "10px",
-          borderRadius: "36px",
-          background: "linear-gradient(145deg, #1E3A5F 0%, #0d1b35 100%)",
-          boxShadow: "0 24px 48px rgba(0,0,0,0.2)",
-        }}
-      >
-        <div
-          style={{
-            borderRadius: "28px",
-            overflow: "hidden",
-            background: "#000",
-            position: "relative",
-          }}
-        >
+    <div className="phone-mockup">
+      <div className="phone-mockup-frame">
+        <div className="phone-mockup-screen">
           <div
             style={{
               position: "absolute",
@@ -66,17 +51,17 @@ function PhoneMockup({ src, label }: { src: string; label: string }) {
 
 export default function Screenshots() {
   return (
-    <section style={{ backgroundColor: "#f5f0e8", padding: "80px 48px" }}>
+    <section className="section-padding" style={{ backgroundColor: "#f5f0e8" }}>
       <div style={{ textAlign: "center", marginBottom: "48px" }}>
-        <div style={{ color: "#C9A84C", fontSize: "12px", fontWeight: "500", letterSpacing: "1px", marginBottom: "8px" }}>
+        <div className="section-label" style={{ marginBottom: "8px" }}>
           SEE IT IN ACTION
         </div>
-        <h2 style={{ color: "#1E3A5F", fontSize: "36px", fontWeight: "500", margin: 0 }}>
+        <h2 className="section-title" style={{ color: "#1E3A5F", margin: 0 }}>
           See it in action
         </h2>
       </div>
 
-      <div style={{ display: "flex", gap: "32px", justifyContent: "center", flexWrap: "wrap" }}>
+      <div className="screenshots-row">
         {screens.map((screen) => (
           <PhoneMockup key={screen.label} src={screen.src} label={screen.label} />
         ))}

@@ -1,11 +1,11 @@
 export default function About() {
   return (
-    <section style={{ padding: "80px 48px", backgroundColor: "#fff" }}>
-      <div style={{ maxWidth: "720px", margin: "0 auto", textAlign: "center" }}>
-        <div style={{ color: "#C9A84C", fontSize: "12px", fontWeight: "500", letterSpacing: "1px", marginBottom: "8px" }}>
+    <section className="section-padding" style={{ backgroundColor: "#fff" }}>
+      <div style={{ maxWidth: "720px", margin: "0 auto", textAlign: "center", width: "100%" }}>
+        <div className="section-label" style={{ marginBottom: "8px" }}>
           MEET THE DEVELOPER
         </div>
-        <h2 style={{ color: "#1E3A5F", fontSize: "36px", fontWeight: "500", margin: "0 0 32px" }}>
+        <h2 className="section-title" style={{ color: "#1E3A5F", margin: "0 0 32px" }}>
           About
         </h2>
 
@@ -44,7 +44,7 @@ export default function About() {
           </p>
           <a
             href="mailto:ahmadado1@icloud.com"
-            style={{ color: "#1E3A5F", fontSize: "15px", fontWeight: "500", textDecoration: "none" }}
+            style={{ color: "#1E3A5F", fontSize: "15px", fontWeight: "500", textDecoration: "none", wordBreak: "break-all" }}
           >
             ahmadado1@icloud.com
           </a>

@@ -8,7 +8,7 @@ const stats = [
 
 export default function Stats() {
   return (
-    <section style={{ backgroundColor: "#C9A84C", padding: "24px 48px", display: "flex", justifyContent: "space-around" }}>
+    <section className="stats-bar">
       {stats.map((stat) => (
         <div key={stat.label} style={{ textAlign: "center" }}>
           <div style={{ color: "#1E3A5F", fontSize: "28px", fontWeight: "500" }}>{stat.number}</div>

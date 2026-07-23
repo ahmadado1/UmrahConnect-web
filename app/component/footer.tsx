@@ -1,16 +1,7 @@
 export default function Footer() {
   return (
-    <footer style={{ backgroundColor: "#0d1b35", padding: "48px 48px 32px" }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: "32px",
-          marginBottom: "32px",
-        }}
-      >
+    <footer className="footer">
+      <div className="footer-grid">
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
             <span style={{ fontSize: "20px" }}>🌙</span>
@@ -24,33 +15,23 @@ export default function Footer() {
           </p>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          <a
-            href="mailto:ahmadado1@icloud.com"
-            style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px", textDecoration: "none" }}
-          >
+        <div className="footer-links-col footer-email">
+          <a href="mailto:ahmadado1@icloud.com">
             ahmadado1@icloud.com
           </a>
           <a
             href="https://instagram.com/myumrahconnect"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px", textDecoration: "none" }}
           >
             @myumrahconnect
           </a>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          <a href="/privacy-policy" style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", textDecoration: "none" }}>
-            Privacy Policy
-          </a>
-          <a href="/terms" style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", textDecoration: "none" }}>
-            Terms of Service
-          </a>
-          <a href="/contact" style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", textDecoration: "none" }}>
-            Contact
-          </a>
+        <div className="footer-links-col">
+          <a href="/privacy-policy">Privacy Policy</a>
+          <a href="/terms">Terms of Service</a>
+          <a href="/contact">Contact</a>
         </div>
       </div>
 

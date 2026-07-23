@@ -1,7 +1,7 @@
 export default function Terms() {
   return (
-    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "80px 24px", fontFamily: "system-ui, sans-serif" }}>
-      <h1 style={{ color: "#1E3A5F", fontSize: "36px", fontWeight: "500", marginBottom: "8px" }}>Terms of Service</h1>
+    <div className="legal-page">
+      <h1>Terms of Service</h1>
       <p style={{ color: "#999", fontSize: "14px", marginBottom: "40px" }}>Last updated: June 2026</p>
       <p style={{ color: "#444", lineHeight: "1.8", marginBottom: "32px" }}>By using UmrahConnect, you agree to these terms. Please read them carefully.</p>
       {[

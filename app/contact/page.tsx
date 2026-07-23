@@ -13,12 +13,12 @@ export default function ContactPage() {
     <>
       <Navbar />
       <main style={{ background: '#f8f9fa', minHeight: 'calc(100vh - 86px)' }}>
-        <div style={{ maxWidth: '720px', margin: '0 auto', padding: '80px 24px', fontFamily: 'system-ui, sans-serif' }}>
+        <div className="page-container" style={{ fontFamily: 'system-ui, sans-serif' }}>
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <div style={{ color: '#C9A84C', fontSize: '12px', fontWeight: '500', letterSpacing: '1px', marginBottom: '8px' }}>
+            <div className="section-label" style={{ marginBottom: '8px' }}>
               GET IN TOUCH
             </div>
-            <h1 style={{ color: '#1E3A5F', fontSize: '36px', fontWeight: '500', margin: '0 0 12px' }}>
+            <h1 className="section-title" style={{ color: '#1E3A5F', margin: '0 0 12px' }}>
               Contact
             </h1>
             <p style={{ color: '#666', lineHeight: '1.8', margin: 0 }}>

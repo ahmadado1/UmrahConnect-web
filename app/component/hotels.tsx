@@ -92,7 +92,7 @@ function HotelCard({ hotel, city }: { hotel: typeof makkahHotels[0], city: strin
   const bookingUrl = `https://www.booking.com/hotel/sa/${hotel.slug}.html?aid=${BOOKING_AID}&label=umrahconnect`;
 
   return (
-    <div style={{
+    <div className="hotel-card" style={{
       background: '#fff',
       borderRadius: '12px',
       padding: '24px',
@@ -126,7 +126,7 @@ function HotelCard({ hotel, city }: { hotel: typeof makkahHotels[0], city: strin
         <StarRating count={hotel.stars} />
       </div>
 
-      <div style={{ display: 'flex', gap: '16px', fontSize: '13px', color: '#666' }}>
+      <div className="hotel-card-meta" style={{ fontSize: '13px', color: '#666' }}>
         <span>📍 {hotel.distance}</span>
         <span>💰 {hotel.priceRange}</span>
       </div>
@@ -180,16 +180,12 @@ function Section({ title, subtitle, hotels, city }: {
   return (
     <section style={{ marginBottom: '64px' }}>
       <div style={{ marginBottom: '32px' }}>
-        <h2 style={{ color: '#1E3A5F', fontSize: '28px', fontWeight: '700', margin: '0 0 8px' }}>
+        <h2 className="hotels-section-title" style={{ color: '#1E3A5F', margin: '0 0 8px' }}>
           {title}
         </h2>
         <p style={{ color: '#666', fontSize: '15px', margin: 0 }}>{subtitle}</p>
       </div>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-        gap: '24px',
-      }}>
+      <div className="hotels-grid">
         {hotels.map(hotel => (
           <HotelCard key={hotel.slug} hotel={hotel} city={city} />
         ))}
@@ -202,25 +198,18 @@ export default function Hotels() {
   return (
     <main style={{ background: '#f8f9fa', minHeight: '100vh' }}>
       {/* Hero */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1E3A5F 0%, #2d5a8e 100%)',
-        padding: '80px 24px',
-        textAlign: 'center',
-        color: '#fff',
-      }}>
+      <div className="hotels-hero">
         <p style={{ color: '#C9A84C', fontSize: '14px', fontWeight: '600', letterSpacing: '2px', marginBottom: '16px' }}>
           ACCOMMODATION GUIDE
         </p>
-        <h1 style={{ fontSize: '40px', fontWeight: '700', margin: '0 0 16px', lineHeight: 1.2 }}>
-          Stay Close to the Holy Sites
-        </h1>
+        <h1>Stay Close to the Holy Sites</h1>
         <p style={{ fontSize: '17px', color: 'rgba(255,255,255,0.8)', maxWidth: '560px', margin: '0 auto' }}>
           Handpicked hotels near Masjid al-Haram and Masjid an-Nabawi, selected for proximity, quality, and value for pilgrims.
         </p>
       </div>
 
       {/* Content */}
-      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '64px 24px' }}>
+      <div className="page-container-wide">
         <Section
           title="🕌 Makkah — Near Masjid al-Haram"
           subtitle="All hotels within walking distance of the Grand Mosque"

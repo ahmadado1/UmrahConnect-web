@@ -33,14 +33,12 @@ const features = [
 
 export default function Features() {
   return (
-    <section id="features" style={{ padding: "80px 48px", backgroundColor: "#fff" }}>
-      
-      {/* Section header */}
+    <section id="features" className="section-padding" style={{ backgroundColor: "#fff" }}>
       <div style={{ textAlign: "center", marginBottom: "48px" }}>
-        <div style={{ color: "#C9A84C", fontSize: "12px", fontWeight: "500", letterSpacing: "1px", marginBottom: "8px" }}>
+        <div className="section-label" style={{ marginBottom: "8px" }}>
           EVERYTHING YOU NEED
         </div>
-        <h2 style={{ color: "#1E3A5F", fontSize: "36px", fontWeight: "500", marginBottom: "12px" }}>
+        <h2 className="section-title" style={{ color: "#1E3A5F", marginBottom: "12px" }}>
           Built for pilgrims, by design
         </h2>
         <p style={{ color: "#666", fontSize: "16px", maxWidth: "500px", margin: "0 auto" }}>
@@ -48,8 +46,7 @@ export default function Features() {
         </p>
       </div>
 
-      {/* Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px", maxWidth: "1000px", margin: "0 auto" }}>
+      <div className="features-grid">
         {features.map((feature) => (
           <div key={feature.title} style={{ backgroundColor: "#fff", border: "0.5px solid #e5e5e5", borderRadius: "16px", padding: "24px" }}>
             <div style={{ fontSize: "32px", marginBottom: "14px" }}>{feature.icon}</div>
@@ -58,7 +55,6 @@ export default function Features() {
           </div>
         ))}
       </div>
-
     </section>
   )
 }

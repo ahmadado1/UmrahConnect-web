@@ -21,52 +21,41 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section style={{ backgroundColor: "#fff", padding: "80px 48px" }}>
-
-      {/* Header */}
+    <section className="section-padding" style={{ backgroundColor: "#fff" }}>
       <div style={{ textAlign: "center", marginBottom: "56px" }}>
-        <div style={{ color: "#C9A84C", fontSize: "12px", fontWeight: "500", letterSpacing: "1px", marginBottom: "8px" }}>
+        <div className="section-label" style={{ marginBottom: "8px" }}>
           SIMPLE TO GET STARTED
         </div>
-        <h2 style={{ color: "#1E3A5F", fontSize: "36px", fontWeight: "500" }}>
+        <h2 className="section-title" style={{ color: "#1E3A5F" }}>
           How it works
         </h2>
       </div>
 
-      {/* Steps */}
-      <div style={{ display: "flex", gap: "32px", maxWidth: "900px", margin: "0 auto", justifyContent: "center" }}>
+      <div className="steps-row">
         {steps.map((step, index) => (
-          <div key={step.number} style={{ flex: 1, textAlign: "center", position: "relative" }}>
-            
-            {/* Connector line */}
+          <div key={step.number} className="step-item">
             {index < steps.length - 1 && (
-              <div style={{ position: "absolute", top: "32px", left: "60%", width: "80%", height: "1px", backgroundColor: "#C9A84C", opacity: 0.3 }} />
+              <div className="step-connector" />
             )}
 
-            {/* Number circle */}
             <div style={{ width: "64px", height: "64px", borderRadius: "50%", backgroundColor: "#1E3A5F", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: "24px" }}>
               {step.emoji}
             </div>
 
-            {/* Step number */}
             <div style={{ color: "#C9A84C", fontSize: "12px", fontWeight: "600", letterSpacing: "1px", marginBottom: "8px" }}>
               STEP {step.number}
             </div>
 
-            {/* Title */}
             <h3 style={{ color: "#1E3A5F", fontSize: "18px", fontWeight: "500", marginBottom: "10px" }}>
               {step.title}
             </h3>
 
-            {/* Description */}
             <p style={{ color: "#666", fontSize: "14px", lineHeight: "1.6" }}>
               {step.description}
             </p>
-
           </div>
         ))}
       </div>
-
     </section>
   )
 }

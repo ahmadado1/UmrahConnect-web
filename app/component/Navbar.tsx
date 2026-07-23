@@ -1,26 +1,50 @@
+'use client';
+
+import { useState } from 'react';
+
+const navLinks = [
+  { href: '/#features', label: 'Features' },
+  { href: '/hotels', label: 'Hotels' },
+  { href: '/#download', label: 'Download' },
+  { href: '/contact', label: 'Contact' },
+];
+
 export default function Navbar() {
+  const [open, setOpen] = useState(false);
+
+  function closeMenu() {
+    setOpen(false);
+  }
+
   return (
-    <nav style={{ backgroundColor: "#1E3A5F", padding: "25px 48px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      
-      {/* Logo */}
-      <a href="/" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
-        <img src="/logo.jpg" style={{ width: "36px", height: "36px", borderRadius: "8px" }} alt="UmrahConnect" />
-        <span style={{ color: "#fff", fontSize: "20px", fontWeight: "500" }}>UmrahConnect</span>
+    <nav className="navbar">
+      <a href="/" className="navbar-logo" onClick={closeMenu}>
+        <img src="/logo.jpg" alt="UmrahConnect" />
+        <span>UmrahConnect</span>
       </a>
-      
-      {/* Links */}
-      <div style={{ display: "flex", gap: "32px" }}>
-        <a href="/#features" style={{ color: "#fff", fontSize: "18px", textDecoration: "none" }}>Features</a>
-        <a href="/hotels" style={{ color: "#fff", fontSize: "18px", textDecoration: "none" }}>Hotels</a>
-        <a href="/#download" style={{ color: "#fff", fontSize: "18px", textDecoration: "none" }}>Download</a>
-        <a href="/contact" style={{ color: "#fff", fontSize: "18px", textDecoration: "none" }}>Contact</a>
+
+      <button
+        type="button"
+        className="navbar-toggle"
+        aria-label={open ? 'Close menu' : 'Open menu'}
+        aria-expanded={open}
+        onClick={() => setOpen((prev) => !prev)}
+      >
+        {open ? '✕' : '☰'}
+      </button>
+
+      <div className={`navbar-menu${open ? ' navbar-menu--open' : ''}`}>
+        <div className="navbar-links">
+          {navLinks.map((link) => (
+            <a key={link.href} href={link.href} onClick={closeMenu}>
+              {link.label}
+            </a>
+          ))}
+        </div>
+        <a href="/#download" className="navbar-download" onClick={closeMenu}>
+          Download app
+        </a>
       </div>
-
-      {/* Download button */}
-      <a href="/#download" style={{ backgroundColor: "#C9A84C", color: "#1E3A5F", padding: "8px 20px", borderRadius: "20px", fontSize: "14px", fontWeight: "600", textDecoration: "none" }}>
-        Download app
-      </a>
-
     </nav>
-  )
+  );
 }

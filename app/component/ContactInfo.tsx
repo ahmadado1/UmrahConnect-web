@@ -7,16 +7,7 @@ const infoItems = [
 
 export default function ContactInfo() {
   return (
-    <div
-      style={{
-        background: '#f5f0e8',
-        borderRadius: '16px',
-        padding: '40px 32px',
-        border: '1px solid rgba(201,168,76,0.2)',
-        boxShadow: '0 8px 24px rgba(30,58,95,0.08)',
-        marginBottom: '48px',
-      }}
-    >
+    <div className="contact-info-card">
       <div style={{ textAlign: 'center', marginBottom: '32px' }}>
         <div style={{ color: '#C9A84C', fontSize: '12px', fontWeight: '500', letterSpacing: '1px', marginBottom: '8px' }}>
           BUSINESS DETAILS
@@ -28,15 +19,7 @@ export default function ContactInfo() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {infoItems.map((item) => (
-          <div
-            key={item.label}
-            style={{
-              background: '#fff',
-              borderRadius: '12px',
-              padding: '18px 20px',
-              border: '1px solid rgba(30,58,95,0.06)',
-            }}
-          >
+          <div key={item.label} className="contact-info-item">
             <span style={{ color: '#C9A84C', fontSize: '11px', fontWeight: '600', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
               {item.label}
             </span>
@@ -55,14 +38,7 @@ export default function ContactInfo() {
           </div>
         ))}
 
-        <div
-          style={{
-            background: '#fff',
-            borderRadius: '12px',
-            padding: '18px 20px',
-            border: '1px solid rgba(30,58,95,0.06)',
-          }}
-        >
+        <div className="contact-info-item">
           <span style={{ color: '#C9A84C', fontSize: '11px', fontWeight: '600', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
             Phone / WhatsApp
           </span>
@@ -89,14 +65,7 @@ export default function ContactInfo() {
           </a>
         </div>
 
-        <div
-          style={{
-            background: '#fff',
-            borderRadius: '12px',
-            padding: '18px 20px',
-            border: '1px solid rgba(30,58,95,0.06)',
-          }}
-        >
+        <div className="contact-info-item">
           <span style={{ color: '#C9A84C', fontSize: '11px', fontWeight: '600', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
             Email
           </span>
