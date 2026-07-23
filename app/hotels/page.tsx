@@ -1,4 +1,6 @@
+import Navbar from '../component/Navbar';
 import Hotels from '../component/hotels';
+import Footer from '../component/footer';
 
 export const metadata = {
   title: 'Hotels Near Haram | UmrahConnect',
@@ -6,5 +8,11 @@ export const metadata = {
 };
 
 export default function HotelsPage() {
-  return <Hotels />;
+  return (
+    <>
+      <Navbar />
+      <Hotels />
+      <Footer />
+    </>
+  );
 }

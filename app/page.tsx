@@ -6,6 +6,7 @@ import Download from "./component/Download"
 import Footer from "./component/footer"
 import Screenshots from "./component/Screenshots"
 import HowItWorks from "./component/Howitworks"
+import About from "./component/About"
 
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
       <Features/>
       <Screenshots/>
       <HowItWorks/>
+      <About/>
       <Download/>
       <Footer/>
       

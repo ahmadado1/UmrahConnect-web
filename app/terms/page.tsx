@@ -11,7 +11,7 @@ export default function Terms() {
         { title: "Religious content", content: "All Quran text, duas and Islamic content are provided for informational and spiritual purposes. We recommend consulting a qualified scholar for religious guidance." },
         { title: "Prayer times", content: "Prayer times are calculated based on your GPS location and may vary slightly from local mosque times." },
         { title: "Changes to terms", content: "We may update these terms from time to time. Continued use of the app after changes means you accept the new terms." },
-        { title: "Contact us", content: "For questions about these terms, contact us at ahmadado6002@gmail.com" },
+        { title: "Contact us", content: "For questions about these terms, contact us at ahmadado1@icloud.com" },
       ].map((section) => (
         <div key={section.title} style={{ marginBottom: "32px" }}>
           <h2 style={{ color: "#1E3A5F", fontSize: "20px", fontWeight: "500", marginBottom: "8px" }}>{section.title}</h2>
