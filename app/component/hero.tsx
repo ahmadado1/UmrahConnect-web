@@ -1,4 +1,4 @@
-import { ChevronDownIcon, KaabaIcon } from './Icons';
+import { KaabaIcon } from './Icons';
 
 const stars = Array.from({ length: 24 }, (_, i) => ({
   id: i,
@@ -72,10 +72,6 @@ export default function Hero() {
           <KaabaIcon size={200} className="hero-kaaba-icon" />
         </div>
       </div>
-
-      <a href="#features" className="hero-scroll-indicator" aria-label="Scroll to features">
-        <ChevronDownIcon size={28} stroke="currentColor" />
-      </a>
     </section>
   );
 }
