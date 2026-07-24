@@ -649,16 +649,19 @@ button,
   display: flex;
   align-items: center;
   justify-content: center;
-  justify-self: center;
-  width: min(500px, 45vw);
+  justify-self: end;
+  width: auto;
   max-width: 100%;
 }
 
-.hero-emoji svg,
-.hero-kaaba-icon {
-  width: 100%;
+.hero-kaaba-image {
+  width: clamp(280px, 35vw, 500px);
+  max-width: 100%;
   height: auto;
-  max-width: min(500px, 45vw);
+  border-radius: 20px;
+  box-shadow: 0 0 60px rgba(201, 168, 76, 0.3);
+  object-fit: cover;
+  display: block;
 }
 
 .hero-badge-icon {

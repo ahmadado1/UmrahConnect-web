@@ -1,3 +1,4 @@
+import HeroKaabaImage from './HeroKaabaImage';
 import { KaabaIcon } from './Icons';
 
 const stars = Array.from({ length: 24 }, (_, i) => ({
@@ -67,11 +68,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="hero-emoji">
-        <div className="hero-float">
-          <KaabaIcon size={200} className="hero-kaaba-icon" />
-        </div>
-      </div>
+      <HeroKaabaImage />
     </section>
   );
 }
