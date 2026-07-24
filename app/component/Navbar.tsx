@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { CloseIcon, MenuIcon } from './Icons';
 
 const navLinks = [
   { href: '/#features', label: 'Features' },
@@ -30,7 +31,7 @@ export default function Navbar() {
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
       >
-        {open ? '✕' : '☰'}
+        {open ? <CloseIcon size={22} stroke="#fff" /> : <MenuIcon size={22} stroke="#fff" />}
       </button>
 
       <div className={`navbar-menu${open ? ' navbar-menu--open' : ''}`}>

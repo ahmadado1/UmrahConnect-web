@@ -15,6 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "UmrahConnect — Your complete Umrah companion",
   description: "Prayer times, Quran reader, Umrah guide, hotel bookings and more for pilgrims.",
+  icons: {
+    icon: "/logo.jpg",
+    apple: "/logo.jpg",
+  },
 }
 
 export default function RootLayout({

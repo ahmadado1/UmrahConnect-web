@@ -1,8 +1,52 @@
-const infoItems = [
+'use client';
+
+import type { ReactNode } from 'react';
+import { Reveal } from './Reveal';
+
+type InfoItem = {
+  label: string;
+  value?: string;
+  href?: string;
+  content?: ReactNode;
+};
+
+const infoItems: InfoItem[] = [
   { label: 'Business Name', value: 'UmrahConnect' },
   { label: 'Website', value: 'myumrahconnect.com', href: 'https://myumrahconnect.com' },
   { label: 'Developer', value: 'Ahmad Ado Muktar' },
   { label: 'Address', value: 'No 20 Fola Crescent Jahi, Abuja, Nigeria' },
+  {
+    label: 'Phone / WhatsApp',
+    content: (
+      <>
+        <a href="tel:+2347037124869" className="contact-info-value contact-info-value--strong">
+          +234 703 712 4869
+        </a>
+        <a
+          href="https://wa.me/2347037124869"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="contact-info-whatsapp"
+        >
+          Message on WhatsApp
+        </a>
+      </>
+    ),
+  },
+  {
+    label: 'Email',
+    content: (
+      <>
+        <a href="mailto:ahmadado1@icloud.com" className="contact-info-value contact-info-value--strong">
+          ahmadado1@icloud.com
+        </a>
+        <p className="contact-info-alt-label">Alternative contact</p>
+        <a href="mailto:ahmadado6002@gmail.com" className="contact-info-value contact-info-value--alt">
+          ahmadado6002@gmail.com
+        </a>
+      </>
+    ),
+  },
 ];
 
 export default function ContactInfo() {
@@ -17,72 +61,30 @@ export default function ContactInfo() {
         </h2>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        {infoItems.map((item) => (
-          <div key={item.label} className="contact-info-item">
-            <span style={{ color: '#C9A84C', fontSize: '11px', fontWeight: '600', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
-              {item.label}
-            </span>
-            {item.href ? (
-              <a
-                href={item.href}
-                style={{ display: 'block', color: '#1E3A5F', fontSize: '16px', fontWeight: '500', textDecoration: 'none', marginTop: '6px' }}
-              >
-                {item.value}
-              </a>
-            ) : (
-              <span style={{ display: 'block', color: '#1E3A5F', fontSize: '16px', fontWeight: '500', marginTop: '6px' }}>
-                {item.value}
-              </span>
-            )}
-          </div>
-        ))}
-
-        <div className="contact-info-item">
-          <span style={{ color: '#C9A84C', fontSize: '11px', fontWeight: '600', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
-            Phone / WhatsApp
-          </span>
-          <a
-            href="tel:+2347037124869"
-            style={{ display: 'block', color: '#1E3A5F', fontSize: '16px', fontWeight: '600', textDecoration: 'none', marginTop: '10px' }}
-          >
-            +234 703 712 4869
-          </a>
-          <a
-            href="https://wa.me/2347037124869"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'inline-block',
-              color: '#25D366',
-              fontSize: '14px',
-              fontWeight: '600',
-              textDecoration: 'none',
-              marginTop: '10px',
-            }}
-          >
-            Message on WhatsApp
-          </a>
-        </div>
-
-        <div className="contact-info-item">
-          <span style={{ color: '#C9A84C', fontSize: '11px', fontWeight: '600', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
-            Email
-          </span>
-          <a
-            href="mailto:ahmadado1@icloud.com"
-            style={{ display: 'block', color: '#1E3A5F', fontSize: '16px', fontWeight: '600', textDecoration: 'none', marginTop: '10px' }}
-          >
-            ahmadado1@icloud.com
-          </a>
-          <p style={{ color: '#999', fontSize: '12px', margin: '8px 0 6px' }}>Alternative contact</p>
-          <a
-            href="mailto:ahmadado6002@gmail.com"
-            style={{ display: 'block', color: '#666', fontSize: '15px', fontWeight: '500', textDecoration: 'none' }}
-          >
-            ahmadado6002@gmail.com
-          </a>
-        </div>
+      <div className="contact-info-list">
+        {infoItems.map((item, index) => {
+          const fromLeft = index % 2 === 0;
+          return (
+            <Reveal
+              key={item.label}
+              threshold={0.1}
+              slideFrom={fromLeft ? 'left-lg' : 'right-lg'}
+              delay={index * 100}
+              className="contact-info-item"
+            >
+              <span className="contact-info-label">{item.label}</span>
+              {item.content ? (
+                item.content
+              ) : item.href ? (
+                <a href={item.href} className="contact-info-value">
+                  {item.value}
+                </a>
+              ) : (
+                <span className="contact-info-value">{item.value}</span>
+              )}
+            </Reveal>
+          );
+        })}
       </div>
     </div>
   );

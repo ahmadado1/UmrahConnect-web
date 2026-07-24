@@ -1,5 +1,9 @@
 'use client';
 
+import { useMemo, useState } from 'react';
+import { LocationPinIcon, MosqueIcon, PriceTagIcon, StarIcon } from './Icons';
+import { Reveal } from './Reveal';
+
 const BOOKING_AID = 'YOUR_AID_HERE'; // Replace when CJ approves
 
 const makkahHotels = [
@@ -80,67 +84,58 @@ const madinahHotels = [
   },
 ];
 
+type Hotel = (typeof makkahHotels)[0];
+type FilterId = 'all' | 'makkah' | 'madinah';
+
+const filterTabs: { id: FilterId; label: string }[] = [
+  { id: 'all', label: 'All Hotels' },
+  { id: 'makkah', label: 'Makkah' },
+  { id: 'madinah', label: 'Madinah' },
+];
+
 function StarRating({ count }: { count: number }) {
   return (
-    <span style={{ color: '#C9A84C', fontSize: '14px' }}>
-      {'★'.repeat(count)}{'☆'.repeat(5 - count)}
+    <span className="hotel-stars">
+      {Array.from({ length: 5 }, (_, i) => (
+        <StarIcon key={i} filled={i < count} size={14} />
+      ))}
     </span>
   );
 }
 
-function HotelCard({ hotel, city }: { hotel: typeof makkahHotels[0], city: string }) {
+function HotelCardContent({ hotel }: { hotel: Hotel }) {
   const bookingUrl = `https://www.booking.com/hotel/sa/${hotel.slug}.html?aid=${BOOKING_AID}&label=umrahconnect`;
 
   return (
-    <div className="hotel-card" style={{
-      background: '#fff',
-      borderRadius: '12px',
-      padding: '24px',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-      border: '1px solid #eee',
-      position: 'relative',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '12px',
-    }}>
+    <>
       {hotel.badge && (
-        <div style={{
-          position: 'absolute',
-          top: '16px',
-          right: '16px',
-          background: '#C9A84C',
-          color: '#fff',
-          fontSize: '11px',
-          fontWeight: '600',
-          padding: '4px 10px',
-          borderRadius: '20px',
-        }}>
-          {hotel.badge}
-        </div>
+        <div className="hotel-card-badge">{hotel.badge}</div>
       )}
 
       <div>
-        <h3 style={{ color: '#1E3A5F', fontSize: '18px', fontWeight: '600', margin: '0 0 4px' }}>
-          {hotel.name}
-        </h3>
+        <h3 className="hotel-card-title">{hotel.name}</h3>
         <StarRating count={hotel.stars} />
       </div>
 
-      <div className="hotel-card-meta" style={{ fontSize: '13px', color: '#666' }}>
-        <span>📍 {hotel.distance}</span>
-        <span>💰 {hotel.priceRange}</span>
+      <div className="hotel-card-meta">
+        <span>
+          <span className="hotel-meta-icon">
+            <LocationPinIcon size={16} />
+          </span>
+          {hotel.distance}
+        </span>
+        <span>
+          <span className="hotel-meta-icon">
+            <PriceTagIcon size={16} />
+          </span>
+          {hotel.priceRange}
+        </span>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-        {hotel.amenities.map(a => (
-          <span key={a} style={{
-            background: '#f0f4f8',
-            color: '#1E3A5F',
-            fontSize: '12px',
-            padding: '4px 10px',
-            borderRadius: '20px',
-          }}>
-            {a}
+      <div className="hotel-card-amenities">
+        {hotel.amenities.map((amenity) => (
+          <span key={amenity} className="hotel-amenity-pill">
+            {amenity}
           </span>
         ))}
       </div>
@@ -149,45 +144,54 @@ function HotelCard({ hotel, city }: { hotel: typeof makkahHotels[0], city: strin
         href={bookingUrl}
         target="_blank"
         rel="noopener noreferrer"
-        style={{
-          display: 'block',
-          background: '#1E3A5F',
-          color: '#fff',
-          textAlign: 'center',
-          padding: '12px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontWeight: '600',
-          fontSize: '14px',
-          marginTop: '4px',
-          transition: 'background 0.2s',
-        }}
-        onMouseOver={e => (e.currentTarget.style.background = '#C9A84C')}
-        onMouseOut={e => (e.currentTarget.style.background = '#1E3A5F')}
+        className="hotel-card-book-btn"
       >
         Book on Booking.com
       </a>
-    </div>
+    </>
   );
 }
 
-function Section({ title, subtitle, hotels, city }: {
+function filterHotels(hotels: Hotel[], search: string) {
+  const query = search.trim().toLowerCase();
+  if (!query) return hotels;
+  return hotels.filter((hotel) => hotel.name.toLowerCase().includes(query));
+}
+
+function HotelSection({
+  title,
+  subtitle,
+  hotels,
+  cardOffset,
+}: {
   title: string;
   subtitle: string;
-  hotels: typeof makkahHotels;
-  city: string;
+  hotels: Hotel[];
+  cardOffset: number;
 }) {
+  if (hotels.length === 0) return null;
+
   return (
-    <section style={{ marginBottom: '64px' }}>
-      <div style={{ marginBottom: '32px' }}>
-        <h2 className="hotels-section-title" style={{ color: '#1E3A5F', margin: '0 0 8px' }}>
+    <section className="hotels-section-block">
+      <Reveal threshold={0.1} slideFrom="left" className="hotels-section-header">
+        <h2 className="hotels-section-title hotels-section-heading">
+          <MosqueIcon size={28} />
           {title}
         </h2>
-        <p style={{ color: '#666', fontSize: '15px', margin: 0 }}>{subtitle}</p>
-      </div>
+        <p className="hotels-section-subtitle">{subtitle}</p>
+      </Reveal>
+
       <div className="hotels-grid">
-        {hotels.map(hotel => (
-          <HotelCard key={hotel.slug} hotel={hotel} city={city} />
+        {hotels.map((hotel, index) => (
+          <Reveal
+            key={hotel.slug}
+            threshold={0.1}
+            slideFrom="hotel-card"
+            delay={(cardOffset + index) * 80}
+            className="hotel-card reveal-hotel-card"
+          >
+            <HotelCardContent hotel={hotel} />
+          </Reveal>
         ))}
       </div>
     </section>
@@ -195,38 +199,78 @@ function Section({ title, subtitle, hotels, city }: {
 }
 
 export default function Hotels() {
+  const [filter, setFilter] = useState<FilterId>('all');
+  const [search, setSearch] = useState('');
+
+  const filteredMakkah = useMemo(
+    () => filterHotels(makkahHotels, search),
+    [search],
+  );
+  const filteredMadinah = useMemo(
+    () => filterHotels(madinahHotels, search),
+    [search],
+  );
+
+  const showMakkah = filter === 'all' || filter === 'makkah';
+  const showMadinah = filter === 'all' || filter === 'madinah';
+
   return (
-    <main style={{ background: '#f8f9fa', minHeight: '100vh' }}>
-      {/* Hero */}
-      <div className="hotels-hero">
-        <p style={{ color: '#C9A84C', fontSize: '14px', fontWeight: '600', letterSpacing: '2px', marginBottom: '16px' }}>
-          ACCOMMODATION GUIDE
-        </p>
+    <main className="hotels-page">
+      <Reveal threshold={0.1} slideFrom="top" className="hotels-hero">
+        <p className="hotels-hero-label">ACCOMMODATION GUIDE</p>
         <h1>Stay Close to the Holy Sites</h1>
-        <p style={{ fontSize: '17px', color: 'rgba(255,255,255,0.8)', maxWidth: '560px', margin: '0 auto' }}>
+        <p className="hotels-hero-text">
           Handpicked hotels near Masjid al-Haram and Masjid an-Nabawi, selected for proximity, quality, and value for pilgrims.
         </p>
-      </div>
+      </Reveal>
 
-      {/* Content */}
       <div className="page-container-wide">
-        <Section
-          title="🕌 Makkah — Near Masjid al-Haram"
-          subtitle="All hotels within walking distance of the Grand Mosque"
-          hotels={makkahHotels}
-          city="makkah"
-        />
-        <Section
-          title="🕌 Madinah — Near Masjid an-Nabawi"
-          subtitle="Comfortable stays within easy reach of the Prophet's Mosque"
-          hotels={madinahHotels}
-          city="madinah"
-        />
+        <div className="hotels-toolbar">
+          <Reveal threshold={0.1} slideFrom="top">
+            <input
+              type="search"
+              className="hotels-search"
+              placeholder="Search hotels by name..."
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              aria-label="Search hotels"
+            />
+          </Reveal>
 
-        {/* Disclaimer */}
-        <p style={{ color: '#999', fontSize: '12px', textAlign: 'center', marginTop: '32px' }}>
-        UmrahConnect © 2026. All rights reserved.
-        </p>
+          <div className="hotels-filter-tabs">
+            {filterTabs.map((tab, index) => (
+              <Reveal key={tab.id} threshold={0.1} slideFrom="left" delay={index * 80}>
+                <button
+                  type="button"
+                  className={`hotels-filter-tab${filter === tab.id ? ' is-active' : ''}`}
+                  onClick={() => setFilter(tab.id)}
+                >
+                  {tab.label}
+                </button>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+
+        {showMakkah && (
+          <HotelSection
+            title="Makkah — Near Masjid al-Haram"
+            subtitle="All hotels within walking distance of the Grand Mosque"
+            hotels={filteredMakkah}
+            cardOffset={0}
+          />
+        )}
+
+        {showMadinah && (
+          <HotelSection
+            title="Madinah — Near Masjid an-Nabawi"
+            subtitle="Comfortable stays within easy reach of the Prophet's Mosque"
+            hotels={filteredMadinah}
+            cardOffset={showMakkah ? filteredMakkah.length : 0}
+          />
+        )}
+
+        <p className="hotels-disclaimer">UmrahConnect © 2026. All rights reserved.</p>
       </div>
     </main>
   );

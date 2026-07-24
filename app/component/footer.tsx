@@ -1,51 +1,55 @@
+'use client';
+
+import { HeartIcon } from './Icons';
+import { Reveal } from './Reveal';
+
 export default function Footer() {
   return (
-    <footer className="footer">
-      <div className="footer-grid">
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-            <span style={{ fontSize: "20px" }}>🌙</span>
-            <span style={{ color: "#fff", fontSize: "18px", fontWeight: "500" }}>UmrahConnect</span>
+    <Reveal slideFrom="up">
+      <footer className="footer footer-full">
+        <div className="footer-grid">
+          <div className="footer-brand">
+            <div className="footer-logo">
+              <img src="/logo.jpg" alt="UmrahConnect" />
+              <span>UmrahConnect</span>
+            </div>
+            <p className="footer-tagline">Your complete Umrah &amp; Hajj companion</p>
+            <p className="footer-made">
+              Made with{' '}
+              <span className="svg-icon-inline">
+                <HeartIcon size={16} />
+              </span>{' '}
+              for pilgrims worldwide
+            </p>
           </div>
-          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px", margin: "0 0 4px" }}>
-            Ahmad Ado Muktar
-          </p>
-          <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "12px", margin: 0 }}>
-            Made with 🤲 for pilgrims worldwide
-          </p>
+
+          <div className="footer-links-col">
+            <span className="footer-col-title">Explore</span>
+            <a href="/#features">Features</a>
+            <a href="/hotels">Hotels</a>
+            <a href="/#download">Download</a>
+            <a href="/contact">Contact</a>
+            <a href="/privacy-policy">Privacy Policy</a>
+          </div>
+
+          <div className="footer-links-col">
+            <span className="footer-col-title">Connect</span>
+            <a
+              href="https://instagram.com/myumrahconnect"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Instagram @myumrahconnect
+            </a>
+            <a href="mailto:ahmadado6002@gmail.com">ahmadado6002@gmail.com</a>
+            <span className="footer-developer">Developer: Ahmad Ado Muktar</span>
+          </div>
         </div>
 
-        <div className="footer-links-col footer-email">
-          <a href="mailto:ahmadado1@icloud.com">
-            ahmadado1@icloud.com
-          </a>
-          <a
-            href="https://instagram.com/myumrahconnect"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            @myumrahconnect
-          </a>
+        <div className="footer-bottom">
+          <p>© 2026 UmrahConnect. All rights reserved.</p>
         </div>
-
-        <div className="footer-links-col">
-          <a href="/privacy-policy">Privacy Policy</a>
-          <a href="/terms">Terms of Service</a>
-          <a href="/contact">Contact</a>
-        </div>
-      </div>
-
-      <div
-        style={{
-          borderTop: "1px solid rgba(255,255,255,0.1)",
-          paddingTop: "24px",
-          textAlign: "center",
-        }}
-      >
-        <p style={{ color: "rgba(255,255,255,0.35)", fontSize: "12px", margin: 0 }}>
-          © 2026 UmrahConnect. All rights reserved.
-        </p>
-      </div>
-    </footer>
-  )
+      </footer>
+    </Reveal>
+  );
 }

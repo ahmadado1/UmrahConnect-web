@@ -7,6 +7,8 @@ import Footer from "./component/footer"
 import Screenshots from "./component/Screenshots"
 import HowItWorks from "./component/Howitworks"
 import About from "./component/About"
+import WhyUmrahConnect from "./component/WhyUmrahConnect"
+import AvailableWorldwide from "./component/AvailableWorldwide"
 
 
 export default function Home() {
@@ -17,11 +19,12 @@ export default function Home() {
       <Stat/>
       <Features/>
       <Screenshots/>
+      <WhyUmrahConnect/>
+      <AvailableWorldwide/>
       <HowItWorks/>
       <About/>
       <Download/>
       <Footer/>
-      
     </main>
   )
 }

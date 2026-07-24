@@ -1,71 +1,73 @@
+'use client';
+
+import PhoneMockup from './PhoneMockup';
+import { Reveal } from './Reveal';
+import { APP_SCREENSHOTS } from './screenshotPaths';
+
 const screens = [
   {
-    src: "/images/Simulator Screenshot - iPhone 16 Pro Max - 2026-07-16 at 00.25.02.png",
-    label: "Home",
+    title: 'Prayer Times & Adhan',
+    description: 'Live countdowns, weekly tracking, and full Adhan on lock screen.',
+    screenshot: APP_SCREENSHOTS.prayer,
+    slot: 'scatter-phone--1',
   },
   {
-    src: "/images/Simulator Screenshot - iPhone 16 Pro Max - 2026-07-16 at 00.25.19.png",
-    label: "AI Guide",
+    title: 'Home',
+    description: 'Your dashboard for prayer times, dhikr, and Umrah progress.',
+    screenshot: APP_SCREENSHOTS.home,
+    slot: 'scatter-phone--2',
   },
   {
-    src: "/images/Simulator Screenshot - iPhone 16 Pro Max - 2026-07-14 at 22.18.55.png",
-    label: "Prayer",
+    title: 'Umrah & Hajj Guide',
+    description: 'Step-by-step rituals with duas, tips, and progress tracking.',
+    screenshot: APP_SCREENSHOTS.umrahChecklist,
+    slot: 'scatter-phone--3',
   },
   {
-    src: "/images/Simulator Screenshot - iPhone 16 Pro Max - 2026-06-23 at 19.45.17.png",
-    label: "Services",
+    title: 'AI Islamic Guide',
+    description: 'Instant Islamic answers in your language, available 24/7.',
+    screenshot: APP_SCREENSHOTS.aiGuide,
+    slot: 'scatter-phone--4',
   },
-]
-
-function PhoneMockup({ src, label }: { src: string; label: string }) {
-  return (
-    <div className="phone-mockup">
-      <div className="phone-mockup-frame">
-        <div className="phone-mockup-screen">
-          <div
-            style={{
-              position: "absolute",
-              top: "8px",
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: "72px",
-              height: "20px",
-              background: "#000",
-              borderRadius: "12px",
-              zIndex: 2,
-            }}
-          />
-          <img
-            src={src}
-            alt={`UmrahConnect ${label} screen`}
-            style={{ width: "100%", display: "block" }}
-          />
-        </div>
-      </div>
-      <div style={{ color: "#1E3A5F", fontSize: "14px", fontWeight: "600", marginTop: "16px" }}>
-        {label}
-      </div>
-    </div>
-  )
-}
+  {
+    title: 'Quran Reader',
+    description: '114 surahs in Arabic with translations and bookmarks.',
+    screenshot: APP_SCREENSHOTS.quran,
+    slot: 'scatter-phone--5',
+  },
+  {
+    title: 'Services',
+    description: 'Hotels, restaurants, transport, and essential pilgrim services.',
+    screenshot: APP_SCREENSHOTS.services,
+    slot: 'scatter-phone--6',
+  },
+];
 
 export default function Screenshots() {
   return (
-    <section className="section-padding" style={{ backgroundColor: "#f5f0e8" }}>
-      <div style={{ textAlign: "center", marginBottom: "48px" }}>
-        <div className="section-label" style={{ marginBottom: "8px" }}>
-          SEE IT IN ACTION
+    <section className="section-padding screenshots-showcase" style={{ backgroundColor: '#f5f0e8' }}>
+      <Reveal>
+        <div style={{ textAlign: 'center', marginBottom: '56px' }}>
+          <div className="section-label" style={{ marginBottom: '8px' }}>
+            SEE IT IN ACTION
+          </div>
+          <h2 className="section-title" style={{ color: '#1E3A5F', margin: 0 }}>
+            See it in action
+          </h2>
         </div>
-        <h2 className="section-title" style={{ color: "#1E3A5F", margin: 0 }}>
-          See it in action
-        </h2>
-      </div>
+      </Reveal>
 
-      <div className="screenshots-row">
-        {screens.map((screen) => (
-          <PhoneMockup key={screen.label} src={screen.src} label={screen.label} />
+      <div className="scatter-phones">
+        {screens.map((screen, index) => (
+          <Reveal key={screen.title} delay={index * 80} className={`scatter-phone ${screen.slot}`}>
+            <PhoneMockup src={screen.screenshot} alt={`UmrahConnect ${screen.title}`} />
+            <div className="scatter-phone-label">
+              <h3>{screen.title}</h3>
+              <p>{screen.description}</p>
+            </div>
+          </Reveal>
         ))}
       </div>
     </section>
-  )
+  );
 }

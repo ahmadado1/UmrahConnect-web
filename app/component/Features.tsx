@@ -1,60 +1,75 @@
-const features = [
+'use client';
+
+import { FeatureIcon, type FeatureIconName } from './Icons';
+import { Reveal } from './Reveal';
+
+const features: {
+  icon: FeatureIconName;
+  title: string;
+  description: string;
+}[] = [
   {
-    icon: "🕌",
-    title: "Prayer times",
-    description: "Accurate prayer times based on your GPS location with beautiful adhan recitations."
+    icon: 'prayer-times',
+    title: 'Prayer Times & Adhan',
+    description:
+      'Accurate prayer times for any city worldwide. Full Adhan plays automatically — even on lock screen.',
   },
   {
-    icon: "📖",
-    title: "Quran reader",
-    description: "Full Quran in Arabic with translation in 5 languages. Bookmarks and progress tracking."
+    icon: 'quran-reader',
+    title: 'Quran Reader',
+    description:
+      'Complete Quran in Arabic with 7 translations. Bookmark verses and track your reading progress.',
   },
   {
-    icon: "🕋",
-    title: "Umrah guide",
-    description: "Complete step-by-step Umrah guide with duas, tips and notes for female pilgrims."
+    icon: 'umrah-guide',
+    title: 'Umrah & Hajj Guide',
+    description:
+      'Step-by-step ritual guidance with duas, tips and notes for female pilgrims. Track your progress.',
   },
   {
-    icon: "🤲",
-    title: "Duas & Zikr",
-    description: "38+ duas for Umrah, prayer, travel and daily life with Arabic and transliteration."
+    icon: 'ai-guide',
+    title: 'AI Islamic Guide',
+    description:
+      'Ask any Islamic question in your language. Powered by Claude AI, available 24/7.',
   },
   {
-    icon: "🏨",
-    title: "Hotel bookings",
-    description: "Find and book hotels near Masjid al-Haram in Makkah and Masjid an-Nabawi in Madinah."
+    icon: 'maps',
+    title: 'Maps & Navigation',
+    description:
+      'Find every gate, Zamzam station and landmark in Masjid al-Haram and Masjid an-Nabawi.',
   },
   {
-    icon: "📅",
-    title: "Islamic calendar",
-    description: "Full Hijri calendar with key Islamic dates — Eid, Ramadan, Arafah with Gregorian dates."
+    icon: 'services',
+    title: 'Hotels & Services',
+    description:
+      '35+ hotels near the Haram with directions. Restaurants, transport, travel agents and flights.',
   },
-]
+];
 
 export default function Features() {
   return (
-    <section id="features" className="section-padding" style={{ backgroundColor: "#fff" }}>
-      <div style={{ textAlign: "center", marginBottom: "48px" }}>
-        <div className="section-label" style={{ marginBottom: "8px" }}>
+    <section id="features" className="section-padding features-section" style={{ backgroundColor: '#fff' }}>
+      <Reveal className="features-header">
+        <div className="section-label" style={{ marginBottom: '8px', textAlign: 'center' }}>
           EVERYTHING YOU NEED
         </div>
-        <h2 className="section-title" style={{ color: "#1E3A5F", marginBottom: "12px" }}>
+        <h2 className="section-title" style={{ color: '#1E3A5F', marginBottom: '12px', textAlign: 'center' }}>
           Built for pilgrims, by design
         </h2>
-        <p style={{ color: "#666", fontSize: "16px", maxWidth: "500px", margin: "0 auto" }}>
+        <p style={{ color: '#666', fontSize: '16px', maxWidth: '500px', margin: '0 auto', textAlign: 'center' }}>
           Every feature crafted to make your Umrah journey easier and more spiritual
         </p>
-      </div>
+      </Reveal>
 
-      <div className="features-grid">
-        {features.map((feature) => (
-          <div key={feature.title} style={{ backgroundColor: "#fff", border: "0.5px solid #e5e5e5", borderRadius: "16px", padding: "24px" }}>
-            <div style={{ fontSize: "32px", marginBottom: "14px" }}>{feature.icon}</div>
-            <h3 style={{ color: "#1E3A5F", fontSize: "16px", fontWeight: "500", marginBottom: "8px" }}>{feature.title}</h3>
-            <p style={{ color: "#666", fontSize: "13px", lineHeight: "1.6" }}>{feature.description}</p>
-          </div>
+      <div className="feature-cards-grid">
+        {features.map((feature, index) => (
+          <Reveal key={feature.title} delay={index * 100} className="feature-card">
+            <FeatureIcon name={feature.icon} size={56} className="feature-card-icon" />
+            <h3>{feature.title}</h3>
+            <p>{feature.description}</p>
+          </Reveal>
         ))}
       </div>
     </section>
-  )
+  );
 }
