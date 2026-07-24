@@ -862,14 +862,18 @@ button,
   max-width: var(--fluid-container);
   margin: 0 auto;
   width: 100%;
-  min-height: 2400px;
+  --phone-w: clamp(220px, 30vw, 360px);
+  /* mockup screen (9:19) + frame + label */
+  --phone-block-h: calc(var(--phone-w) * 19 / 9 + 100px);
+  --phone-gap: clamp(100px, 10vw, 180px);
+  min-height: calc(2.5 * (var(--phone-block-h) + var(--phone-gap)) + var(--phone-block-h) + 120px);
   padding-bottom: 80px;
 }
 
 .scatter-phone {
   position: absolute;
-  width: clamp(220px, 30vw, 360px);
-  max-width: 100%;
+  width: var(--phone-w);
+  max-width: calc(100% - 6vw);
   --scatter-rotate: 0deg;
   transform: rotate(var(--scatter-rotate));
   transition: transform 0.35s ease, filter 0.35s ease;
@@ -882,6 +886,7 @@ button,
   filter: drop-shadow(0 22px 40px rgba(30, 58, 95, 0.32));
 }
 
+/* Left column: 1 → 3 → 5 — each starts after previous ends + gap */
 .scatter-phone--1 {
   --scatter-rotate: -3deg;
   left: 3vw;
@@ -892,33 +897,33 @@ button,
   --scatter-rotate: 2deg;
   right: 3vw;
   left: auto;
-  top: 280px;
+  top: calc(0.55 * (var(--phone-block-h) + var(--phone-gap)));
 }
 
 .scatter-phone--3 {
   --scatter-rotate: 3deg;
   left: 5vw;
-  top: 680px;
+  top: calc(var(--phone-block-h) + var(--phone-gap));
 }
 
 .scatter-phone--4 {
   --scatter-rotate: -2deg;
   right: 5vw;
   left: auto;
-  top: 960px;
+  top: calc(1.55 * (var(--phone-block-h) + var(--phone-gap)));
 }
 
 .scatter-phone--5 {
   --scatter-rotate: 2deg;
   left: 3vw;
-  top: 1360px;
+  top: calc(2 * (var(--phone-block-h) + var(--phone-gap)));
 }
 
 .scatter-phone--6 {
   --scatter-rotate: -3deg;
   right: 3vw;
   left: auto;
-  top: 1640px;
+  top: calc(2.55 * (var(--phone-block-h) + var(--phone-gap)));
 }
 
 .scatter-phone-label {
@@ -1618,12 +1623,12 @@ button,
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   .scatter-phones {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: max(80px, clamp(3rem, 10vw, 5rem));
+    gap: clamp(100px, 12vw, 160px);
     min-height: auto;
     padding-bottom: clamp(2rem, 6vw, 3rem);
   }
@@ -1634,5 +1639,6 @@ button,
     left: auto !important;
     right: auto !important;
     width: clamp(220px, 70vw, 360px);
+    max-width: 100%;
   }
 }
