@@ -37,12 +37,12 @@ const infoItems: InfoItem[] = [
     label: 'Email',
     content: (
       <>
-        <a href="mailto:ahmadado1@icloud.com" className="contact-info-value contact-info-value--strong">
-          ahmadado1@icloud.com
+        <a href="mailto:info@myumrahconnect.com" className="contact-info-value contact-info-value--strong">
+          info@myumrahconnect.com
         </a>
-        <p className="contact-info-alt-label">Alternative contact</p>
-        <a href="mailto:ahmadado6002@gmail.com" className="contact-info-value contact-info-value--alt">
-          ahmadado6002@gmail.com
+        <p className="contact-info-alt-label">Developer contact</p>
+        <a href="mailto:ahmad@myumrahconnect.com" className="contact-info-value contact-info-value--alt">
+          ahmad@myumrahconnect.com
         </a>
       </>
     ),

@@ -32,10 +32,10 @@ export default function About() {
               Built by a Muslim developer passionate about making the Umrah journey easier for pilgrims worldwide.
             </p>
             <a
-              href="mailto:ahmadado1@icloud.com"
+              href="mailto:ahmad@myumrahconnect.com"
               style={{ color: '#1E3A5F', fontSize: '15px', fontWeight: '500', textDecoration: 'none', wordBreak: 'break-all' }}
             >
-              ahmadado1@icloud.com
+              ahmad@myumrahconnect.com
             </a>
           </div>
         </Reveal>

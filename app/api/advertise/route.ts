@@ -2,15 +2,26 @@ import { NextResponse } from 'next/server';
 
 const CONTACT_EMAIL = 'info@myumrahconnect.com';
 
+const PACKAGE_LABELS: Record<string, string> = {
+  basic: 'Basic Featured — $39.99/month',
+  premium: 'Premium Featured — $79.99/month',
+};
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const name = typeof body.name === 'string' ? body.name.trim() : '';
+    const agencyName = typeof body.agencyName === 'string' ? body.agencyName.trim() : '';
+    const country = typeof body.country === 'string' ? body.country.trim() : '';
+    const phone = typeof body.phone === 'string' ? body.phone.trim() : '';
     const email = typeof body.email === 'string' ? body.email.trim() : '';
-    const message = typeof body.message === 'string' ? body.message.trim() : '';
+    const packageChoice = typeof body.packageChoice === 'string' ? body.packageChoice.trim() : '';
 
-    if (!name || !email || !message) {
+    if (!agencyName || !country || !phone || !email || !packageChoice) {
       return NextResponse.json({ error: 'Please fill in all fields.' }, { status: 400 });
+    }
+
+    if (!PACKAGE_LABELS[packageChoice]) {
+      return NextResponse.json({ error: 'Please select a valid package.' }, { status: 400 });
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -21,12 +32,13 @@ export async function POST(request: Request) {
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { error: 'Email service is not configured yet. Please try again later.' },
+        { error: 'Email service is not configured yet. Please try again later or contact us on WhatsApp.' },
         { status: 503 },
       );
     }
 
     const fromEmail = process.env.RESEND_FROM_EMAIL || 'UmrahConnect <onboarding@resend.dev>';
+    const packageLabel = PACKAGE_LABELS[packageChoice];
 
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -38,13 +50,15 @@ export async function POST(request: Request) {
         from: fromEmail,
         to: [CONTACT_EMAIL],
         reply_to: email,
-        subject: `UmrahConnect contact from ${name}`,
+        subject: `Featured listing request — ${agencyName}`,
         text: [
-          `Name: ${name}`,
-          `Email: ${email}`,
+          'New Featured listing request from the Advertise page',
           '',
-          'Message:',
-          message,
+          `Agency Name: ${agencyName}`,
+          `Country: ${country}`,
+          `Phone: ${phone}`,
+          `Email: ${email}`,
+          `Package: ${packageLabel}`,
         ].join('\n'),
       }),
     });
@@ -53,14 +67,14 @@ export async function POST(request: Request) {
       const errorData = await response.json().catch(() => null);
       console.error('Resend error:', errorData);
       return NextResponse.json(
-        { error: 'Failed to send your message. Please try again later.' },
+        { error: 'Failed to send your request. Please try again later or contact us on WhatsApp.' },
         { status: 502 },
       );
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Contact form error:', error);
+    console.error('Advertise form error:', error);
     return NextResponse.json(
       { error: 'Something went wrong. Please try again later.' },
       { status: 500 },

@@ -29,7 +29,9 @@ export default function Footer() {
             <a href="/hotels">Hotels</a>
             <a href="/#download">Download</a>
             <a href="/contact">Contact</a>
+            <a href="/advertise">Advertise</a>
             <a href="/privacy-policy">Privacy Policy</a>
+            <a href="/delete-account">Delete Account</a>
           </div>
 
           <div className="footer-links-col">
@@ -41,7 +43,7 @@ export default function Footer() {
             >
               Instagram @myumrahconnect
             </a>
-            <a href="mailto:ahmadado6002@gmail.com">ahmadado6002@gmail.com</a>
+            <a href="mailto:info@myumrahconnect.com">info@myumrahconnect.com</a>
             <span className="footer-developer">Developer: Ahmad Ado Muktar</span>
           </div>
         </div>
