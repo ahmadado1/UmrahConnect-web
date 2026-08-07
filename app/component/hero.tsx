@@ -1,5 +1,5 @@
-import HeroKaabaImage from './HeroKaabaImage';
-import { KaabaIcon } from './Icons';
+import HeroPhones from './HeroPhones';
+import { CrescentMoonIcon } from './Icons';
 
 const stars = Array.from({ length: 24 }, (_, i) => ({
   id: i,
@@ -31,7 +31,7 @@ export default function Hero() {
       <div className="hero-content">
         <div className="hero-badge">
           <span className="hero-badge-icon">
-            <KaabaIcon size={18} />
+            <CrescentMoonIcon size={18} />
           </span>
           <span>YOUR COMPLETE UMRAH COMPANION</span>
         </div>
@@ -68,7 +68,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <HeroKaabaImage />
+      <HeroPhones />
     </section>
   );
 }

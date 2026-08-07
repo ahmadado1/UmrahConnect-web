@@ -710,24 +710,73 @@ button,
   min-width: min(100%, 200px);
 }
 
-.hero-emoji {
+.hero-phones {
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   justify-self: end;
-  width: auto;
+  width: min(420px, 100%);
   max-width: 100%;
 }
 
-.hero-kaaba-image {
-  width: clamp(280px, 35vw, 500px);
-  max-width: 100%;
-  height: auto;
-  border-radius: 20px;
-  box-shadow: 0 0 60px rgba(201, 168, 76, 0.3);
-  object-fit: cover;
-  display: block;
+.hero-phones-stack {
+  position: relative;
+  width: 100%;
+  min-height: clamp(340px, 52vw, 520px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-phone {
+  width: clamp(180px, 28vw, 240px);
+}
+
+.hero-phone .phone-mockup {
+  max-width: none;
+  width: 100%;
+}
+
+.hero-phone .phone-mockup-frame {
+  border-radius: 28px;
+  box-shadow:
+    0 0 0 1px rgba(201, 168, 76, 0.25),
+    0 24px 48px rgba(0, 0, 0, 0.35),
+    0 0 60px rgba(201, 168, 76, 0.22);
+}
+
+.hero-phone--back {
+  position: absolute;
+  left: 4%;
+  top: 8%;
+  transform: rotate(-8deg);
+  opacity: 0.92;
+  z-index: 1;
+}
+
+.hero-phone--front {
+  position: relative;
+  z-index: 2;
+  margin-left: 18%;
+  margin-top: 10%;
+  transform: rotate(4deg);
+}
+
+@media (max-width: 700px) {
+  .hero-phones {
+    justify-self: center;
+    width: min(340px, 100%);
+  }
+
+  .hero-phones-stack {
+    min-height: 360px;
+  }
+
+  .hero-phone {
+    width: clamp(150px, 42vw, 200px);
+  }
+
+  .hero-phone--front {
+    margin-left: 14%;
+  }
 }
 
 .hero-badge-icon {

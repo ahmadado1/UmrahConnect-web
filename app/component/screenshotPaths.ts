@@ -7,4 +7,5 @@ export const APP_SCREENSHOTS = {
   guide: '/images/Simulator Screenshot - iPhone 16 Pro Max - 2026-07-16 at 00.25.19.png',
   services: '/images/Simulator Screenshot - iPhone 16 Pro Max - 2026-06-23 at 19.45.17.png',
   maps: '/images/Simulator Screenshot - iPhone 16 Pro Max - 2026-06-23 at 19.45.09.png',
+  qibla: '/images/Simulator Screenshot - iPhone 16 Pro Max - 2026-06-23 at 19.46.52.png',
 } as const;
