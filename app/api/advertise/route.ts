@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const CONTACT_EMAIL = 'info@myumrahconnect.com';
+const CONTACT_EMAIL = 'infom@myumrahconnect.com';
 
 const PACKAGE_LABELS: Record<string, string> = {
   basic: 'Basic Featured — $39.99/month',

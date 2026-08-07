@@ -2,7 +2,7 @@
 
 import { Reveal } from './Reveal';
 
-const SUPPORT_EMAIL = 'info@myumrahconnect.com';
+const SUPPORT_EMAIL = 'infom@myumrahconnect.com';
 const DELETE_MAILTO = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent('Delete My Account')}`;
 
 const deletedDataItems = [

@@ -43,7 +43,7 @@ export default function Footer() {
             >
               Instagram @myumrahconnect
             </a>
-            <a href="mailto:info@myumrahconnect.com">info@myumrahconnect.com</a>
+            <a href="mailto:infom@myumrahconnect.com">infom@myumrahconnect.com</a>
             <span className="footer-developer">Developer: Ahmad Ado Muktar</span>
           </div>
         </div>

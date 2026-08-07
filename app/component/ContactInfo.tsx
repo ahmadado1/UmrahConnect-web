@@ -37,8 +37,8 @@ const infoItems: InfoItem[] = [
     label: 'Email',
     content: (
       <>
-        <a href="mailto:info@myumrahconnect.com" className="contact-info-value contact-info-value--strong">
-          info@myumrahconnect.com
+        <a href="mailto:infom@myumrahconnect.com" className="contact-info-value contact-info-value--strong">
+          infom@myumrahconnect.com
         </a>
         <p className="contact-info-alt-label">Developer contact</p>
         <a href="mailto:ahmad@myumrahconnect.com" className="contact-info-value contact-info-value--alt">
