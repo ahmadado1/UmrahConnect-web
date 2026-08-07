@@ -74,7 +74,7 @@ export default function PrivacyPolicyContent() {
             >
               <div className="privacy-contact-box">
                 {section.content}{' '}
-                <a href="mailto:infom@myumrahconnect.com">infom@myumrahconnect.com</a>.
+                <a href="mailto:info@myumrahconnect.com">info@myumrahconnect.com</a>.
               </div>
             </Reveal>
           ) : (

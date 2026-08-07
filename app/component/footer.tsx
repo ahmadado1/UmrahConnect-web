@@ -37,13 +37,13 @@ export default function Footer() {
           <div className="footer-links-col">
             <span className="footer-col-title">Connect</span>
             <a
-              href="https://instagram.com/myumrahconnect"
+              href="https://instagram.com/umrahconnectapp"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Instagram @myumrahconnect
+              Instagram @umrahconnectapp
             </a>
-            <a href="mailto:infom@myumrahconnect.com">infom@myumrahconnect.com</a>
+            <a href="mailto:info@myumrahconnect.com">info@myumrahconnect.com</a>
             <span className="footer-developer">Developer: Ahmad Ado Muktar</span>
           </div>
         </div>

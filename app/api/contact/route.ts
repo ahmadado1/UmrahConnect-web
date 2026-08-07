@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const CONTACT_EMAIL = 'infom@myumrahconnect.com';
+const CONTACT_EMAIL = 'info@myumrahconnect.com';
 
 export async function POST(request: Request) {
   try {
