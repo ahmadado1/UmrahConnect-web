@@ -1,6 +1,6 @@
 'use client';
 
-import { HeartIcon } from './Icons';
+import { HeartIcon, InstagramIcon, MailIcon } from './Icons';
 import { Reveal } from './Reveal';
 
 export default function Footer() {
@@ -40,10 +40,15 @@ export default function Footer() {
               href="https://instagram.com/umrahconnectapp"
               target="_blank"
               rel="noopener noreferrer"
+              className="footer-connect-link"
             >
-              Instagram @umrahconnectapp
+              <InstagramIcon size={16} stroke="#C9A84C" />
+              <span>@umrahconnectapp</span>
             </a>
-            <a href="mailto:info@myumrahconnect.com">info@myumrahconnect.com</a>
+            <a href="mailto:info@myumrahconnect.com" className="footer-connect-link">
+              <MailIcon size={16} stroke="#C9A84C" />
+              <span>info@myumrahconnect.com</span>
+            </a>
             <span className="footer-developer">Developer: Ahmad Ado Muktar</span>
           </div>
         </div>

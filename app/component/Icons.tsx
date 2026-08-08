@@ -219,6 +219,27 @@ export function HeartIcon(props: IconProps) {
   );
 }
 
+export function MailIcon(props: IconProps) {
+  const { size, className, stroke } = { ...defaults, ...props };
+  return (
+    <IconSvg size={size} className={className} stroke={stroke}>
+      <rect x="8" y="12" width="32" height="24" rx="3" />
+      <path d="M8 16L24 26L40 16" />
+    </IconSvg>
+  );
+}
+
+export function InstagramIcon(props: IconProps) {
+  const { size, className, stroke } = { ...defaults, ...props };
+  return (
+    <IconSvg size={size} className={className} stroke={stroke}>
+      <rect x="10" y="10" width="28" height="28" rx="8" />
+      <circle cx="24" cy="24" r="7" />
+      <circle cx="33" cy="15" r="1.5" fill={stroke} stroke="none" />
+    </IconSvg>
+  );
+}
+
 export function MosqueIcon(props: IconProps) {
   const { size, className, stroke } = { ...defaults, ...props };
   return (
