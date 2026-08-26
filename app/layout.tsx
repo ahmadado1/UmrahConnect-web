@@ -31,6 +31,13 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <meta
+          name="impact-site-verification"
+          // Impact affiliate verification uses `value` (not `content`)
+          {...{ value: "c5a20aef-c37d-489b-9dab-f373f75a0e04" }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
