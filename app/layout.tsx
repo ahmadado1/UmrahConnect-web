@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     icon: "/logo.jpg",
     apple: "/logo.jpg",
   },
+  verification: {
+    google: "9Jzg0F7vqT2af0-aIj9gnRqodMnUgEb6LrZfKOyP__Q",
+  },
   other: {
     "impact-site-verification": "c5a20aef-c37d-489b-9dab-f373f75a0e04",
   },
