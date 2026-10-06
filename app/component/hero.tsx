@@ -56,7 +56,11 @@ export default function Hero() {
               <div style={{ color: '#fff', fontSize: '15px', fontWeight: '500' }}>App Store</div>
             </div>
           </a>
-          <a href="#download">
+          <a
+            href="https://play.google.com/store/apps/details?id=com.myumrahconnect.app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
               <path d="M3 20.5v-17c0-.83 1-.83 1.5-.5l15 8.5-15 8.5c-.5.33-1.5.33-1.5-.5z" />
             </svg>
