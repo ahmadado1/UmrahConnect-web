@@ -2,6 +2,7 @@ import type { Dictionary } from "./types"
 
 const bn: Dictionary = {
   nav: {
+    myAccount: "আমার অ্যাকাউন্ট",
     features: "ফিচার",
     hotels: "হোটেল",
     download: "ডাউনলোড",
@@ -15,6 +16,10 @@ const bn: Dictionary = {
     login: "লগ ইন",
   },
   hero: {
+    cardNext: "পরবর্তী নামাজ",
+    cardQibla: "কিবলা",
+    cardUmrah: "উমরাহ যাত্রা",
+    cardStep: "৭ ধাপের ৩য় ধাপ · তাওয়াফ",
     badge: "উমরাহর সম্পূর্ণ সঙ্গী",
     titleBefore: "আপনার যাত্রা",
     titleGold: "পবিত্র ভূমির",

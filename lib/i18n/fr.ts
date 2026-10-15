@@ -2,6 +2,7 @@ import type { Dictionary } from "./types"
 
 const fr: Dictionary = {
   nav: {
+    myAccount: "Mon compte",
     features: "Fonctions",
     hotels: "Hôtels",
     download: "Télécharger",
@@ -15,6 +16,10 @@ const fr: Dictionary = {
     login: "Connexion",
   },
   hero: {
+    cardNext: "Prochaine prière",
+    cardQibla: "Qibla",
+    cardUmrah: "Parcours de la Omra",
+    cardStep: "Étape 3 sur 7 · Tawaf",
     badge: "VOTRE COMPAGNON COMPLET POUR LA OMRA",
     titleBefore: "Votre voyage vers",
     titleGold: "les terres bénies",

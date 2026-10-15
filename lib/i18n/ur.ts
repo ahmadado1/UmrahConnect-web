@@ -2,6 +2,7 @@ import type { Dictionary } from "./types"
 
 const ur: Dictionary = {
   nav: {
+    myAccount: "میرا اکاؤنٹ",
     features: "خصوصیات",
     hotels: "ہوٹل",
     download: "ڈاؤن لوڈ",
@@ -15,6 +16,10 @@ const ur: Dictionary = {
     login: "لاگ اِن",
   },
   hero: {
+    cardNext: "اگلی نماز",
+    cardQibla: "قبلہ",
+    cardUmrah: "عمرے کا سفر",
+    cardStep: "مرحلہ 3 از 7 · طواف",
     badge: "عمرہ کا مکمل ساتھی",
     titleBefore: "آپ کا سفر",
     titleGold: "مبارک سرزمین",

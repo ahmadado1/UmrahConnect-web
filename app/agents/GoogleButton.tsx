@@ -19,11 +19,12 @@ export default function GoogleButton({ onError, next = "/agents/signup" }: { onE
         options: { redirectTo: `${window.location.origin}${next}` },
       })
       if (error) {
-        onError(t.signup.googleError)
+        onError(`${t.signup.googleError} (${error.message})`)
         setBusy(false)
       }
-    } catch {
-      onError(t.signup.googleError)
+    } catch (err) {
+      // Show the real reason, e.g. missing Supabase settings on the live site.
+      onError(`${t.signup.googleError} (${err instanceof Error ? err.message : String(err)})`)
       setBusy(false)
     }
   }

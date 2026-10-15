@@ -2,6 +2,7 @@ import type { Dictionary } from "./types"
 
 const tr: Dictionary = {
   nav: {
+    myAccount: "Hesabım",
     features: "Özellikler",
     hotels: "Oteller",
     download: "İndir",
@@ -15,6 +16,10 @@ const tr: Dictionary = {
     login: "Giriş",
   },
   hero: {
+    cardNext: "Sıradaki namaz",
+    cardQibla: "Kıble",
+    cardUmrah: "Umre yolculuğu",
+    cardStep: "7 adımdan 3. adım · Tavaf",
     badge: "UMRE İÇİN TAM YOL ARKADAŞINIZ",
     titleBefore: "Yolculuğunuz",
     titleGold: "mübarek topraklara",

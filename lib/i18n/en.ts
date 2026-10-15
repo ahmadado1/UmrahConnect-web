@@ -1,5 +1,6 @@
 const en = {
   nav: {
+    myAccount: "My account",
     features: "Features",
     hotels: "Hotels",
     download: "Download",
@@ -13,6 +14,10 @@ const en = {
     login: "Log in",
   },
   hero: {
+    cardNext: "Next prayer",
+    cardQibla: "Qibla",
+    cardUmrah: "Umrah journey",
+    cardStep: "Step 3 of 7 · Tawaf",
     badge: "YOUR COMPLETE UMRAH COMPANION",
     titleBefore: "Your journey to",
     titleGold: "the blessed lands",
