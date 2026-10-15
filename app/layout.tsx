@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
+import { cookies, headers } from "next/headers";
+import { I18nProvider } from "@/lib/i18n/I18nProvider";
+import { isRtl, resolveLang } from "@/lib/i18n/languages";
+import TravelpayoutsScript from "./component/TravelpayoutsScript";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,27 +31,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies()
+  const headerStore = await headers()
+  const lang = resolveLang(cookieStore.get("uc_lang")?.value, headerStore.get("accept-language"))
+
   return (
     <html
-      lang="en"
+      lang={lang}
+      dir={isRtl(lang) ? "rtl" : "ltr"}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
-        <Script id="tp-em" strategy="afterInteractive">
-          {`(function () {
-      var script = document.createElement("script");
-      script.async = 1;
-      script.setAttribute("data-cmp-ab","2");
-      script.src = "https://tp-em.com/NTgzMTQ1.js?t=583145";
-      document.head.appendChild(script);
-  })();`}
-        </Script>
+        <I18nProvider initialLang={lang}>{children}</I18nProvider>
+        <TravelpayoutsScript />
       </body>
     </html>
   );

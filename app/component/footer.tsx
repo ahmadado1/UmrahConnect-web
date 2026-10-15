@@ -1,9 +1,11 @@
 'use client';
 
+import { useT } from '@/lib/i18n/I18nProvider';
 import { HeartIcon, InstagramIcon, MailIcon } from './Icons';
 import { Reveal } from './Reveal';
 
 export default function Footer() {
+  const { t } = useT();
   return (
     <Reveal slideFrom="up">
       <footer className="footer footer-full">
@@ -13,29 +15,30 @@ export default function Footer() {
               <img src="/logo.jpg" alt="UmrahConnect" />
               <span>UmrahConnect</span>
             </div>
-            <p className="footer-tagline">Your complete Umrah &amp; Hajj companion</p>
+            <p className="footer-tagline">{t.footer.tagline}</p>
             <p className="footer-made">
-              Made with{' '}
+              {t.footer.made}{' '}
               <span className="svg-icon-inline">
                 <HeartIcon size={16} />
               </span>{' '}
-              for pilgrims worldwide
+              {t.footer.madeAfter}
             </p>
           </div>
 
           <div className="footer-links-col">
-            <span className="footer-col-title">Explore</span>
-            <a href="/#features">Features</a>
-            <a href="/hotels">Hotels</a>
-            <a href="/#download">Download</a>
-            <a href="/contact">Contact</a>
-            <a href="/advertise">Advertise</a>
-            <a href="/privacy-policy">Privacy Policy</a>
-            <a href="/delete-account">Delete Account</a>
+            <span className="footer-col-title">{t.footer.explore}</span>
+            <a href="/#features">{t.nav.features}</a>
+            <a href="/hotels">{t.nav.hotels}</a>
+            <a href="/#download">{t.nav.download}</a>
+            <a href="/contact">{t.nav.contact}</a>
+            <a href="/agents">{t.nav.agents}</a>
+            <a href="/advertise">{t.footer.advertise}</a>
+            <a href="/privacy-policy">{t.footer.privacy}</a>
+            <a href="/delete-account">{t.footer.deleteAccount}</a>
           </div>
 
           <div className="footer-links-col">
-            <span className="footer-col-title">Connect</span>
+            <span className="footer-col-title">{t.footer.connect}</span>
             <a
               href="https://instagram.com/umrahconnectapp"
               target="_blank"
@@ -49,12 +52,12 @@ export default function Footer() {
               <MailIcon size={16} stroke="#C9A84C" />
               <span>info@myumrahconnect.com</span>
             </a>
-            <span className="footer-developer">Developer: Ahmad Ado Muktar</span>
+            <span className="footer-developer">{t.footer.developer}</span>
           </div>
         </div>
 
         <div className="footer-bottom">
-          <p>© 2026 UmrahConnect. All rights reserved.</p>
+          <p>{t.footer.rights}</p>
         </div>
       </footer>
     </Reveal>

@@ -1,18 +1,20 @@
 'use client';
 
+import { useT } from '@/lib/i18n/I18nProvider';
 import { CrescentMoonIcon } from './Icons';
 import { Reveal } from './Reveal';
 
 export default function About() {
+  const { t } = useT();
   return (
     <section className="section-padding" style={{ backgroundColor: '#fff' }}>
       <div style={{ maxWidth: '720px', margin: '0 auto', textAlign: 'center', width: '100%' }}>
         <Reveal>
           <div className="section-label" style={{ marginBottom: '8px' }}>
-            MEET THE DEVELOPER
+            {t.about.label}
           </div>
           <h2 className="section-title" style={{ color: '#1E3A5F', margin: '0 0 32px' }}>
-            About
+            {t.about.title}
           </h2>
         </Reveal>
 
@@ -26,10 +28,10 @@ export default function About() {
               Ahmad Ado Muktar
             </h3>
             <p style={{ color: '#C9A84C', fontSize: '14px', fontWeight: '500', margin: '0 0 20px' }}>
-              Founder &amp; Developer
+              {t.about.role}
             </p>
             <p style={{ color: '#666', fontSize: '16px', lineHeight: '1.8', margin: '0 0 24px' }}>
-              Built by a Muslim developer passionate about making the Umrah journey easier for pilgrims worldwide.
+              {t.about.body}
             </p>
             <a
               href="mailto:ahmad@myumrahconnect.com"

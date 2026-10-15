@@ -1,17 +1,22 @@
 'use client';
 
 import { useState } from 'react';
+import { useT } from '@/lib/i18n/I18nProvider';
+import LanguagePicker from './LanguagePicker';
 import { CloseIcon, MenuIcon } from './Icons';
 
-const navLinks = [
-  { href: '/#features', label: 'Features' },
-  { href: '/hotels', label: 'Hotels' },
-  { href: '/#download', label: 'Download' },
-  { href: '/contact', label: 'Contact' },
-];
-
 export default function Navbar() {
+  const { t } = useT();
   const [open, setOpen] = useState(false);
+  const navLinks = [
+    { href: '/#features', label: t.nav.features },
+    { href: '/hotels', label: t.nav.hotels },
+    { href: '/#download', label: t.nav.download },
+    { href: '/pricing', label: t.nav.pricing },
+    { href: '/contact', label: t.nav.contact },
+    { href: '/agents', label: t.nav.agents },
+    { href: '/login', label: t.nav.login },
+  ];
 
   function closeMenu() {
     setOpen(false);
@@ -27,7 +32,7 @@ export default function Navbar() {
       <button
         type="button"
         className="navbar-toggle"
-        aria-label={open ? 'Close menu' : 'Open menu'}
+        aria-label={open ? t.nav.closeMenu : t.nav.openMenu}
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
       >
@@ -42,8 +47,9 @@ export default function Navbar() {
             </a>
           ))}
         </div>
+        <LanguagePicker />
         <a href="/#download" className="navbar-download" onClick={closeMenu}>
-          Download app
+          {t.nav.downloadApp}
         </a>
       </div>
     </nav>

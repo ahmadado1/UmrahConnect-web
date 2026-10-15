@@ -1,33 +1,26 @@
 'use client';
 
+import { useT } from '@/lib/i18n/I18nProvider';
 import { DuasDhikrIcon, GlobeIcon, KaabaIcon } from './Icons';
 import { Reveal } from './Reveal';
 
-const reasons = [
-  {
-    Icon: GlobeIcon,
-    text: 'The only Umrah app with AI guidance in 7 languages',
-  },
-  {
-    Icon: KaabaIcon,
-    text: 'From home preparation to performing Tawaf — we guide every step',
-  },
-  {
-    Icon: DuasDhikrIcon,
-    text: 'Built by a Muslim, for Muslims worldwide',
-  },
-];
-
 export default function WhyUmrahConnect() {
+  const { t } = useT();
+  const reasons = [
+    { Icon: GlobeIcon, text: t.why.ai },
+    { Icon: KaabaIcon, text: t.why.steps },
+    { Icon: DuasDhikrIcon, text: t.why.built },
+  ];
+
   return (
     <section className="section-padding why-section">
       <Reveal>
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
           <div className="section-label" style={{ marginBottom: '8px' }}>
-            WHY UMRAHCONNECT
+            {t.why.label}
           </div>
           <h2 className="section-title" style={{ color: '#fff', margin: 0 }}>
-            Why UmrahConnect?
+            {t.why.title}
           </h2>
         </div>
       </Reveal>

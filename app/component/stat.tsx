@@ -1,16 +1,18 @@
 'use client';
 
+import { useT } from '@/lib/i18n/I18nProvider';
 import { Reveal } from './Reveal';
 
-const stats = [
-  { number: '7', label: 'Languages' },
-  { number: '114', label: 'Quran Surahs' },
-  { number: '7', label: 'Umrah Steps' },
-  { number: '35+', label: 'Hotels Listed' },
-  { number: 'Free', label: 'Always free' },
-];
-
 export default function Stats() {
+  const { t } = useT();
+  const stats = [
+    { number: '6', label: t.stats.languages },
+    { number: '114', label: t.stats.surahs },
+    { number: '7', label: t.stats.steps },
+    { number: '35+', label: t.stats.hotels },
+    { number: t.stats.freeWord, label: t.stats.free },
+  ];
+
   return (
     <section className="stats-bar">
       {stats.map((stat, index) => (
