@@ -602,3 +602,20 @@ export async function sendPremiumStoppedEmail(mail: { to: string; name: string |
   )
   await deliver(mail.to, failed ? "Premium renewal failed – UmrahConnect" : "Premium auto-renew is off – UmrahConnect", html)
 }
+
+/** A Premium OPay / MyNita transfer could not be found. */
+export async function sendPremiumRejectedEmail(mail: { to: string; name: string | null; amount: string; method: string; note: string }) {
+  const name = escapeHtml(mail.name?.trim() || "there")
+  const html = wrapEmail(
+    `
+    <h1 style="margin:0 0 16px;font-size:22px;color:${BRAND.navy};">We could not find your payment</h1>
+    <p style="margin:0 0 8px;color:${BRAND.text};">Salam ${name}, we checked our ${escapeHtml(mail.method)} account but could not match your
+      payment of <strong>${escapeHtml(mail.amount)}</strong> for UmrahConnect Premium.</p>
+    <p style="margin:0 0 8px;color:${BRAND.text};">${escapeHtml(mail.note)}</p>
+    <p style="margin:0 0 8px;color:${BRAND.muted};">If you did pay, reply to this email with your receipt and we will fix it quickly.</p>
+    ${ctaButton("Open my account", `${SITE_URL}/account`)}
+    `,
+    { title: "Payment not found", preheader: "We could not match your Premium payment" },
+  )
+  await deliver(mail.to, "Your UmrahConnect Premium payment", html)
+}

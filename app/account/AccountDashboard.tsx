@@ -1,12 +1,15 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, type FormEvent } from "react"
 import { useRouter } from "next/navigation"
 import { formatDate } from "@/lib/agentFormat"
+import { formatMoney, MANUAL_METHODS, type Currency, type ManualMethod } from "@/lib/agentPlans"
 import { fill, useT } from "@/lib/i18n/I18nProvider"
 import {
   formatUsd,
   PREMIUM_CUSTOM_PREFIX,
+  PREMIUM_LOCAL_PRICES,
+  premiumPayCode,
   PREMIUM_PAYPAL_PLAN_IDS,
   PREMIUM_PLANS,
   type PremiumPlanId,
@@ -44,6 +47,19 @@ const CSS = `
 .acct-table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .acct-table td { padding: 8px 4px; border-bottom: 1px solid rgba(30,58,95,0.08); }
 .acct-links { display: flex; flex-wrap: wrap; gap: 12px 20px; }
+.acct-methods { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+.acct-methods button { font: inherit; font-weight: 700; padding: 9px 14px; border-radius: 999px; border: 1.5px solid rgba(30,58,95,0.2); background: #fff; color: #1e3a5f; cursor: pointer; }
+.acct-methods button[aria-pressed="true"] { background: #1e3a5f; border-color: #1e3a5f; color: #fff; }
+.acct-transfer { display: grid; gap: 10px; }
+.acct-details { display: grid; gap: 8px; margin: 0; padding: 14px; border-radius: 14px; background: #faf6ee; border: 1px solid rgba(201,168,76,0.4); }
+.acct-details div { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.acct-details dt { color: #6b7280; }
+.acct-details dd { margin: 0; font-weight: 700; color: #1e3a5f; display: flex; gap: 8px; align-items: center; }
+.acct-details dd button { font: inherit; font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid #c9a84c; background: #fff; color: #a07f2a; cursor: pointer; }
+.acct-code { font-size: 20px; letter-spacing: 1px; color: #a07f2a !important; }
+.acct-transfer label { display: grid; gap: 4px; font-weight: 600; color: #1e3a5f; }
+.acct-transfer input { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(30,58,95,0.2); }
+.acct-pending { padding: 12px 14px; border-radius: 12px; background: #fff7e6; border: 1px solid #f0c36d; color: #7a5300; }
 `
 
 async function authHeaders() {
@@ -63,6 +79,11 @@ export default function AccountDashboard() {
   const [error, setError] = useState("")
   const [notice, setNotice] = useState("")
   const [busy, setBusy] = useState(false)
+  // How to pay: PayPal / card, or an OPay / MyNita transfer checked by hand.
+  const [payMethod, setPayMethod] = useState<"paypal" | ManualMethod>("paypal")
+  const [reference, setReference] = useState("")
+  const [receipt, setReceipt] = useState<File | null>(null)
+  const [copied, setCopied] = useState("")
 
   // ─── Load the account (or send to login) ──────────────────────────────────
   const load = useCallback(async () => {
@@ -137,6 +158,60 @@ export default function AccountDashboard() {
     }
   }
 
+  // ─── OPay / MyNita: the user tells us they sent the money ─────────────────
+  async function submitTransfer(event: FormEvent) {
+    event.preventDefault()
+    if (payMethod === "paypal") return
+    setError("")
+    setNotice("")
+    if (!reference.trim()) {
+      setError(a.needReference)
+      return
+    }
+    setBusy(true)
+    try {
+      const supabase = getSupabase()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error(a.loadError)
+      // Optional receipt (helps the admin find it faster; the admin still checks the real account).
+      let receiptPath = ""
+      if (receipt) {
+        const ext = receipt.name.split(".").pop()?.toLowerCase() || ""
+        const types: Record<string, string> = { pdf: "application/pdf", jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp" }
+        if (!types[ext]) throw new Error(a.receiptType)
+        if (receipt.size > 5 * 1024 * 1024) throw new Error(a.receiptSize)
+        receiptPath = `${session.user.id}/payments/premium-${Date.now()}.${ext === "jpeg" ? "jpg" : ext}`
+        const { error: uploadError } = await supabase.storage.from("agent-docs").upload(receiptPath, receipt, { upsert: false, contentType: types[ext] })
+        if (uploadError) throw new Error(uploadError.message)
+      }
+      const response = await fetch("/api/account/manual-payment", {
+        method: "POST",
+        headers: await authHeaders(),
+        body: JSON.stringify({ plan, method: payMethod, reference, receiptPath }),
+      })
+      const payload = await response.json().catch(() => null)
+      if (!response.ok) throw new Error(payload?.error || a.loadError)
+      setNotice(a.transferSent)
+      setReference("")
+      setReceipt(null)
+      await load()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : a.loadError)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function copy(value: string) {
+    try {
+      await navigator.clipboard.writeText(value)
+      setCopied(value)
+      window.setTimeout(() => setCopied(""), 2000)
+    } catch {
+      // clipboard blocked; the value is still on screen
+    }
+  }
+
   async function logOut() {
     await getSupabase().auth.signOut()
     router.replace("/account/login")
@@ -154,6 +229,10 @@ export default function AccountDashboard() {
   const planIdReady = Boolean(PREMIUM_PAYPAL_PLAN_IDS[plan])
 
   const premiumFeatures = [a.featAdhan, a.featFonts, a.featTrip, a.featGuided, a.featAi]
+  const manualMethods = (Object.keys(MANUAL_METHODS) as ManualMethod[]).filter((key) => MANUAL_METHODS[key].accountNumber.trim())
+  const hasPending = Boolean(info?.payments.some((p) => p.status === "pending"))
+  const payCode = userId ? premiumPayCode(userId) : ""
+  const showAmount = (amount: number, currency: string) => (currency === "USD" ? formatUsd(amount) : formatMoney(amount, currency as Currency))
 
   return (
     <main className="agent-page">
@@ -197,17 +276,80 @@ export default function AccountDashboard() {
                   <PremiumCard key={id} plan={id} selected={plan === id} onSelect={() => setPlan(id)} />
                 ))}
               </div>
-              <p className="agent-switch" style={{ marginTop: 0 }}>{a.payNote}</p>
-              {planIdReady && userId ? (
-                <PaypalSubscribeButton
-                  key={plan}
-                  planId={PREMIUM_PAYPAL_PLAN_IDS[plan]}
-                  agentId={`${PREMIUM_CUSTOM_PREFIX}${userId}`}
-                  onApproved={onApproved}
-                  onError={onPaypalError}
-                />
+              {hasPending ? <p className="acct-pending">{a.pendingNote}</p> : null}
+
+              {/* How to pay */}
+              <div className="acct-methods" role="group">
+                <button type="button" aria-pressed={payMethod === "paypal"} onClick={() => setPayMethod("paypal")}>{a.payCard}</button>
+                {manualMethods.map((key) => (
+                  <button key={key} type="button" aria-pressed={payMethod === key} onClick={() => setPayMethod(key)}>
+                    {fill(a.payTransfer, { method: MANUAL_METHODS[key].label })}
+                  </button>
+                ))}
+              </div>
+
+              {payMethod === "paypal" ? (
+                <>
+                  <p className="agent-switch" style={{ marginTop: 0 }}>{a.payNote}</p>
+                  {planIdReady && userId ? (
+                    <PaypalSubscribeButton
+                      key={plan}
+                      planId={PREMIUM_PAYPAL_PLAN_IDS[plan]}
+                      agentId={`${PREMIUM_CUSTOM_PREFIX}${userId}`}
+                      onApproved={onApproved}
+                      onError={onPaypalError}
+                    />
+                  ) : (
+                    <p className="agent-note">{a.paypalMissing}</p>
+                  )}
+                </>
               ) : (
-                <p className="agent-note">{a.paypalMissing}</p>
+                <form className="acct-transfer" onSubmit={submitTransfer}>
+                  <p style={{ margin: 0 }}>{a.transferHow}</p>
+                  <dl className="acct-details">
+                    <div>
+                      <dt>{a.amountLabel}</dt>
+                      <dd>{formatMoney(PREMIUM_LOCAL_PRICES[plan][MANUAL_METHODS[payMethod].currency as "NGN" | "XOF"], MANUAL_METHODS[payMethod].currency)}</dd>
+                    </div>
+                    <div>
+                      <dt>{a.sendTo}</dt>
+                      <dd>{MANUAL_METHODS[payMethod].bank}</dd>
+                    </div>
+                    <div>
+                      <dt>{a.accountName}</dt>
+                      <dd>{MANUAL_METHODS[payMethod].accountName}</dd>
+                    </div>
+                    <div>
+                      <dt>{a.accountNumber}</dt>
+                      <dd>
+                        {MANUAL_METHODS[payMethod].accountNumber}
+                        <button type="button" onClick={() => copy(MANUAL_METHODS[payMethod].accountNumber)}>
+                          {copied === MANUAL_METHODS[payMethod].accountNumber ? a.copied : a.copy}
+                        </button>
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>{a.yourCode}</dt>
+                      <dd className="acct-code">
+                        {payCode}
+                        <button type="button" onClick={() => copy(payCode)}>{copied === payCode ? a.copied : a.copy}</button>
+                      </dd>
+                    </div>
+                  </dl>
+                  <p className="agent-switch" style={{ margin: 0 }}>{a.codeHint}</p>
+                  <label>
+                    {a.referenceLabel}
+                    <input value={reference} onChange={(event) => setReference(event.target.value)} maxLength={120} placeholder={a.referenceHint} />
+                  </label>
+                  <label>
+                    {a.receiptLabel}
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" onChange={(event) => setReceipt(event.target.files?.[0] ?? null)} />
+                  </label>
+                  <button className="agent-btn agent-btn--navy" type="submit" disabled={busy}>
+                    {busy ? a.sending : a.submitTransfer}
+                  </button>
+                  <p className="agent-switch" style={{ margin: 0 }}>{a.transferWait}</p>
+                </form>
               )}
             </section>
           ) : null}
@@ -230,8 +372,9 @@ export default function AccountDashboard() {
                     <tr key={payment.id}>
                       <td>{formatDate(payment.created_at.slice(0, 10))}</td>
                       <td>{payment.plan === "yearly" ? a.yearly : a.monthly}</td>
-                      <td>{formatUsd(Number(payment.amount))}</td>
-                      <td>{payment.method === "paypal" ? "PayPal / card" : payment.method}</td>
+                      <td>{showAmount(Number(payment.amount), payment.currency)}</td>
+                      <td>{payment.method === "paypal" ? "PayPal / card" : MANUAL_METHODS[payment.method as ManualMethod]?.label || payment.method}</td>
+                      <td>{payment.status === "pending" ? a.statusPending : payment.status === "rejected" ? a.statusRejected : "✓"}</td>
                     </tr>
                   ))}
                 </tbody>

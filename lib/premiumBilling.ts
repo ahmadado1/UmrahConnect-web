@@ -35,7 +35,7 @@ export async function premiumForUser(userId: string) {
 }
 
 /** Email + name for receipts. Phone-only accounts have no email: then we skip the email. */
-async function contactFor(userId: string) {
+export async function contactFor(userId: string) {
   const { data } = await getSupabaseAdmin().auth.admin.getUserById(userId)
   const user = data.user
   return {

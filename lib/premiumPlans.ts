@@ -41,3 +41,14 @@ export function yearlySavingPercent() {
 export function formatUsd(amount: number) {
   return `$${amount.toFixed(2)}`
 }
+
+/** Prices for OPay (Naira) and MyNita (CFA) transfers. One payment = PREMIUM_MONTHS of Premium. */
+export const PREMIUM_LOCAL_PRICES: Record<PremiumPlanId, { NGN: number; XOF: number }> = {
+  monthly: { NGN: 3000, XOF: 1200 },
+  yearly: { NGN: 33000, XOF: 13000 },
+}
+
+/** Short code the pilgrim writes in the transfer note, so the admin can match the payment. */
+export function premiumPayCode(userId: string) {
+  return `UC-${userId.replace(/-/g, "").slice(0, 6).toUpperCase()}`
+}
