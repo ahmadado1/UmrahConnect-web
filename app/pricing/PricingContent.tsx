@@ -6,6 +6,7 @@ import { AGENT_PLANS } from "@/lib/agentPlans"
 import { useT } from "@/lib/i18n/I18nProvider"
 import PlanCard from "../agents/PlanCard"
 import PremiumCard from "../account/PremiumCard"
+import PlanCompare from "./PlanCompare"
 import AgentFaq from "../agents/AgentFaq"
 
 type Tab = "pilgrims" | "agencies"
@@ -69,7 +70,18 @@ export default function PricingContent() {
                   <p className="plan-card-local">{t.account.freeFeatures}</p>
                   <hr />
                   <ul className="plan-card-list">
-                    {[t.account.freePrayer, t.account.freeQuran, t.account.freeGuide, t.account.freeDuas, t.account.freeServices].map((item) => (
+                    {[
+                      t.account.freePrayer,
+                      t.account.freeQuran,
+                      t.account.freeAudio,
+                      t.account.freeGuide,
+                      t.account.freeDuas,
+                      t.account.freeDhikr,
+                      t.account.freeKahfMulk,
+                      t.account.freeAi,
+                      t.account.freeMaps,
+                      t.account.freeServices,
+                    ].map((item) => (
                       <li key={item}>
                         <span className="plan-card-tick" aria-hidden="true">✓</span>
                         <span>{item}</span>
@@ -81,6 +93,8 @@ export default function PricingContent() {
                 <PremiumCard plan="monthly" href="/account" />
                 <PremiumCard plan="yearly" href="/account" />
               </div>
+              {/* Free vs Premium, feature by feature */}
+              <PlanCompare />
             </>
           ) : (
             <>

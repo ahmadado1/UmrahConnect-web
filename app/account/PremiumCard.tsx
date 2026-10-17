@@ -27,8 +27,20 @@ export default function PremiumCard({
   const perMonth = formatUsd(PREMIUM_PRICES.yearly / 12)
   const label = selected ? `✓ ${t.agentsPage.selected}` : fill(t.agentsPage.choose, { plan: `Premium ${name}` })
 
-  // Everything Premium adds, then the "how it works" lines.
-  const features = [a.featAdhan, a.featFonts, a.featGuided, a.featAi, a.featTrip, a.freeEverything]
+  // Everything Premium adds (keep in the same order as the comparison table), then "everything free".
+  const features = [
+    a.featReciters,
+    a.featPlayer,
+    a.featKahfMulk,
+    a.featTrip,
+    a.featOffline,
+    a.featAi,
+    a.featFonts,
+    a.featGuided,
+    a.featSalawat,
+    a.featAdhan,
+    a.freeEverything,
+  ]
 
   return (
     <article className={`plan-card${yearly ? " plan-card--featured" : ""}${selected ? " plan-card--selected" : ""}`}>

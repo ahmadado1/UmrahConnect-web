@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { syncAllPaypalSubscriptions } from "@/lib/agentBilling"
 import { sendDueAgentReminders } from "@/lib/email"
 import { syncAllPremiumSubscriptions } from "@/lib/premiumBilling"
+import { sendDuePremiumReminders } from "@/lib/premiumReminders"
 
 export const dynamic = "force-dynamic"
 
@@ -33,7 +34,14 @@ async function run(request: Request) {
       premium = { error: err instanceof Error ? err.message : "Premium sync failed" }
     }
     const results = await sendDueAgentReminders()
-    return NextResponse.json({ ok: true, paypal, premium, results })
+    // Premium "ends in 3 days" / "has ended" emails (after the PayPal sync, so auto-renewers are skipped).
+    let premiumReminders: unknown = null
+    try {
+      premiumReminders = await sendDuePremiumReminders()
+    } catch (err) {
+      premiumReminders = { error: err instanceof Error ? err.message : "Premium reminders failed" }
+    }
+    return NextResponse.json({ ok: true, paypal, premium, results, premiumReminders })
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Could not send reminders." },

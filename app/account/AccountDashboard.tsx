@@ -228,7 +228,7 @@ export default function AccountDashboard() {
   const renewing = info?.premium?.paypal_status === "ACTIVE"
   const planIdReady = Boolean(PREMIUM_PAYPAL_PLAN_IDS[plan])
 
-  const premiumFeatures = [a.featAdhan, a.featFonts, a.featTrip, a.featGuided, a.featAi]
+  const premiumFeatures = [a.featReciters, a.featPlayer, a.featKahfMulk, a.featTrip, a.featOffline, a.featAi, a.featFonts, a.featGuided, a.featSalawat, a.featAdhan]
   const manualMethods = (Object.keys(MANUAL_METHODS) as ManualMethod[]).filter((key) => MANUAL_METHODS[key].accountNumber.trim())
   const hasPending = Boolean(info?.payments.some((p) => p.status === "pending"))
   const payCode = userId ? premiumPayCode(userId) : ""

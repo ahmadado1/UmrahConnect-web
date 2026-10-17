@@ -140,13 +140,30 @@ function formatDate(value: string | null) {
   })
 }
 
+/** True once Paystack is switched on (set PAYSTACK_LIVE=true in Vercel). */
+export function paystackLive() {
+  return (process.env.PAYSTACK_LIVE || "").toLowerCase() === "true"
+}
+
+/** "New: pay by card, bank transfer or OPay in one tap" — only shown once Paystack is live. */
+function newWayToPayLine() {
+  if (!paystackLive()) return ""
+  return `
+    <p style="margin:16px 0 0;padding:12px 16px;background:#EEF6EE;border:1px solid #B7DFC0;border-radius:10px;color:${BRAND.text};">
+      <strong style="color:#2F855A;">New:</strong> pay by card, bank transfer, USSD or OPay in one tap. Card payments renew automatically.
+    </p>
+  `
+}
+
 function renewLine() {
   return `
     <p style="margin:20px 0 0;padding:14px 16px;background:${BRAND.cream};border:1px solid ${BRAND.border};border-radius:10px;color:${BRAND.text};">
       <strong style="color:${BRAND.navy};">How to renew.</strong>
-      Email <a href="mailto:${INFO_EMAIL}" style="color:${BRAND.navy};font-weight:600;text-decoration:none;">${INFO_EMAIL}</a>
+      Log in to Agent Zone → Pay / Renew and pay by card, PayPal, OPay or MyNita.
+      Need help? Email <a href="mailto:${INFO_EMAIL}" style="color:${BRAND.navy};font-weight:600;text-decoration:none;">${INFO_EMAIL}</a>
       or WhatsApp <a href="${WHATSAPP_URL}" style="color:${BRAND.navy};font-weight:600;text-decoration:none;">${WHATSAPP_NUMBER}</a>.
     </p>
+    ${newWayToPayLine()}
   `
 }
 
@@ -240,7 +257,7 @@ function buildEmail(agent: AgentMail) {
           After that date it is hidden until you renew.
         </p>
         ${renewLine()}
-        ${ctaButton("Email us to renew", `mailto:${INFO_EMAIL}`)}
+        ${ctaButton("Renew in Agent Zone", `${SITE_URL}/agents/billing`)}
         <p style="margin:18px 0 0;color:${BRAND.navy};font-size:14px;font-weight:600;">
           Barak Allahu feekum,<br />
           <span style="font-weight:500;color:${BRAND.muted};">The UmrahConnect Team</span>
@@ -264,7 +281,7 @@ function buildEmail(agent: AgentMail) {
         It stays hidden until you renew.
       </p>
       ${renewLine()}
-      ${ctaButton("Email us to renew", `mailto:${INFO_EMAIL}`)}
+      ${ctaButton("Renew in Agent Zone", `${SITE_URL}/agents/billing`)}
       <p style="margin:18px 0 0;color:${BRAND.navy};font-size:14px;font-weight:600;">
         Barak Allahu feekum,<br />
         <span style="font-weight:500;color:${BRAND.muted};">The UmrahConnect Team</span>
@@ -618,4 +635,62 @@ export async function sendPremiumRejectedEmail(mail: { to: string; name: string 
     { title: "Payment not found", preheader: "We could not match your Premium payment" },
   )
   await deliver(mail.to, "Your UmrahConnect Premium payment", html)
+}
+
+// ─── Premium renewal reminders ──────────────────────────────────────────────
+
+export type PremiumReminderType = "reminder_3_days" | "ended"
+
+/** "Your Premium ends in 3 days" / "Your Premium has ended". Only for people who are not on auto-renew. */
+export async function sendPremiumReminderEmail(mail: { to: string; name: string | null; type: PremiumReminderType; premiumUntil: string }) {
+  const name = escapeHtml(mail.name?.trim() || "there")
+  const until = escapeHtml(formatDate(mail.premiumUntil))
+  const ended = mail.type === "ended"
+  const html = wrapEmail(
+    `
+    <p style="margin:0 0 6px;font-size:13px;color:${BRAND.gold};font-weight:700;letter-spacing:0.6px;text-transform:uppercase;">Premium</p>
+    <h1 style="margin:0 0 16px;font-size:24px;line-height:1.3;color:${BRAND.navy};font-weight:700;">
+      ${ended ? "Your Premium has ended" : "Your Premium ends in 3 days"}
+    </h1>
+    ${greeting(name)}
+    <p style="margin:0 0 16px;color:${BRAND.muted};">
+      ${ended
+        ? `Your UmrahConnect Premium ended on <strong style="color:${BRAND.navy};">${until}</strong>. The app is back to the free plan. Everything for your Umrah stays free; renew any time to get the Premium extras back.`
+        : `Your UmrahConnect Premium is paid until <strong style="color:${BRAND.navy};">${until}</strong>. Renew before then to keep the extra Adhan voices, Mushaf fonts, Quran player, trip tools and unlimited AI guide.`}
+    </p>
+    <p style="margin:0 0 16px;color:${BRAND.muted};">If you renew early, the new time is added on top, so you lose nothing.</p>
+    ${ctaButton(ended ? "Get Premium again" : "Renew Premium", `${SITE_URL}/account`)}
+    ${newWayToPayLine()}
+    ${signOff()}
+    `,
+    { title: ended ? "Premium ended" : "Premium ends soon", preheader: ended ? "Your Premium has ended." : `Your Premium ends on ${until}.` },
+  )
+  await deliver(mail.to, ended ? "Your UmrahConnect Premium has ended" : "Your UmrahConnect Premium ends in 3 days", html)
+}
+
+// ─── Announcement: new way to pay (Paystack) ────────────────────────────────
+
+/** Sent once to every Premium user and agency when Paystack goes live. */
+export async function sendNewWayToPayEmail(mail: { to: string; name: string | null; isAgency: boolean }) {
+  const name = escapeHtml(mail.name?.trim() || "there")
+  const html = wrapEmail(
+    `
+    <p style="margin:0 0 6px;font-size:13px;color:${BRAND.gold};font-weight:700;letter-spacing:0.6px;text-transform:uppercase;">New</p>
+    <h1 style="margin:0 0 16px;font-size:24px;line-height:1.3;color:${BRAND.navy};font-weight:700;">A new, easier way to pay</h1>
+    ${greeting(name)}
+    <p style="margin:0 0 12px;color:${BRAND.muted};">
+      You can now pay for ${mail.isAgency ? "your agency listing" : "UmrahConnect Premium"} with
+      <strong style="color:${BRAND.navy};">card, bank transfer, USSD or OPay</strong>, in one tap.
+    </p>
+    <ul style="margin:0 0 16px;padding-left:18px;color:${BRAND.muted};line-height:1.7;">
+      <li>No more sending transfer details by hand: it is confirmed straight away.</li>
+      <li>Card payments renew automatically, so ${mail.isAgency ? "your listing" : "Premium"} never stops by surprise.</li>
+      <li>Prices in Naira for Nigeria.</li>
+    </ul>
+    ${ctaButton(mail.isAgency ? "Open Agent Zone" : "Open my account", mail.isAgency ? `${SITE_URL}/agents/billing` : `${SITE_URL}/account`)}
+    ${signOff()}
+    `,
+    { title: "New way to pay", preheader: "Pay by card, bank transfer, USSD or OPay in one tap." },
+  )
+  await deliver(mail.to, "New: pay UmrahConnect by card, bank transfer or OPay", html)
 }

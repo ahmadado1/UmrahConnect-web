@@ -8,6 +8,7 @@ import { formatDate, planLabel, STATUS_LABEL } from "@/lib/agentFormat"
 import { getSupabase } from "@/lib/supabaseBrowser"
 import AdminPayments from "./AdminPayments"
 import AdminPremiumPayments from "./AdminPremiumPayments"
+import AdminAnnounce from "./AdminAnnounce"
 
 type AdminAgent = {
   id: string
@@ -329,6 +330,7 @@ export default function AdminAgents() {
           ) : null}
           <AdminPayments onChanged={() => { loadAgents().catch(() => undefined) }} />
           <AdminPremiumPayments />
+          <AdminAnnounce />
           <label className="agent-filter">
             Status
             <select value={filter} onChange={(event) => setFilter(event.target.value as (typeof FILTERS)[number])}>
