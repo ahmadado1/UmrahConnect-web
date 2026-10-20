@@ -131,3 +131,8 @@ export const SITE_URL = "https://myumrahconnect.com"
 export function agentJoinUrl(agentCode: string) {
   return `${SITE_URL}/a/${encodeURIComponent(agentCode)}`
 }
+
+/** Short code an agent writes in the OPay / MyNita transfer note (e.g. "UA-1A2B3C"). */
+export function agentPayCode(agentId: string) {
+  return `UA-${String(agentId).replace(/-/g, "").slice(0, 6).toUpperCase()}`
+}

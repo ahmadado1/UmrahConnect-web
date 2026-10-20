@@ -161,7 +161,7 @@ export function KaabaIcon(props: IconProps) {
   const { size, className, stroke } = { ...defaults, ...props };
   return (
     <IconSvg size={size} className={className} stroke={stroke}>
-      {/* Isometric Kaaba cuboid — not a warning triangle */}
+      {/* Isometric Kaaba cuboid, not a warning triangle */}
       <path d="M24 8L38 16V32L24 40L10 32V16L24 8Z" />
       <path d="M10 16L24 24L38 16" />
       <path d="M24 24V40" />

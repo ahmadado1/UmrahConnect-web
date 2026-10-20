@@ -40,7 +40,7 @@ export default function DeleteAccountContent() {
 
         <Reveal threshold={0.1} slideFrom="up" delay={100}>
           <div className="delete-route-card">
-            <h3 className="delete-route-title">Option 1 — In the app</h3>
+            <h3 className="delete-route-title">Option 1: In the app</h3>
             <p style={{ color: '#444', lineHeight: '1.8', margin: '0 0 12px' }}>
               Open UmrahConnect on your device, then go to:
             </p>
@@ -60,7 +60,7 @@ export default function DeleteAccountContent() {
 
         <Reveal threshold={0.1} slideFrom="up" delay={180}>
           <div className="delete-route-card">
-            <h3 className="delete-route-title">Option 2 — By email</h3>
+            <h3 className="delete-route-title">Option 2: By email</h3>
             <p style={{ color: '#444', lineHeight: '1.8', margin: '0 0 16px' }}>
               Send an email from the same email address registered to your UmrahConnect account,
               with the subject line <strong>Delete My Account</strong>.

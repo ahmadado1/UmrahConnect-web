@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { formatDate } from "@/lib/agentFormat"
 import { formatMoney, MANUAL_METHODS, type Currency, type ManualMethod } from "@/lib/agentPlans"
 import { fill, useT } from "@/lib/i18n/I18nProvider"
+import ManualPayGuide from "./ManualPayGuide"
 import {
   formatUsd,
   PREMIUM_CUSTOM_PREFIX,
@@ -24,6 +25,8 @@ type AccountInfo = {
     plan: PremiumPlanId | null
     paypal_subscription_id: string | null
     paypal_status: string | null
+    store_until?: string | null
+    store_name?: string | null
   } | null
   payments: { id: string; plan: PremiumPlanId; amount: number; currency: string; method: string; status: string; created_at: string }[]
   isAgent: boolean
@@ -58,6 +61,7 @@ const CSS = `
 .acct-details dd button { font: inherit; font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid #c9a84c; background: #fff; color: #a07f2a; cursor: pointer; }
 .acct-code { font-size: 20px; letter-spacing: 1px; color: #a07f2a !important; }
 .acct-transfer label { display: grid; gap: 4px; font-weight: 600; color: #1e3a5f; }
+.mpg-ref { font-weight: 400; color: #5C6B7A; font-size: 13px; line-height: 1.45; }
 .acct-transfer input { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(30,58,95,0.2); }
 .acct-pending { padding: 12px 14px; border-radius: 12px; background: #fff7e6; border: 1px solid #f0c36d; color: #7a5300; }
 `
@@ -223,7 +227,10 @@ export default function AccountDashboard() {
 
   // ─── Work out the state ───────────────────────────────────────────────────
   const today = new Date().toISOString().slice(0, 10)
-  const until = info?.premium?.premium_until?.slice(0, 10) || ""
+  // Website Premium or Premium bought in the app (App Store / Google Play): the later date counts.
+  const webUntil = info?.premium?.premium_until?.slice(0, 10) || ""
+  const storeUntil = info?.premium?.store_until?.slice(0, 10) || ""
+  const until = webUntil > storeUntil ? webUntil : storeUntil
   const isPremium = Boolean(until && until >= today)
   const renewing = info?.premium?.paypal_status === "ACTIVE"
   const planIdReady = Boolean(PREMIUM_PAYPAL_PLAN_IDS[plan])
@@ -306,6 +313,7 @@ export default function AccountDashboard() {
               ) : (
                 <form className="acct-transfer" onSubmit={submitTransfer}>
                   <p style={{ margin: 0 }}>{a.transferHow}</p>
+                  <ManualPayGuide method={MANUAL_METHODS[payMethod].label} code={payCode} />
                   <dl className="acct-details">
                     <div>
                       <dt>{a.amountLabel}</dt>
@@ -340,6 +348,7 @@ export default function AccountDashboard() {
                   <label>
                     {a.referenceLabel}
                     <input value={reference} onChange={(event) => setReference(event.target.value)} maxLength={120} placeholder={a.referenceHint} />
+                    <small className="mpg-ref">{fill(t.pay.refWhat, { method: MANUAL_METHODS[payMethod].label })}</small>
                   </label>
                   <label>
                     {a.receiptLabel}

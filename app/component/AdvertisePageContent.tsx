@@ -62,7 +62,7 @@ export default function AdvertisePageContent() {
           <Reveal threshold={0.1} slideFrom="up" delay={160}>
             <p>
               <strong>Featured</strong> puts your agency in front of pilgrims actively planning Umrah. When users
-              browse travel agents in your country, Featured agencies appear first with a gold badge — so you stand
+              browse travel agents in your country. Featured agencies appear first with a gold badge, so you stand
               out from free listings and reach more bookings.
             </p>
           </Reveal>

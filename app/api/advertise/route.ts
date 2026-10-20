@@ -3,8 +3,8 @@ import { NextResponse } from 'next/server';
 const CONTACT_EMAIL = 'info@myumrahconnect.com';
 
 const PACKAGE_LABELS: Record<string, string> = {
-  basic: 'Basic Featured — $39.99/month',
-  premium: 'Premium Featured — $79.99/month',
+  basic: 'Basic Featured: $39.99/month',
+  premium: 'Premium Featured: $79.99/month',
 };
 
 export async function POST(request: Request) {
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
         from: fromEmail,
         to: [CONTACT_EMAIL],
         reply_to: email,
-        subject: `Featured listing request — ${agencyName}`,
+        subject: `Featured listing request, ${agencyName}`,
         text: [
           'New Featured listing request from the Advertise page',
           '',

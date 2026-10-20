@@ -4,7 +4,7 @@ import Footer from '../component/footer';
 
 export const metadata = {
   title: 'Contact Us | UmrahConnect',
-  description: 'Business and contact information for UmrahConnect — myumrahconnect.com',
+  description: 'Business and contact information for UmrahConnect, myumrahconnect.com',
 };
 
 export default function ContactPage() {

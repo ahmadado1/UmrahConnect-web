@@ -7,6 +7,7 @@ import {
   currencyForCountry,
   formatMoney,
   MANUAL_METHODS,
+  agentPayCode,
   manualMethodsFor,
   MONTH_OPTIONS,
   PAYPAL_PLAN_IDS,
@@ -16,6 +17,7 @@ import {
   type PlanId,
 } from "@/lib/agentPlans"
 import { fill, useT } from "@/lib/i18n/I18nProvider"
+import ManualPayGuide from "@/app/account/ManualPayGuide"
 import { getSupabase } from "@/lib/supabaseBrowser"
 import { useAgentSession } from "../../useAgentSession"
 import PaypalSubscribeButton from "./PaypalSubscribeButton"
@@ -228,6 +230,8 @@ export default function Billing() {
   const subscriptionActive = info?.agent.paypal_status === "ACTIVE"
   const awaitingVerification = !info?.agent.verified || (info?.agent.status || "pending") === "pending"
   const statusLabel = { pending: t.pay.statusPending, confirmed: t.pay.statusConfirmed, rejected: t.pay.statusRejected }
+  // Code the agent writes in the transfer note, so the admin can find the money.
+  const payCode = agent ? agentPayCode(agent.id) : ""
   const methodLabel = (key: string) => (key === "paypal" ? "PayPal" : key in MANUAL_METHODS ? MANUAL_METHODS[key as ManualMethod].label : key)
 
   return (
@@ -249,6 +253,8 @@ export default function Billing() {
         .billing-details dt { color: #5C6B7A; }
         .billing-details dd { margin: 0; font-weight: 700; color: #1E3A5F; display: flex; gap: 8px; align-items: center; }
         .billing-details dd button { border: 1px solid #CBD5E1; border-radius: 8px; padding: 2px 8px; background: #fff; font: inherit; font-size: 12px; cursor: pointer; }
+        .billing-code { font-size: 20px; letter-spacing: 1px; color: #A07F2A !important; }
+        .billing-ref { font-weight: 400; color: #5C6B7A; font-size: 13px; line-height: 1.45; }
         .billing-paypal { max-width: 420px; margin-top: 8px; }
         .billing-table { width: 100%; border-collapse: collapse; font-size: 14px; }
         .billing-table th, .billing-table td { text-align: start; padding: 10px 8px; border-bottom: 1px solid #E2E8F0; vertical-align: top; }
@@ -379,11 +385,19 @@ export default function Billing() {
                       </button>
                     </dd>
                   </div>
-                  {MANUAL_METHODS[method].instructions ? <p style={{ margin: 0 }}>{MANUAL_METHODS[method].instructions}</p> : null}
+                  <div>
+                    <dt>{t.pay.payCode}</dt>
+                    <dd className="billing-code">
+                      {payCode}
+                      <button type="button" onClick={() => copy(payCode)}>{copied === payCode ? t.pay.copied : t.pay.copy}</button>
+                    </dd>
+                  </div>
                 </dl>
+                <ManualPayGuide method={MANUAL_METHODS[method].label} code={payCode} />
                 <label>
                   {t.pay.reference}
                   <input value={reference} onChange={(event) => setReference(event.target.value)} required maxLength={120} />
+                  <small className="billing-ref">{fill(t.pay.refWhat, { method: MANUAL_METHODS[method].label })}</small>
                 </label>
                 <label>
                   {t.pay.receipt}

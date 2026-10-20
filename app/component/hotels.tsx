@@ -254,7 +254,7 @@ export default function Hotels() {
 
         {showMakkah && (
           <HotelSection
-            title="Makkah — Near Masjid al-Haram"
+            title="Makkah: Near Masjid al-Haram"
             subtitle="All hotels within walking distance of the Grand Mosque"
             hotels={filteredMakkah}
             cardOffset={0}
@@ -263,7 +263,7 @@ export default function Hotels() {
 
         {showMadinah && (
           <HotelSection
-            title="Madinah — Near Masjid an-Nabawi"
+            title="Madinah: Near Masjid an-Nabawi"
             subtitle="Comfortable stays within easy reach of the Prophet's Mosque"
             hotels={filteredMadinah}
             cardOffset={showMakkah ? filteredMakkah.length : 0}

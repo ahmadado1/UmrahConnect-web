@@ -95,7 +95,7 @@ export default function VerificationFields({
       </label>
       {VERIFICATION_DOC_FIELDS.map((field) => (
         <label key={field.key}>
-          {docLabels[field.key]} — {stored[field.key] ? t.common.uploaded : t.common.missing}
+          {docLabels[field.key]}, {stored[field.key] ? t.common.uploaded : t.common.missing}
           <input
             type="file"
             accept={ACCEPT}

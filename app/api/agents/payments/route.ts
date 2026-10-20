@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { agentForUser, METHOD_NAMES, PLAN_NAMES } from "@/lib/agentBilling"
-import { formatMoney, isPlanId, MANUAL_METHODS, MONTH_OPTIONS, priceFor, type ManualMethod } from "@/lib/agentPlans"
+import { agentPayCode, formatMoney, isPlanId, MANUAL_METHODS, MONTH_OPTIONS, priceFor, type ManualMethod } from "@/lib/agentPlans"
 import { sendAdminPaymentNotice } from "@/lib/email"
 import { userFromBearer } from "@/lib/requestUser"
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin"
@@ -34,6 +34,8 @@ export async function POST(request: Request) {
     if (!agent.verified || (agent.status || "").toLowerCase() === "pending") {
       return NextResponse.json({ error: "You can pay once your agency is verified." }, { status: 403 })
     }
+    const code = agentPayCode(agent.id)
+    const fullReference = `${code} · ${reference}`
     const currency = MANUAL_METHODS[method].currency
     const amount = priceFor(plan, currency, months)
     const admin = getSupabaseAdmin()
@@ -53,7 +55,7 @@ export async function POST(request: Request) {
       amount,
       currency,
       method,
-      reference,
+      reference: fullReference,
       receipt_path: receiptPath,
       status: "pending",
     })
@@ -64,7 +66,7 @@ export async function POST(request: Request) {
         businessName: agent.business_name || agent.agency_name || "An agent",
         amount: formatMoney(amount, currency),
         method: METHOD_NAMES[method],
-        reference,
+        reference: fullReference,
         planName: PLAN_NAMES[plan],
         months,
       })

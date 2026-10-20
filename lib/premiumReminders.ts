@@ -29,12 +29,14 @@ export async function sendDuePremiumReminders() {
   for (const { type, date } of due) {
     const { data, error } = await admin
       .from("user_premium")
-      .select("user_id, premium_until, paypal_status")
+      .select("*")
       .eq("premium_until", date)
     if (error) throw new Error(error.message)
 
     for (const row of data ?? []) {
       if (row.paypal_status === "ACTIVE") continue
+      // Also has Premium from the App Store / Google Play that lasts longer: no "ending" email.
+      if (row.store_until && String(row.store_until).slice(0, 10) > date) continue
       // Claim first (unique row), so two runs at once never both send.
       const { error: claimError } = await admin
         .from("premium_email_log")

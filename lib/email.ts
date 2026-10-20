@@ -454,7 +454,7 @@ export async function sendPaymentReceivedEmail(mail: PaymentMail) {
     `,
     { title: "Payment received", preheader: "We received your UmrahConnect payment." },
   )
-  await deliver(mail.to, "Payment received – UmrahConnect", html)
+  await deliver(mail.to, "Payment received | UmrahConnect", html)
 }
 
 /** Sent when the admin rejects a manual payment. */
@@ -475,7 +475,7 @@ export async function sendPaymentRejectedEmail(mail: PaymentMail & { note: strin
     `,
     { title: "Payment not confirmed", preheader: "We could not confirm your UmrahConnect payment." },
   )
-  await deliver(mail.to, "Payment not confirmed – UmrahConnect", html)
+  await deliver(mail.to, "Payment not confirmed | UmrahConnect", html)
 }
 
 /** Tells the admin that an agent says they paid by OPay or Nita. */
@@ -493,7 +493,7 @@ export async function sendAdminPaymentNotice(info: { businessName: string; amoun
     `,
     { title: "New payment", preheader: `${info.businessName} paid ${info.amount} by ${info.method}` },
   )
-  await deliver(to, `New ${info.method} payment: ${info.businessName} – ${info.amount}`, html)
+  await deliver(to, `New ${info.method} payment from ${info.businessName}, ${info.amount}`, html)
 }
 
 /** Sent when monthly card/PayPal billing stops: cancelled by the agent, or PayPal could not take the payment. */
@@ -528,7 +528,7 @@ export async function sendSubscriptionStoppedEmail(mail: {
     `,
     { title: failed ? "Payment failed" : "Subscription cancelled", preheader: failed ? "We could not take your monthly UmrahConnect payment." : "Your UmrahConnect monthly payment is cancelled." },
   )
-  await deliver(mail.to, failed ? "Payment failed – UmrahConnect" : "Monthly payment cancelled – UmrahConnect", html)
+  await deliver(mail.to, failed ? "Payment failed | UmrahConnect" : "Monthly payment cancelled | UmrahConnect", html)
 }
 
 // ─── "Need more info" emails ────────────────────────────────────────────────
@@ -553,7 +553,7 @@ export async function sendInfoRequestEmail(mail: { to: string; ownerName: string
     `,
     { title: "More information needed", preheader: "We need a little more information to verify your agency." },
   )
-  await deliver(mail.to, "More information needed – UmrahConnect", html)
+  await deliver(mail.to, "More information needed | UmrahConnect", html)
 }
 
 /** Tells the admin that an agency updated its application after a "need more info" message. */
@@ -592,7 +592,7 @@ export async function sendPremiumReceivedEmail(mail: { to: string; name: string 
     `,
     { title: "Premium is on", preheader: "Your UmrahConnect Premium payment was received." },
   )
-  await deliver(mail.to, "Premium is on – UmrahConnect", html)
+  await deliver(mail.to, "Premium is on | UmrahConnect", html)
 }
 
 /** Sent when Premium auto-renew stops: cancelled by the user, or PayPal could not charge. */
@@ -617,7 +617,7 @@ export async function sendPremiumStoppedEmail(mail: { to: string; name: string |
     `,
     { title: failed ? "Renewal failed" : "Auto-renew off", preheader: failed ? "We could not renew your UmrahConnect Premium." : "Your UmrahConnect Premium will not renew." },
   )
-  await deliver(mail.to, failed ? "Premium renewal failed – UmrahConnect" : "Premium auto-renew is off – UmrahConnect", html)
+  await deliver(mail.to, failed ? "Premium renewal failed | UmrahConnect" : "Premium auto-renew is off | UmrahConnect", html)
 }
 
 /** A Premium OPay / MyNita transfer could not be found. */

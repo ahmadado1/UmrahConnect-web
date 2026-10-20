@@ -18,6 +18,9 @@ export type PremiumRow = {
   source: string
   paypal_subscription_id: string | null
   paypal_status: string | null
+  /** Premium bought in the app (App Store / Google Play via RevenueCat). Written by the app's Supabase webhook. */
+  store_until?: string | null
+  store_name?: string | null
 }
 
 export const PREMIUM_PLAN_NAMES: Record<PremiumPlanId, string> = { monthly: "Premium monthly", yearly: "Premium yearly" }
@@ -27,7 +30,8 @@ export const PREMIUM_PLAN_NAMES: Record<PremiumPlanId, string> = { monthly: "Pre
 export async function premiumForUser(userId: string) {
   const { data, error } = await getSupabaseAdmin()
     .from("user_premium")
-    .select("user_id, premium_until, plan, source, paypal_subscription_id, paypal_status")
+    // "*" so it also works before the in-app purchase columns (store_until...) exist.
+    .select("*")
     .eq("user_id", userId)
     .maybeSingle()
   if (error) throw new Error(error.message)
