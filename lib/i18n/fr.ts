@@ -743,7 +743,7 @@ const fr: Dictionary = {
     featKahfMulk: "Écouter Al-Kahf et Al-Mulk, cochés à la fin",
     featSalawat: "Rappel des Salawat du vendredi avec compteur",
     featOffline: "Carte hors ligne de La Mecque et Médine avec flèches de direction",
-    freeAudio: "Audio du Coran avec 3–4 récitateurs connus",
+    freeAudio: "Audio du Coran avec tous les récitateurs, gratuit",
     freeKahfMulk: "Pages des sourates Al-Kahf et Al-Mulk avec rappels simples",
     freeAi: "Guide IA : 12 questions par semaine",
     freeDhikr: "Dhikr du jour et compteur de dhikr",

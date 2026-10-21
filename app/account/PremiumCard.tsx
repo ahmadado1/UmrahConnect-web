@@ -29,8 +29,6 @@ export default function PremiumCard({
 
   // Everything Premium adds (keep in the same order as the comparison table), then "everything free".
   const features = [
-    a.featReciters,
-    a.featPlayer,
     a.featKahfMulk,
     a.featTrip,
     a.featOffline,

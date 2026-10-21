@@ -741,7 +741,7 @@ const en = {
     featKahfMulk: "Listen to Al-Kahf and Al-Mulk, ticked when you finish",
     featSalawat: "Friday Salawat reminder with a dhikr counter",
     featOffline: "Offline map of Makkah & Madinah with direction arrows",
-    freeAudio: "Quran audio with 3–4 popular reciters",
+    freeAudio: "Quran audio with every reciter, free",
     freeKahfMulk: "Surah Al-Kahf and Al-Mulk pages with simple reminders",
     freeAi: "AI guide: 12 questions a week",
     freeDhikr: "Daily dhikr and a dhikr counter",

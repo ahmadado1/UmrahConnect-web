@@ -743,7 +743,7 @@ const tr: Dictionary = {
     featKahfMulk: "Kehf ve Mülk'ü dinleyin, bitince işaretlenir",
     featSalawat: "Sayaçlı Cuma salavat hatırlatması",
     featOffline: "Yön oklu Mekke ve Medine çevrimdışı haritası",
-    freeAudio: "3–4 ünlü hafızla Kur'an sesi",
+    freeAudio: "Tüm hafızlarla Kur'an sesi, ücretsiz",
     freeKahfMulk: "Basit hatırlatmalı Kehf ve Mülk sayfaları",
     freeAi: "Yapay zekâ rehberi: haftada 12 soru",
     freeDhikr: "Günün zikri ve zikir sayacı",

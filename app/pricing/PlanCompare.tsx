@@ -25,12 +25,12 @@ export default function PlanCompare() {
   // [feature, free, premium, premium is "coming soon"]
   const rows: [string, string, string, boolean?][] = [
     [a.rPrayer, a.vYes, a.vYes],
-    [a.rAdhan, a.v3Voices, a.vMoreVoices, true],
+    [a.rAdhan, a.v3Voices, a.vMoreVoices],
     [a.rQuran, a.vYes, a.vYes],
     [a.rFonts, a.v2Fonts, a.v6Fonts],
-    [a.rVerseAudio, a.v3Reciters, a.vAllReciters],
-    [a.rListen, a.v4Reciters, a.vAllReciters],
-    [a.rPlayer, a.vSmall, a.vBig],
+    [a.rVerseAudio, a.vAllReciters, a.vAllReciters],
+    [a.rListen, a.vAllReciters, a.vAllReciters],
+    [a.rPlayer, a.vBig, a.vBig],
     [a.rResume, a.vNo, a.vYes],
     [a.rKahfMulk, a.vRead, a.vReadListen],
     [a.rReminders, a.vSimple, a.vGuided],
