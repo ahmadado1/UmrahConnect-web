@@ -94,10 +94,9 @@ export async function initializePaystack(input: {
       reference: input.reference,
       callback_url: input.callbackUrl,
       metadata: input.metadata,
-      // Auto-renew needs a card; one-off payments can use every method.
-      ...(input.planCode
-        ? { plan: input.planCode, channels: ["card"] }
-        : { channels: ["card", "bank", "bank_transfer", "ussd", "mobile_money", "qr"] }),
+      // Auto-renew needs a card. One-off payments use every method switched on in
+      // Paystack → Settings → Preferences (card, transfer, USSD, Apple Pay, Google Pay...).
+      ...(input.planCode ? { plan: input.planCode, channels: ["card"] } : {}),
     }),
   })
   const json = await res.json().catch(() => null)
