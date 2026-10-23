@@ -26,7 +26,7 @@ const AGENT_COLUMNS =
   "id, business_name, agency_name, owner_name, email, country, status, plan, verified, paid_until, user_id, owner_user_id, paypal_subscription_id, paypal_status"
 
 export const PLAN_NAMES: Record<PlanId, string> = { listed: "Listed", featured: "Featured" }
-export const METHOD_NAMES: Record<string, string> = { paypal: "PayPal / card", opay: "OPay", nita: "Nita", other: "Other" }
+export const METHOD_NAMES: Record<string, string> = { paypal: "PayPal / card", opay: "OPay", nita: "Nita", paystack: "Paystack", other: "Other" }
 
 /** The agent row owned by this login, or null. */
 export async function agentForUser(userId: string) {

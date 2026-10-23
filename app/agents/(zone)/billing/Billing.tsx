@@ -57,6 +57,9 @@ const RECEIPT_TYPES: Record<string, string> = {
   webp: "image/webp",
 }
 
+/** Paystack (card, transfer, USSD in Naira) is shown when NEXT_PUBLIC_PAYSTACK_LIVE=true in Vercel. */
+const PAYSTACK_ON = process.env.NEXT_PUBLIC_PAYSTACK_LIVE === "true"
+
 async function authHeaders() {
   const { data: { session } } = await getSupabase().auth.getSession()
   if (!session) throw new Error("Log in again.")
@@ -71,12 +74,14 @@ export default function Billing() {
   const [notice, setNotice] = useState("")
   const [busy, setBusy] = useState(false)
   const [plan, setPlan] = useState<PlanId>("listed")
-  const [method, setMethod] = useState<"paypal" | ManualMethod>("paypal")
+  const [method, setMethod] = useState<"paypal" | "paystack" | ManualMethod>("paypal")
   const [months, setMonths] = useState<number>(1)
   const [reference, setReference] = useState("")
   const [receipt, setReceipt] = useState<File | null>(null)
   const [copied, setCopied] = useState("")
   const [paypalBroken, setPaypalBroken] = useState(false)
+  // Paystack auto-renew: is it on, and which plans can auto-renew.
+  const [paystackSub, setPaystackSub] = useState<{ active: { plan: string; nextPayment: string | null } | null; autoRenewPlans: string[] }>({ active: null, autoRenewPlans: [] })
 
   const [reloadKey, setReloadKey] = useState(0)
   const initialized = useRef(false)
@@ -93,11 +98,16 @@ export default function Billing() {
         if (cancelled) return
         const data = payload as BillingInfo
         setInfo(data)
+        if (PAYSTACK_ON) {
+          const sub = await fetch("/api/paystack/subscription?kind=agent", { headers: await authHeaders(), cache: "no-store" })
+          if (sub.ok && !cancelled) setPaystackSub(await sub.json())
+        }
         if (!initialized.current) {
           initialized.current = true
           setPlan(data.agent.plan)
           const manual = manualMethodsFor(data.agent.country)
-          if (currencyForCountry(data.agent.country) !== "USD" && manual.length) setMethod(manual[0])
+          if (PAYSTACK_ON && currencyForCountry(data.agent.country) === "NGN") setMethod("paystack")
+          else if (currencyForCountry(data.agent.country) !== "USD" && manual.length) setMethod(manual[0])
         }
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : "Could not load payments.")
@@ -108,6 +118,70 @@ export default function Billing() {
       cancelled = true
     }
   }, [agent, reloadKey])
+
+  // Back from Paystack (?paystack=<reference>): confirm the payment and refresh.
+  const paystackChecked = useRef(false)
+  useEffect(() => {
+    if (!agent || paystackChecked.current) return
+    const reference = new URLSearchParams(window.location.search).get("paystack")
+    if (!reference) return
+    paystackChecked.current = true
+    window.history.replaceState(null, "", window.location.pathname)
+    ;(async () => {
+      setNotice(t.pay.paystackChecking)
+      try {
+        const response = await fetch("/api/paystack/verify", {
+          method: "POST",
+          headers: await authHeaders(),
+          body: JSON.stringify({ reference }),
+        })
+        const result = await response.json().catch(() => null)
+        if (response.ok && result?.ok) {
+          setNotice(fill(t.pay.paystackDone, { date: result.until ? formatDate(String(result.until).slice(0, 10)) : "" }))
+          load()
+        } else {
+          setNotice(t.pay.paystackPending)
+        }
+      } catch {
+        setNotice(t.pay.paystackPending)
+      }
+    })()
+  }, [agent, load, t.pay.paystackChecking, t.pay.paystackDone, t.pay.paystackPending])
+
+  async function payWithPaystack(autoRenew: boolean) {
+    setBusy(true)
+    setError("")
+    try {
+      const response = await fetch("/api/paystack/initialize", {
+        method: "POST",
+        headers: await authHeaders(),
+        body: JSON.stringify({ kind: "agent", plan, months, autoRenew }),
+      })
+      const payload = await response.json().catch(() => null)
+      if (!response.ok || !payload?.url) throw new Error(payload?.error || "Could not start the payment.")
+      window.location.href = payload.url
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not start the payment.")
+      setBusy(false)
+    }
+  }
+
+  async function stopPaystackRenew() {
+    if (!window.confirm(t.pay.paystackCancelConfirm)) return
+    setBusy(true)
+    setError("")
+    try {
+      const response = await fetch("/api/paystack/subscription", { method: "POST", headers: await authHeaders(), body: JSON.stringify({ kind: "agent" }) })
+      const payload = await response.json().catch(() => null)
+      if (!response.ok) throw new Error(payload?.error || "Could not stop the auto-renew.")
+      setNotice(t.pay.paystackStopped)
+      load()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not stop the auto-renew.")
+    } finally {
+      setBusy(false)
+    }
+  }
 
   async function onApproved(subscriptionId: string) {
     setBusy(true)
@@ -150,7 +224,7 @@ export default function Billing() {
 
   async function submitManual(event: FormEvent) {
     event.preventDefault()
-    if (method === "paypal") return
+    if (method === "paypal" || method === "paystack") return
     setError("")
     setNotice("")
     if (!receipt) {
@@ -232,7 +306,7 @@ export default function Billing() {
   const statusLabel = { pending: t.pay.statusPending, confirmed: t.pay.statusConfirmed, rejected: t.pay.statusRejected }
   // Code the agent writes in the transfer note, so the admin can find the money.
   const payCode = agent ? agentPayCode(agent.id) : ""
-  const methodLabel = (key: string) => (key === "paypal" ? "PayPal" : key in MANUAL_METHODS ? MANUAL_METHODS[key as ManualMethod].label : key)
+  const methodLabel = (key: string) => (key === "paypal" ? "PayPal" : key === "paystack" ? "Paystack" : key in MANUAL_METHODS ? MANUAL_METHODS[key as ManualMethod].label : key)
 
   return (
     <main className="agent-page">
@@ -316,6 +390,9 @@ export default function Billing() {
           <section className="agent-card">
             <h2>{t.pay.chooseMethod}</h2>
             <div className="billing-methods" role="group">
+              {PAYSTACK_ON ? (
+                <button type="button" aria-pressed={method === "paystack"} onClick={() => setMethod("paystack")}>{t.pay.paystackTitle}</button>
+              ) : null}
               <button type="button" aria-pressed={method === "paypal"} onClick={() => setMethod("paypal")}>{t.pay.cardTitle}</button>
               {manual.map((key) => (
                 <button key={key} type="button" aria-pressed={method === key} onClick={() => setMethod(key)}>
@@ -327,7 +404,37 @@ export default function Billing() {
               <p className="agent-lead">{fill(t.pay.noManual, { whatsapp: AGENT_RENEW.whatsappDisplay })}</p>
             ) : null}
 
-            {method === "paypal" ? (
+            {method === "paystack" ? (
+              <div className="agent-form">
+                {paystackSub.active ? (
+                  <>
+                    <p className="agent-note">{t.pay.paystackRenewing}</p>
+                    <button className="agent-btn agent-btn--line" type="button" onClick={stopPaystackRenew} disabled={busy}>
+                      {t.pay.paystackCancel}
+                    </button>
+                  </>
+                ) : paystackSub.autoRenewPlans.includes(plan) ? (
+                  <>
+                    <p className="agent-lead">{fill(t.pay.paystackAutoNote, { period: t.pay.paystackMonth })}</p>
+                    <button className="agent-btn" type="button" onClick={() => payWithPaystack(true)} disabled={busy}>
+                      {fill(t.pay.paystackAuto, { amount: formatMoney(priceFor(plan, "NGN", 1), "NGN"), period: t.pay.paystackMonth })}
+                    </button>
+                  </>
+                ) : null}
+                <p className="agent-lead">{t.pay.paystackNote}</p>
+                <label>
+                  {t.pay.months}
+                  <select value={months} onChange={(event) => setMonths(Number(event.target.value))}>
+                    {MONTH_OPTIONS.map((value) => (
+                      <option key={value} value={value}>{value}</option>
+                    ))}
+                  </select>
+                </label>
+                <button className="agent-btn agent-btn--line" type="button" onClick={() => payWithPaystack(false)} disabled={busy}>
+                  {fill(t.pay.paystackOnce, { amount: formatMoney(priceFor(plan, "NGN", months), "NGN") })}
+                </button>
+              </div>
+            ) : method === "paypal" ? (
               <div>
                 {subscriptionActive ? <p className="agent-lead">{t.pay.subChange}</p> : null}
                 {!subscriptionActive || plan !== info?.agent.plan ? (

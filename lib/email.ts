@@ -150,7 +150,7 @@ function newWayToPayLine() {
   if (!paystackLive()) return ""
   return `
     <p style="margin:16px 0 0;padding:12px 16px;background:#EEF6EE;border:1px solid #B7DFC0;border-radius:10px;color:${BRAND.text};">
-      <strong style="color:#2F855A;">New:</strong> pay by card, bank transfer, USSD or OPay in one tap. Card payments renew automatically.
+      <strong style="color:#2F855A;">New:</strong> pay by card, bank transfer, USSD or OPay in one tap, confirmed straight away.
     </p>
   `
 }
@@ -684,7 +684,7 @@ export async function sendNewWayToPayEmail(mail: { to: string; name: string | nu
     </p>
     <ul style="margin:0 0 16px;padding-left:18px;color:${BRAND.muted};line-height:1.7;">
       <li>No more sending transfer details by hand: it is confirmed straight away.</li>
-      <li>Card payments renew automatically, so ${mail.isAgency ? "your listing" : "Premium"} never stops by surprise.</li>
+      <li>Choose ${mail.isAgency ? "1, 3, 6 or 12 months" : "a month or a whole year"} and pay once. We email you before it ends.</li>
       <li>Prices in Naira for Nigeria.</li>
     </ul>
     ${ctaButton(mail.isAgency ? "Open Agent Zone" : "Open my account", mail.isAgency ? `${SITE_URL}/agents/billing` : `${SITE_URL}/account`)}

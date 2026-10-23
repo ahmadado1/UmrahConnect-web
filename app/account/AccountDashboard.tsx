@@ -66,6 +66,9 @@ const CSS = `
 .acct-pending { padding: 12px 14px; border-radius: 12px; background: #fff7e6; border: 1px solid #f0c36d; color: #7a5300; }
 `
 
+/** Paystack (card, transfer, USSD in Naira) is shown when NEXT_PUBLIC_PAYSTACK_LIVE=true in Vercel. */
+const PAYSTACK_ON = process.env.NEXT_PUBLIC_PAYSTACK_LIVE === "true"
+
 async function authHeaders() {
   const { data: { session } } = await getSupabase().auth.getSession()
   if (!session) throw new Error("login")
@@ -83,11 +86,13 @@ export default function AccountDashboard() {
   const [error, setError] = useState("")
   const [notice, setNotice] = useState("")
   const [busy, setBusy] = useState(false)
-  // How to pay: PayPal / card, or an OPay / MyNita transfer checked by hand.
-  const [payMethod, setPayMethod] = useState<"paypal" | ManualMethod>("paypal")
+  // How to pay: Paystack (Naira), PayPal / card, or an OPay / MyNita transfer checked by hand.
+  const [payMethod, setPayMethod] = useState<"paypal" | "paystack" | ManualMethod>(PAYSTACK_ON ? "paystack" : "paypal")
   const [reference, setReference] = useState("")
   const [receipt, setReceipt] = useState<File | null>(null)
   const [copied, setCopied] = useState("")
+  // Paystack auto-renew: is it on, and which plans can auto-renew.
+  const [paystackSub, setPaystackSub] = useState<{ active: { plan: string; nextPayment: string | null } | null; autoRenewPlans: string[] }>({ active: null, autoRenewPlans: [] })
 
   // ─── Load the account (or send to login) ──────────────────────────────────
   const load = useCallback(async () => {
@@ -97,6 +102,8 @@ export default function AccountDashboard() {
         router.replace(loginError ? `/account/login?error=${encodeURIComponent(loginError)}` : "/account/login")
         return
       }
+      // Back from Paystack? Remember the payment reference before cleaning the address bar.
+      const paystackRef = new URLSearchParams(window.location.search).get("paystack")
       // Clean the login details out of the address bar.
       if (window.location.hash || window.location.search) window.history.replaceState(null, "", "/account")
       setUserId(session.user.id)
@@ -105,6 +112,28 @@ export default function AccountDashboard() {
       const payload = await response.json().catch(() => null)
       if (!response.ok) throw new Error(payload?.error || a.loadError)
       setInfo(payload as AccountInfo)
+      if (PAYSTACK_ON) {
+        const sub = await fetch("/api/paystack/subscription?kind=premium", { headers: await authHeaders() })
+        if (sub.ok) setPaystackSub(await sub.json())
+      }
+      if (paystackRef) {
+        setNotice(a.paystackChecking)
+        const check = await fetch("/api/paystack/verify", {
+          method: "POST",
+          headers: await authHeaders(),
+          body: JSON.stringify({ reference: paystackRef }),
+        })
+        const result = await check.json().catch(() => null)
+        if (check.ok && result?.ok) {
+          const again = await fetch("/api/account/premium", { headers: await authHeaders() })
+          const fresh = await again.json().catch(() => null)
+          if (again.ok) setInfo(fresh as AccountInfo)
+          const until = (fresh as AccountInfo | null)?.premium?.premium_until || result.until || ""
+          setNotice(fill(a.paystackDone, { date: until ? formatDate(until.slice(0, 10)) : "" }))
+        } else {
+          setNotice(a.paystackPending)
+        }
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : a.loadError)
     }
@@ -145,6 +174,23 @@ export default function AccountDashboard() {
     setError(message === "missing-client-id" ? a.paypalMissing : message)
   }, [a.paypalMissing])
 
+  async function stopPaystackRenew() {
+    if (!window.confirm(a.paystackCancelConfirm)) return
+    setBusy(true)
+    setError("")
+    try {
+      const response = await fetch("/api/paystack/subscription", { method: "POST", headers: await authHeaders(), body: JSON.stringify({ kind: "premium" }) })
+      const payload = await response.json().catch(() => null)
+      if (!response.ok) throw new Error(payload?.error || a.loadError)
+      setNotice(a.paystackStopped)
+      await load()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : a.loadError)
+    } finally {
+      setBusy(false)
+    }
+  }
+
   async function cancelRenew() {
     if (!window.confirm(a.cancelConfirm)) return
     setBusy(true)
@@ -162,10 +208,29 @@ export default function AccountDashboard() {
     }
   }
 
+  // ─── Paystack: get a checkout link and go there ──────────────────────────
+  async function payWithPaystack(autoRenew: boolean) {
+    setBusy(true)
+    setError("")
+    try {
+      const response = await fetch("/api/paystack/initialize", {
+        method: "POST",
+        headers: await authHeaders(),
+        body: JSON.stringify({ kind: "premium", plan, autoRenew }),
+      })
+      const payload = await response.json().catch(() => null)
+      if (!response.ok || !payload?.url) throw new Error(payload?.error || a.loadError)
+      window.location.href = payload.url
+    } catch (err) {
+      setError(err instanceof Error ? err.message : a.loadError)
+      setBusy(false)
+    }
+  }
+
   // ─── OPay / MyNita: the user tells us they sent the money ─────────────────
   async function submitTransfer(event: FormEvent) {
     event.preventDefault()
-    if (payMethod === "paypal") return
+    if (payMethod === "paypal" || payMethod === "paystack") return
     setError("")
     setNotice("")
     if (!reference.trim()) {
@@ -232,7 +297,9 @@ export default function AccountDashboard() {
   const storeUntil = info?.premium?.store_until?.slice(0, 10) || ""
   const until = webUntil > storeUntil ? webUntil : storeUntil
   const isPremium = Boolean(until && until >= today)
-  const renewing = info?.premium?.paypal_status === "ACTIVE"
+  const paypalRenewing = info?.premium?.paypal_status === "ACTIVE"
+  const paystackRenewing = Boolean(paystackSub.active)
+  const renewing = paypalRenewing || paystackRenewing
   const planIdReady = Boolean(PREMIUM_PAYPAL_PLAN_IDS[plan])
 
   const premiumFeatures = [a.featKahfMulk, a.featTrip, a.featOffline, a.featAi, a.featFonts, a.featGuided, a.featSalawat, a.featAdhan]
@@ -261,9 +328,14 @@ export default function AccountDashboard() {
             {isPremium ? (
               <>
                 <p>{fill(a.premiumUntil, { date: formatDate(until) })}</p>
-                <p>{renewing ? a.renews : fill(a.renewOff, { date: formatDate(until) })}</p>
+                <p>{paystackRenewing ? a.paystackRenewing : renewing ? a.renews : fill(a.renewOff, { date: formatDate(until) })}</p>
                 <p className="agent-switch" style={{ margin: 0 }}>{a.appNote}</p>
-                {renewing ? (
+                {paystackRenewing ? (
+                  <button className="agent-btn agent-btn--line" type="button" onClick={stopPaystackRenew} disabled={busy}>
+                    {a.paystackCancel}
+                  </button>
+                ) : null}
+                {paypalRenewing ? (
                   <button className="agent-btn agent-btn--line" type="button" onClick={cancelRenew} disabled={busy}>
                     {a.cancel}
                   </button>
@@ -287,6 +359,9 @@ export default function AccountDashboard() {
 
               {/* How to pay */}
               <div className="acct-methods" role="group">
+                {PAYSTACK_ON ? (
+                  <button type="button" aria-pressed={payMethod === "paystack"} onClick={() => setPayMethod("paystack")}>{a.payPaystack}</button>
+                ) : null}
                 <button type="button" aria-pressed={payMethod === "paypal"} onClick={() => setPayMethod("paypal")}>{a.payCard}</button>
                 {manualMethods.map((key) => (
                   <button key={key} type="button" aria-pressed={payMethod === key} onClick={() => setPayMethod(key)}>
@@ -295,7 +370,31 @@ export default function AccountDashboard() {
                 ))}
               </div>
 
-              {payMethod === "paypal" ? (
+              {payMethod === "paystack" ? (
+                <div className="acct-transfer">
+                  {paystackSub.autoRenewPlans.includes(plan) ? (
+                    <>
+                      <p style={{ margin: 0 }}>{fill(a.paystackAutoNote, { period: plan === "yearly" ? a.paystackYear : a.paystackMonth })}</p>
+                      <button className="agent-btn" type="button" onClick={() => payWithPaystack(true)} disabled={busy}>
+                        {fill(a.paystackAuto, {
+                          amount: formatMoney(PREMIUM_LOCAL_PRICES[plan].NGN, "NGN"),
+                          period: plan === "yearly" ? a.paystackYear : a.paystackMonth,
+                        })}
+                      </button>
+                      <button className="agent-btn agent-btn--line" type="button" onClick={() => payWithPaystack(false)} disabled={busy}>
+                        {fill(a.paystackOnce, { amount: formatMoney(PREMIUM_LOCAL_PRICES[plan].NGN, "NGN") })}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <p style={{ margin: 0 }}>{a.paystackNote}</p>
+                      <button className="agent-btn" type="button" onClick={() => payWithPaystack(false)} disabled={busy}>
+                        {fill(a.paystackPay, { amount: formatMoney(PREMIUM_LOCAL_PRICES[plan].NGN, "NGN") })}
+                      </button>
+                    </>
+                  )}
+                </div>
+              ) : payMethod === "paypal" ? (
                 <>
                   <p className="agent-switch" style={{ marginTop: 0 }}>{a.payNote}</p>
                   {planIdReady && userId ? (
@@ -382,7 +481,7 @@ export default function AccountDashboard() {
                       <td>{formatDate(payment.created_at.slice(0, 10))}</td>
                       <td>{payment.plan === "yearly" ? a.yearly : a.monthly}</td>
                       <td>{showAmount(Number(payment.amount), payment.currency)}</td>
-                      <td>{payment.method === "paypal" ? "PayPal / card" : MANUAL_METHODS[payment.method as ManualMethod]?.label || payment.method}</td>
+                      <td>{payment.method === "paypal" ? "PayPal / card" : payment.method === "paystack" ? "Paystack" : MANUAL_METHODS[payment.method as ManualMethod]?.label || payment.method}</td>
                       <td>{payment.status === "pending" ? a.statusPending : payment.status === "rejected" ? a.statusRejected : "✓"}</td>
                     </tr>
                   ))}
