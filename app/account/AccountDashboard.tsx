@@ -68,6 +68,8 @@ const CSS = `
 
 /** Paystack (card, transfer, USSD in Naira) is shown when NEXT_PUBLIC_PAYSTACK_LIVE=true in Vercel. */
 const PAYSTACK_ON = process.env.NEXT_PUBLIC_PAYSTACK_LIVE === "true"
+/** Set NEXT_PUBLIC_PAYPAL_OFF=true in Vercel to stop offering PayPal for new payments (existing PayPal subscriptions keep working). */
+const PAYPAL_ON = process.env.NEXT_PUBLIC_PAYPAL_OFF !== "true"
 
 async function authHeaders() {
   const { data: { session } } = await getSupabase().auth.getSession()
@@ -303,7 +305,10 @@ export default function AccountDashboard() {
   const planIdReady = Boolean(PREMIUM_PAYPAL_PLAN_IDS[plan])
 
   const premiumFeatures = [a.featKahfMulk, a.featTrip, a.featOffline, a.featAi, a.featFonts, a.featGuided, a.featSalawat, a.featAdhan]
-  const manualMethods = (Object.keys(MANUAL_METHODS) as ManualMethod[]).filter((key) => MANUAL_METHODS[key].accountNumber.trim())
+  // OPay is already inside Paystack checkout, so the manual OPay transfer is hidden while Paystack is live.
+  const manualMethods = (Object.keys(MANUAL_METHODS) as ManualMethod[]).filter(
+    (key) => MANUAL_METHODS[key].accountNumber.trim() && !(PAYSTACK_ON && key === "opay"),
+  )
   const hasPending = Boolean(info?.payments.some((p) => p.status === "pending"))
   const payCode = userId ? premiumPayCode(userId) : ""
   const showAmount = (amount: number, currency: string) => (currency === "USD" ? formatUsd(amount) : formatMoney(amount, currency as Currency))
@@ -358,11 +363,13 @@ export default function AccountDashboard() {
               {hasPending ? <p className="acct-pending">{a.pendingNote}</p> : null}
 
               {/* How to pay */}
-              <div className="acct-methods" role="group">
+              <div className="acct-methods pay-pills" role="group">
                 {PAYSTACK_ON ? (
                   <button type="button" aria-pressed={payMethod === "paystack"} onClick={() => setPayMethod("paystack")}>{a.payPaystack}</button>
                 ) : null}
-                <button type="button" aria-pressed={payMethod === "paypal"} onClick={() => setPayMethod("paypal")}>{a.payCard}</button>
+                {PAYPAL_ON || !PAYSTACK_ON ? (
+                  <button type="button" aria-pressed={payMethod === "paypal"} onClick={() => setPayMethod("paypal")}>{a.payCard}</button>
+                ) : null}
                 {manualMethods.map((key) => (
                   <button key={key} type="button" aria-pressed={payMethod === key} onClick={() => setPayMethod(key)}>
                     {fill(a.payTransfer, { method: MANUAL_METHODS[key].label })}
@@ -375,20 +382,23 @@ export default function AccountDashboard() {
                   {paystackSub.autoRenewPlans.includes(plan) ? (
                     <>
                       <p style={{ margin: 0 }}>{fill(a.paystackAutoNote, { period: plan === "yearly" ? a.paystackYear : a.paystackMonth })}</p>
-                      <button className="agent-btn" type="button" onClick={() => payWithPaystack(true)} disabled={busy}>
+                      <button className="pay-cta pay-cta--main" type="button" onClick={() => payWithPaystack(true)} disabled={busy}>
+                        <span className="pay-cta-icon" aria-hidden="true">↻</span>
                         {fill(a.paystackAuto, {
                           amount: formatMoney(PREMIUM_LOCAL_PRICES[plan].NGN, "NGN"),
                           period: plan === "yearly" ? a.paystackYear : a.paystackMonth,
                         })}
                       </button>
-                      <button className="agent-btn agent-btn--line" type="button" onClick={() => payWithPaystack(false)} disabled={busy}>
+                      <button className="pay-cta pay-cta--alt" type="button" onClick={() => payWithPaystack(false)} disabled={busy}>
+                        <span className="pay-cta-icon" aria-hidden="true">⚡</span>
                         {fill(a.paystackOnce, { amount: formatMoney(PREMIUM_LOCAL_PRICES[plan].NGN, "NGN") })}
                       </button>
                     </>
                   ) : (
                     <>
                       <p style={{ margin: 0 }}>{a.paystackNote}</p>
-                      <button className="agent-btn" type="button" onClick={() => payWithPaystack(false)} disabled={busy}>
+                      <button className="pay-cta pay-cta--main" type="button" onClick={() => payWithPaystack(false)} disabled={busy}>
+                        <span className="pay-cta-icon" aria-hidden="true">⚡</span>
                         {fill(a.paystackPay, { amount: formatMoney(PREMIUM_LOCAL_PRICES[plan].NGN, "NGN") })}
                       </button>
                     </>

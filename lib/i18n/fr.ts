@@ -402,7 +402,7 @@ const fr: Dictionary = {
   pay: {
     paystackAuto: "S'abonner : {amount} par {period} (carte)",
     paystackOnce: "Payer une fois : {amount} (carte, virement, USSD, OPay)",
-    paystackAutoNote: "Avec l'abonnement, votre carte est débitée automatiquement chaque {period} : rien ne s'arrête par surprise. Vous pouvez l'arrêter ici à tout moment.",
+    paystackAutoNote: "Avec l'abonnement, votre carte est débitée automatiquement chaque {period} : rien ne s'arrête par surprise. Vous pouvez l'arrêter ici à tout moment. Seules les cartes se renouvellent automatiquement. Pour un virement, l'USSD ou OPay, choisissez « Payer une fois ».",
     paystackRenewing: "Renouvellement automatique par carte (Paystack).",
     paystackCancel: "Arrêter le renouvellement",
     paystackCancelConfirm: "Arrêter le renouvellement automatique ? Vous gardez la période déjà payée.",
@@ -732,7 +732,7 @@ const fr: Dictionary = {
     payCard: "Carte / PayPal",
     paystackAuto: "S'abonner : {amount} par {period} (carte)",
     paystackOnce: "Payer une fois : {amount} (carte, virement, USSD, OPay)",
-    paystackAutoNote: "Avec l'abonnement, votre carte est débitée automatiquement chaque {period} : rien ne s'arrête par surprise. Vous pouvez l'arrêter ici à tout moment.",
+    paystackAutoNote: "Avec l'abonnement, votre carte est débitée automatiquement chaque {period} : rien ne s'arrête par surprise. Vous pouvez l'arrêter ici à tout moment. Seules les cartes se renouvellent automatiquement. Pour un virement, l'USSD ou OPay, choisissez « Payer une fois ».",
     paystackRenewing: "Renouvellement automatique par carte (Paystack).",
     paystackCancel: "Arrêter le renouvellement",
     paystackCancelConfirm: "Arrêter le renouvellement automatique ? Vous gardez la période déjà payée.",

@@ -400,7 +400,7 @@ const en = {
   pay: {
     paystackAuto: "Subscribe: {amount} every {period} (card)",
     paystackOnce: "Pay once: {amount} (card, transfer, USSD, OPay)",
-    paystackAutoNote: "With Subscribe, your card is charged automatically every {period}, so nothing stops by surprise. You can stop it here at any time.",
+    paystackAutoNote: "With Subscribe, your card is charged automatically every {period}, so nothing stops by surprise. You can stop it here at any time. Only cards can renew automatically. For transfer, USSD or OPay, use Pay once.",
     paystackRenewing: "Renews automatically by card (Paystack).",
     paystackCancel: "Stop auto-renew",
     paystackCancelConfirm: "Stop auto-renew? You keep the time you already paid for.",
@@ -730,7 +730,7 @@ const en = {
     payCard: "Card / PayPal",
     paystackAuto: "Subscribe: {amount} every {period} (card)",
     paystackOnce: "Pay once: {amount} (card, transfer, USSD, OPay)",
-    paystackAutoNote: "With Subscribe, your card is charged automatically every {period}, so nothing stops by surprise. You can stop it here at any time.",
+    paystackAutoNote: "With Subscribe, your card is charged automatically every {period}, so nothing stops by surprise. You can stop it here at any time. Only cards can renew automatically. For transfer, USSD or OPay, use Pay once.",
     paystackRenewing: "Renews automatically by card (Paystack).",
     paystackCancel: "Stop auto-renew",
     paystackCancelConfirm: "Stop auto-renew? You keep the time you already paid for.",

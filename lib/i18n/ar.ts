@@ -402,7 +402,7 @@ const ar: Dictionary = {
   pay: {
     paystackAuto: "اشترك: {amount} كل {period} (بطاقة)",
     paystackOnce: "ادفع مرة واحدة: {amount} (بطاقة، تحويل، USSD، OPay)",
-    paystackAutoNote: "عند الاشتراك تُخصم من بطاقتك تلقائيًا كل {period}، فلا يتوقف شيء فجأة. يمكنك إيقافه من هنا في أي وقت.",
+    paystackAutoNote: "عند الاشتراك تُخصم من بطاقتك تلقائيًا كل {period}، فلا يتوقف شيء فجأة. يمكنك إيقافه من هنا في أي وقت. التجديد التلقائي متاح للبطاقات فقط. للتحويل أو USSD أو OPay اختر «ادفع مرة واحدة».",
     paystackRenewing: "يتجدد تلقائيًا بالبطاقة (Paystack).",
     paystackCancel: "إيقاف التجديد التلقائي",
     paystackCancelConfirm: "إيقاف التجديد التلقائي؟ ستحتفظ بالمدة التي دفعتها.",
@@ -732,7 +732,7 @@ const ar: Dictionary = {
     payCard: "بطاقة / PayPal",
     paystackAuto: "اشترك: {amount} كل {period} (بطاقة)",
     paystackOnce: "ادفع مرة واحدة: {amount} (بطاقة، تحويل، USSD، OPay)",
-    paystackAutoNote: "عند الاشتراك تُخصم من بطاقتك تلقائيًا كل {period}، فلا يتوقف شيء فجأة. يمكنك إيقافه من هنا في أي وقت.",
+    paystackAutoNote: "عند الاشتراك تُخصم من بطاقتك تلقائيًا كل {period}، فلا يتوقف شيء فجأة. يمكنك إيقافه من هنا في أي وقت. التجديد التلقائي متاح للبطاقات فقط. للتحويل أو USSD أو OPay اختر «ادفع مرة واحدة».",
     paystackRenewing: "يتجدد تلقائيًا بالبطاقة (Paystack).",
     paystackCancel: "إيقاف التجديد التلقائي",
     paystackCancelConfirm: "إيقاف التجديد التلقائي؟ ستحتفظ بالمدة التي دفعتها.",

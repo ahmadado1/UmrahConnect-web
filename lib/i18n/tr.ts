@@ -402,7 +402,7 @@ const tr: Dictionary = {
   pay: {
     paystackAuto: "Abone ol: her {period} {amount} (kart)",
     paystackOnce: "Tek seferlik öde: {amount} (kart, havale, USSD, OPay)",
-    paystackAutoNote: "Abonelikte kartınızdan her {period} otomatik ödeme alınır, böylece hiçbir şey birden durmaz. İstediğiniz zaman buradan durdurabilirsiniz.",
+    paystackAutoNote: "Abonelikte kartınızdan her {period} otomatik ödeme alınır, böylece hiçbir şey birden durmaz. İstediğiniz zaman buradan durdurabilirsiniz. Yalnızca kartlar otomatik yenilenir. Havale, USSD veya OPay için «Tek seferlik öde»yi seçin.",
     paystackRenewing: "Kartla otomatik yenilenir (Paystack).",
     paystackCancel: "Otomatik yenilemeyi durdur",
     paystackCancelConfirm: "Otomatik yenileme durdurulsun mu? Ödediğiniz süre sizde kalır.",
@@ -732,7 +732,7 @@ const tr: Dictionary = {
     payCard: "Kart / PayPal",
     paystackAuto: "Abone ol: her {period} {amount} (kart)",
     paystackOnce: "Tek seferlik öde: {amount} (kart, havale, USSD, OPay)",
-    paystackAutoNote: "Abonelikte kartınızdan her {period} otomatik ödeme alınır, böylece hiçbir şey birden durmaz. İstediğiniz zaman buradan durdurabilirsiniz.",
+    paystackAutoNote: "Abonelikte kartınızdan her {period} otomatik ödeme alınır, böylece hiçbir şey birden durmaz. İstediğiniz zaman buradan durdurabilirsiniz. Yalnızca kartlar otomatik yenilenir. Havale, USSD veya OPay için «Tek seferlik öde»yi seçin.",
     paystackRenewing: "Kartla otomatik yenilenir (Paystack).",
     paystackCancel: "Otomatik yenilemeyi durdur",
     paystackCancelConfirm: "Otomatik yenileme durdurulsun mu? Ödediğiniz süre sizde kalır.",
