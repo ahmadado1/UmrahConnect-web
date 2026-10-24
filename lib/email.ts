@@ -17,8 +17,8 @@ const LOGO_URL = "https://cdn.jsdelivr.net/gh/ahmadado1/unrahconnect@main/assets
 const SITE_URL = "https://myumrahconnect.com"
 const INFO_EMAIL = "info@myumrahconnect.com"
 const SUPPORT_EMAIL = "support@myumrahconnect.com"
-const WHATSAPP_NUMBER = "+201222151335"
-const WHATSAPP_URL = "https://wa.me/201222151335"
+const WHATSAPP_NUMBER = "+201041436778"
+const WHATSAPP_URL = "https://wa.me/201041436778"
 
 export type AgentEmailType =
   | "application_received"

@@ -122,8 +122,8 @@ export const AGENT_PLANS = [
 
 export const AGENT_RENEW = {
   email: "info@myumrahconnect.com",
-  whatsappDisplay: "+201222151335",
-  whatsappUrl: "https://wa.me/201222151335",
+  whatsappDisplay: "+201041436778",
+  whatsappUrl: "https://wa.me/201041436778",
 }
 
 export const SITE_URL = "https://myumrahconnect.com"
