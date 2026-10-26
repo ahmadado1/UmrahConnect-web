@@ -8,11 +8,11 @@ import { APP_SCREENSHOTS } from './screenshotPaths';
 export default function Screenshots() {
   const { t } = useT();
   const screens = [
-    { title: t.screens.prayerTitle, description: t.screens.prayerBody, screenshot: APP_SCREENSHOTS.prayer, slot: 'scatter-phone--1' },
+    { title: t.features.mapsTitle, description: t.features.mapsBody, screenshot: APP_SCREENSHOTS.maps, slot: 'scatter-phone--1' },
     { title: t.screens.homeTitle, description: t.screens.homeBody, screenshot: APP_SCREENSHOTS.home, slot: 'scatter-phone--2' },
     { title: t.screens.guideTitle, description: t.screens.guideBody, screenshot: APP_SCREENSHOTS.umrahChecklist, slot: 'scatter-phone--3' },
     { title: t.screens.aiTitle, description: t.screens.aiBody, screenshot: APP_SCREENSHOTS.aiGuide, slot: 'scatter-phone--4' },
-    { title: t.screens.quranTitle, description: t.screens.quranBody, screenshot: APP_SCREENSHOTS.quran, slot: 'scatter-phone--5' },
+    { title: t.screens.quranTitle, description: t.screens.quranBody, screenshot: APP_SCREENSHOTS.mushaf, slot: 'scatter-phone--5' },
     { title: t.screens.servicesTitle, description: t.screens.servicesBody, screenshot: APP_SCREENSHOTS.services, slot: 'scatter-phone--6' },
   ];
 

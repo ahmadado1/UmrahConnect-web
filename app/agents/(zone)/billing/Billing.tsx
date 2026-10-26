@@ -17,6 +17,7 @@ import {
   type PlanId,
 } from "@/lib/agentPlans"
 import { fill, useT } from "@/lib/i18n/I18nProvider"
+import PayGuide from "@/app/component/PayGuide"
 import ManualPayGuide from "@/app/account/ManualPayGuide"
 import { getSupabase } from "@/lib/supabaseBrowser"
 import { useAgentSession } from "../../useAgentSession"
@@ -392,6 +393,7 @@ export default function Billing() {
           {awaitingVerification ? null : (
           <section className="agent-card">
             <h2>{t.pay.chooseMethod}</h2>
+            <PayGuide paystack={PAYSTACK_ON} paypal={PAYPAL_ON || !PAYSTACK_ON || subscriptionActive} onPick={setMethod} />
             <div className="billing-methods pay-pills" role="group">
               {PAYSTACK_ON ? (
                 <button type="button" aria-pressed={method === "paystack"} onClick={() => setMethod("paystack")}>{t.pay.paystackTitle}</button>

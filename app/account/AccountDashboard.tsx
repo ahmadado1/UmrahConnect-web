@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { formatDate } from "@/lib/agentFormat"
 import { formatMoney, MANUAL_METHODS, type Currency, type ManualMethod } from "@/lib/agentPlans"
 import { fill, useT } from "@/lib/i18n/I18nProvider"
+import PayGuide from "@/app/component/PayGuide"
 import ManualPayGuide from "./ManualPayGuide"
 import {
   formatUsd,
@@ -363,6 +364,7 @@ export default function AccountDashboard() {
               {hasPending ? <p className="acct-pending">{a.pendingNote}</p> : null}
 
               {/* How to pay */}
+              <PayGuide paystack={PAYSTACK_ON} paypal={PAYPAL_ON || !PAYSTACK_ON} onPick={setPayMethod} />
               <div className="acct-methods pay-pills" role="group">
                 {PAYSTACK_ON ? (
                   <button type="button" aria-pressed={payMethod === "paystack"} onClick={() => setPayMethod("paystack")}>{a.payPaystack}</button>

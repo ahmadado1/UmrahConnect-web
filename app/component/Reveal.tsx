@@ -9,25 +9,31 @@ import {
   type ReactNode,
 } from 'react';
 
+/**
+ * True once the element has come into view. It stays true afterwards, so each animation
+ * plays only ONCE (scrolling back up does not replay it).
+ */
 export function useInView(threshold = 0.15) {
   const ref = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || inView) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setInView(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect(); // done: never animate again
+        }
       },
       { threshold, rootMargin: '0px 0px -5% 0px' },
     );
 
     observer.observe(el);
-
     return () => observer.disconnect();
-  }, [threshold]);
+  }, [threshold, inView]);
 
   return { ref, inView };
 }
@@ -61,6 +67,7 @@ export function Reveal({
   as: Tag = 'div',
 }: RevealProps) {
   const { ref, inView } = useInView(threshold);
+  // "active" is set after the first paint, so people without JavaScript still see everything.
   const [active, setActive] = useState(false);
 
   useEffect(() => {

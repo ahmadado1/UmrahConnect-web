@@ -2,6 +2,7 @@
 
 import { useT } from '@/lib/i18n/I18nProvider';
 import HeroPhones from './HeroPhones';
+import StoreButtons from './StoreButtons';
 import { CrescentMoonIcon } from './Icons';
 
 const stars = Array.from({ length: 24 }, (_, i) => ({
@@ -16,6 +17,12 @@ export default function Hero() {
   const { t } = useT();
   return (
     <section className="hero hero-full">
+      {/* Soft moving light behind the hero (navy and gold) */}
+      <div className="hero-aurora" aria-hidden="true">
+        <span className="hero-aurora-a" />
+        <span className="hero-aurora-b" />
+      </div>
+
       <div className="hero-particles" aria-hidden="true">
         {stars.map((star) => (
           <span
@@ -33,7 +40,7 @@ export default function Hero() {
       </div>
 
       <div className="hero-content">
-        <div className="hero-badge">
+        <div className="hero-badge hero-enter" style={{ animationDelay: '0.05s' }}>
           <span className="hero-badge-icon">
             <CrescentMoonIcon size={18} />
           </span>
@@ -46,41 +53,29 @@ export default function Hero() {
           {t.hero.titleAfter}
         </h1>
 
-        <p className="hero-subtitle">
+        <p className="hero-subtitle hero-enter" style={{ animationDelay: '0.35s' }}>
           {t.hero.subtitle}
         </p>
 
-        <div className="hero-buttons">
-          <a
-            href="https://apps.apple.com/us/app/umrahconnect/id6778753426"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-            </svg>
-            <div className="store-caption">
-              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px' }}>{t.hero.downloadOn}</div>
-              <div style={{ color: '#fff', fontSize: '15px', fontWeight: '500' }}>{t.hero.appStore}</div>
-            </div>
-          </a>
-          <a
-            href="https://play.google.com/store/apps/details?id=com.myumrahconnect.app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-              <path d="M3 20.5v-17c0-.83 1-.83 1.5-.5l15 8.5-15 8.5c-.5.33-1.5.33-1.5-.5z" />
-            </svg>
-            <div className="store-caption">
-              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px' }}>{t.hero.getItOn}</div>
-              <div style={{ color: '#fff', fontSize: '15px', fontWeight: '500' }}>{t.hero.googlePlay}</div>
-            </div>
-          </a>
-        </div>
+        {/* Desktop: buttons under the text. On phones they move under the phones (see below). */}
+        <StoreButtons className="hero-enter hero-store hero-store--desktop" />
       </div>
 
       <HeroPhones />
+
+      {/* Phones and small screens: buttons under the fan of phones, centred, like the poster. */}
+      <StoreButtons className="hero-enter hero-store hero-store--mobile" />
+
+      {/* Mosque skyline along the bottom of the hero */}
+      <svg className="hero-skyline" viewBox="0 0 1440 160" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 160V120h60v-10h20v10h40V96c0-18 14-32 32-36 18 4 32 18 32 36v24h30V70l6-14 6 14v50h34v-34c0-30 24-54 54-58 30 4 54 28 54 58v34h40v-20c0-12 10-22 22-24 12 2 22 12 22 24v20h46V52l7-18 7 18v68h36V90c0-40 32-72 72-78 40 6 72 38 72 78v30h36V52l7-18 7 18v68h46v-20c0-12 10-22 22-24 12 2 22 12 22 24v20h40V86c0-30 24-54 54-58 30 4 54 28 54 58v34h34V70l6-14 6 14v50h30V96c0-18 14-32 32-36 18 4 32 18 32 36v24h40v-10h20v10h60v40z" />
+      </svg>
+
+      {/* Scroll cue: leads into the journey story below */}
+      <a href="#journey" className="hero-scroll-cue hero-enter" style={{ animationDelay: '0.9s' }}>
+        <span>{t.hero.scroll}</span>
+        <span className="hero-scroll-mouse" aria-hidden="true"><span /></span>
+      </a>
     </section>
   );
 }
