@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.myumrahconnect.app",
+      "sha256_cert_fingerprints": [
+        "ED:09:29:7E:26:81:0F:80:93:CA:6C:AB:2B:21:D9:27:E3:6F:F5:FD:2F:2B:5E:48:5F:CC:FF:0E:BF:D7:EC:8F",
+        "C3:36:CB:03:9F:FC:2F:69:F4:94:02:C8:FD:1B:15:B2:68:3E:4C:1D:AE:A6:AE:42:E5:E9:15:5D:F5:16:07:8C"
+      ]
+    }
+  }
+]

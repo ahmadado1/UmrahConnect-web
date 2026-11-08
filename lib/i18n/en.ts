@@ -435,6 +435,10 @@ const en = {
     missing: "This code is not an active listing yet. Ask the agency to renew, or download the app and try the code there.",
     download: "Download the app",
     openApp: "Open in the app",
+    copyDownload: "Copy code and download",
+    copied: "Code copied! Paste it when you sign up.",
+    redirecting: "Opening the store…",
+    afterInstall: "After installing, enter code {code} when you sign up so the agency is linked to you.",
   },
   delete: {
     label: "ACCOUNT",

@@ -437,6 +437,10 @@ const tr: Dictionary = {
     missing: "Bu kod henüz aktif bir kayıt değil. Acenteden yenilemesini isteyin veya uygulamayı indirip kodu orada deneyin.",
     download: "Uygulamayı indir",
     openApp: "Uygulamada aç",
+    copyDownload: "Kodu kopyala ve indir",
+    copied: "Kod kopyalandı! Kaydolurken yapıştırın.",
+    redirecting: "Mağaza açılıyor…",
+    afterInstall: "Yükledikten sonra kaydolurken {code} kodunu girin, böylece acenteye bağlanırsınız.",
   },
   delete: {
     label: "HESAP",

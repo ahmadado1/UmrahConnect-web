@@ -437,6 +437,10 @@ const fr: Dictionary = {
     missing: "Ce code n’est pas encore une fiche active. Demandez à l’agence de renouveler, ou téléchargez l’application et essayez le code.",
     download: "Télécharger l’application",
     openApp: "Ouvrir dans l’app",
+    copyDownload: "Copier le code et télécharger",
+    copied: "Code copié ! Collez-le lors de l’inscription.",
+    redirecting: "Ouverture du store…",
+    afterInstall: "Après l’installation, saisissez le code {code} à l’inscription pour être lié à l’agence.",
   },
   delete: {
     label: "COMPTE",

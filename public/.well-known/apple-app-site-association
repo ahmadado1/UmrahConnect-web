@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["ZLD82LL339.com.umrahconnect.app"],
+        "components": [
+          { "/": "/a/*", "comment": "Agent links and agent QR codes open the app" }
+        ]
+      }
+    ]
+  }
+}
