@@ -85,6 +85,18 @@ export default function AgentCodeCard({ code }: { code: string }) {
     }
   }, [code])
 
+  // 2b. On a phone: remember this visit for 24 h, so after installing from the App Store the app
+  //     can ask "Were you sent by <agency>?" (iPhone can't pass the code through the store).
+  useEffect(() => {
+    if (!agent || (device !== "ios" && device !== "android")) return
+    void fetch("/api/agents/click", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: agent.agent_code || code }),
+      keepalive: true,
+    }).catch(() => {})
+  }, [agent, device, code])
+
   // 3. Android: once we know the agency, go straight to Google Play with the code attached
   useEffect(() => {
     if (device !== "android" || !agent) return
