@@ -1,14 +1,13 @@
 "use client"
 
 import { FormEvent, useEffect, useState } from "react"
-import { agentJoinUrl } from "@/lib/agentPlans"
-import { citiesToText } from "@/lib/agentAccount"
 import { isActiveAgent } from "@/lib/agentFormat"
 import { fill, useT } from "@/lib/i18n/I18nProvider"
 import { getSupabase } from "@/lib/supabaseBrowser"
-import { downloadAgentPoster, useAgentQr } from "../../poster"
 import { useAgentSession } from "../../useAgentSession"
-import VerifiedCheck from "../../VerifiedCheck"
+import { formatDate } from "@/lib/agentFormat"
+import { ZONE_CSS } from "../zoneUi"
+import { QrPanel, RenewAlert, ZoneHead } from "../ZoneBits"
 
 function AdminHomeCard() {
   const { t } = useT()
@@ -45,7 +44,6 @@ type Announcement = {
 export default function Dashboard() {
   const { t } = useT()
   const { agent, isAdmin, loading, error, setError } = useAgentSession()
-  const qrUrl = useAgentQr(agent?.agent_code ?? null)
   const [pilgrims, setPilgrims] = useState<Pilgrim[]>([])
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [title, setTitle] = useState("")
@@ -131,99 +129,83 @@ export default function Dashboard() {
     )
   }
 
-  const joinUrl = agent.agent_code ? agentJoinUrl(agent.agent_code) : ""
-
   return (
-    <main className="agent-page">
-      <section className="agent-section">
-        <div className="page-container agent-dashboard">
-          <div className="section-label">{t.dash.label}</div>
-          <h1>{agent.business_name || t.common.yourAgency}</h1>
-          {error ? <p className="agent-error">{error}</p> : null}
+    <main className="z-page">
+      <style>{ZONE_CSS}</style>
+      <div className="z-wrap">
+        <ZoneHead agent={agent} />
+        {error ? <p className="agent-error">{error}</p> : null}
+        <RenewAlert agent={agent} />
 
-          <section className="agent-card">
-            <h2>{t.dash.pilgrims}</h2>
-            <p className="agent-lead">{t.dash.pilgrimsLead}</p>
-            {pilgrims.length === 0 ? <p className="agent-lead">{t.dash.noPilgrims}</p> : null}
-            <div className="agent-people">
-              {pilgrims.map((pilgrim) => (
-                <article key={pilgrim.pilgrim_id} className="agent-person">
-                  <strong>{pilgrim.pilgrim_name || t.dash.pilgrim}</strong>
-                  {pilgrim.pilgrim_nationality ? <p>{pilgrim.pilgrim_nationality}</p> : null}
-                  {pilgrim.pilgrim_phone ? <p>{pilgrim.pilgrim_phone}</p> : null}
-                  {pilgrim.pilgrim_email ? <p>{pilgrim.pilgrim_email}</p> : null}
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <section className="agent-card" id="announcement">
-            <h2>{t.dash.announcements}</h2>
-            {posted ? <p className="agent-note">{t.dash.posted}</p> : null}
-            <form className="agent-form" onSubmit={postAnnouncement}>
-              <label>
-                {t.dash.title}
-                <input value={title} onChange={(event) => setTitle(event.target.value)} required />
-              </label>
-              <label>
-                {t.dash.message}
-                <textarea value={body} onChange={(event) => setBody(event.target.value)} rows={4} required />
-              </label>
-              <button className="agent-btn agent-btn--navy" type="submit" disabled={posting}>
-                {posting ? t.dash.posting : t.dash.post}
-              </button>
-            </form>
-            <div className="agent-people">
-              {announcements.map((item) => (
-                <article key={item.id} className="agent-person">
-                  <strong>{item.title}</strong>
-                  <p>{item.body}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          {agent.agent_code ? (
-            <section className="agent-card" id="qr">
-              <h2>{t.dash.qr}</h2>
-              <p className="agent-lead">{joinUrl}</p>
-              {qrUrl ? <img className="agent-qr" src={qrUrl} alt={fill(t.dash.qrAlt, { code: agent.agent_code })} /> : null}
-              <button
-                className="agent-btn agent-btn--gold"
-                type="button"
-                disabled={!qrUrl}
-                onClick={() => downloadAgentPoster(agent.agent_code!, agent.business_name, qrUrl)}
-              >
-                {t.dash.downloadPoster}
-              </button>
+        <div className="z-grid">
+          {/* ─── Pilgrims who joined this agency ─── */}
+          <div className="z-col">
+            <section className="z-panel">
+              <div className="z-panel-head">
+                <h2>{t.zui.pilgrimsTitle}</h2>
+                <span className="z-chip">{pilgrims.length}</span>
+              </div>
+              <p className="z-muted" style={{ marginBottom: 8 }}>{t.zui.pilgrimsLead}</p>
+              {pilgrims.length === 0 ? (
+                <div className="z-empty">{t.zui.noPilgrims}</div>
+              ) : (
+                <div className="z-list">
+                  {pilgrims.map((pilgrim) => {
+                    const name = pilgrim.pilgrim_name || t.dash.pilgrim
+                    const contact = [pilgrim.pilgrim_phone, pilgrim.pilgrim_email].filter(Boolean).join(" · ")
+                    return (
+                      <div className="z-row" key={pilgrim.pilgrim_id}>
+                        <div className="z-avatar">{name.trim().charAt(0).toUpperCase()}</div>
+                        <div className="z-row-main">
+                          <strong>{name}</strong>
+                          <small>{[pilgrim.pilgrim_nationality, contact].filter(Boolean).join(" · ")}</small>
+                        </div>
+                        <div className="z-row-end">
+                          <small style={{ fontWeight: 500, color: "#5C6B7A" }}>
+                            {fill(t.zui.joined, { date: formatDate(pilgrim.created_at) })}
+                          </small>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
             </section>
-          ) : null}
+          </div>
 
-          <section className="agent-card">
-            <h2>{t.dash.appear}</h2>
-            <div className="agent-preview">
-              {agent.logo_url ? <img className="agent-logo" src={agent.logo_url} alt="" /> : null}
-              <h3>
-                {agent.business_name || t.common.agency}
-                {agent.verified ? <VerifiedCheck /> : null}
-              </h3>
-              {agent.owner_name ? <p>{agent.owner_name}</p> : null}
-              <p>
-                {agent.verified ? `${t.dash.verified} · ` : ""}
-                {agent.plan === "pro" || agent.plan === "featured" ? t.settings.featured : t.settings.listed}
-                {agent.country ? ` · ${agent.country}` : ""}
-              </p>
-              {agent.cities?.length ? <p>{citiesToText(agent.cities)}</p> : null}
-              {agent.description ? <p>{agent.description}</p> : null}
-              {agent.phone ? <p>{fill(t.dash.call, { phone: agent.phone })}</p> : null}
-              {agent.whatsapp ? <p>{fill(t.dash.whatsapp, { phone: agent.whatsapp })}</p> : null}
-              {agent.email ? <p>{fill(t.dash.email, { email: agent.email })}</p> : null}
-              {agent.website ? <p>{fill(t.dash.website, { url: agent.website })}</p> : null}
-              {agent.agent_code ? <p className="agent-code-display">{agent.agent_code}</p> : null}
-            </div>
-          </section>
+          {/* ─── Updates to pilgrims + QR ─── */}
+          <div className="z-col">
+            <section className="z-panel" id="updates">
+              <div className="z-panel-head"><h2>{t.zui.updatesTitle}</h2></div>
+              <p className="z-muted" style={{ marginBottom: 10 }}>{t.zui.updatesLead}</p>
+              {posted ? <p className="agent-note">{t.dash.posted}</p> : null}
+              <form className="z-form" onSubmit={postAnnouncement}>
+                <input placeholder={t.dash.title} value={title} onChange={(event) => setTitle(event.target.value)} required />
+                <textarea placeholder={t.dash.message} value={body} onChange={(event) => setBody(event.target.value)} rows={4} required />
+                <button className="z-btn z-btn--navy" type="submit" disabled={posting}>
+                  {posting ? t.dash.posting : t.dash.post}
+                </button>
+              </form>
+              {announcements.length === 0 ? (
+                <div className="z-empty">{t.zui.noUpdates}</div>
+              ) : (
+                <div className="z-list">
+                  {announcements.map((item) => (
+                    <div className="z-row" key={item.id} style={{ alignItems: "flex-start" }}>
+                      <div className="z-row-main">
+                        <strong>{item.title}</strong>
+                        <small style={{ whiteSpace: "normal" }}>{item.body}</small>
+                        <small>{formatDate(item.created_at)}</small>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+            <QrPanel agent={agent} />
+          </div>
         </div>
-      </section>
+      </div>
     </main>
   )
 }

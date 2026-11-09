@@ -56,11 +56,13 @@ export default function AgentZoneShell({ children }: { children: React.ReactNode
     router.replace("/agents/login")
   }
 
+  // Main sections first; plan & billing last (it's not something agents use every day).
   const links = [
-    { href: "/agents/home", label: t.zone.home },
-    { href: "/agents/dashboard", label: t.zone.dashboard },
-    { href: "/agents/billing", label: t.pay.tab },
-    { href: "/agents/settings", label: t.zone.settings },
+    { href: "/agents/home", label: t.zui.navHome },
+    { href: "/agents/dashboard", label: t.zui.navPilgrims },
+    { href: "/agents/earnings", label: t.zui.navEarnings },
+    { href: "/agents/settings", label: t.zui.navProfile },
+    { href: "/agents/billing", label: t.zui.navPlan },
     ...(isAdmin ? [{ href: "/admin/agents", label: t.zone.admin }] : []),
   ]
   const displayName = businessName || email
@@ -86,6 +88,10 @@ export default function AgentZoneShell({ children }: { children: React.ReactNode
   return (
     <div className="agent-zone">
       <style>{`
+        /* Soft grey page so the white cards stand out (app look) on every Agent Zone page. */
+        .agent-zone { background: #F4F6FA; min-height: 100vh; }
+        .agent-zone .agent-page { background: transparent; }
+        .agent-zone .agent-card { box-shadow: none; border: 1px solid #E3E8EF; border-radius: 18px; }
         .agent-zone-header { background: #1E3A5F; color: #fff; position: sticky; top: 0; z-index: 50; }
         .agent-zone-header a, .agent-zone-header button { color: #fff; background: transparent; text-decoration: none; }
         .agent-zone-header-inner { width: min(1100px, calc(100% - 32px)); margin: 0 auto; min-height: 64px; display: flex; align-items: center; gap: 20px; }

@@ -11,6 +11,8 @@ import { useAgentSession } from "../../useAgentSession"
 import PlanCard from "../../PlanCard"
 import AgentHowItWorks from "../../AgentHowItWorks"
 import { WIZARD_CSS } from "../../agentStyles"
+import { ZONE_CSS } from "../zoneUi"
+import { ListingPanel, QrPanel, RenewAlert, ZoneHead, sumText, useEarnings } from "../ZoneBits"
 
 type HomeStats = {
   pilgrim_count: number
@@ -74,6 +76,7 @@ export default function Home() {
   const { t } = useT()
   const { agent, isAdmin, loading, error } = useAgentSession()
   const [stats, setStats] = useState<HomeStats | null>(null)
+  const earnings = useEarnings(agent && agentHomeMode(agent) === "active" ? agent.id : null)
 
   useEffect(() => {
     if (!agent || agentHomeMode(agent) !== "active") return
@@ -125,6 +128,97 @@ export default function Home() {
 
   const mode = agentHomeMode(agent)
   const docsComplete = verificationGaps(agent).length === 0
+
+  // ─── Active agency: app-style overview ───────────────────────────────────
+  if (mode === "active") {
+    const premiumCount = earnings ? earnings.reduce((n, r) => n + r.premium_pilgrims, 0) : null
+    return (
+      <main className="z-page">
+        <style>{ZONE_CSS}</style>
+        <div className="z-wrap">
+          <ZoneHead agent={agent} subtitle={t.zui.welcome} />
+          {error ? <p className="agent-error">{error}</p> : null}
+          <RenewAlert agent={agent} />
+
+          {/* Numbers at a glance */}
+          <div className="z-kpis">
+            <div className="z-kpi z-kpi--navy">
+              <span>{t.zui.pilgrims}</span>
+              <strong>{stats ? stats.pilgrim_count : "…"}</strong>
+            </div>
+            <div className="z-kpi">
+              <span>{t.zui.onPremium}</span>
+              <strong>{premiumCount ?? "…"}</strong>
+            </div>
+            <div className="z-kpi">
+              <span>{t.zui.contacts}</span>
+              <strong>{stats ? stats.leads_this_month : "…"}</strong>
+            </div>
+            <div className="z-kpi">
+              <span>{t.zui.ready}</span>
+              <strong>{sumText(earnings, "ready")}</strong>
+            </div>
+          </div>
+
+          <div className="z-grid">
+            <div className="z-col">
+              {/* Shortcuts to everything else */}
+              <section className="z-panel">
+                <div className="z-panel-head"><h2>{t.zui.quick}</h2></div>
+                <div className="z-actions">
+                  <a className="z-action" href="/agents/dashboard#updates">
+                    <strong>{t.zui.postUpdate}</strong>
+                    <small>{t.zui.postUpdateSub}</small>
+                  </a>
+                  <a className="z-action" href="/agents/dashboard">
+                    <strong>{t.zui.seePilgrims}</strong>
+                    <small>{t.zui.seePilgrimsSub}</small>
+                  </a>
+                  <a className="z-action" href="/agents/earnings">
+                    <strong>{t.zui.seeEarnings}</strong>
+                    <small>{t.zui.seeEarningsSub}</small>
+                  </a>
+                  <a className="z-action" href="/agents/settings">
+                    <strong>{t.zui.editProfile}</strong>
+                    <small>{t.zui.editProfileSub}</small>
+                  </a>
+                </div>
+              </section>
+
+              {/* Earnings summary */}
+              <section className="z-panel">
+                <div className="z-panel-head">
+                  <h2>{t.zui.earnTitle}</h2>
+                  <a className="z-link" href="/agents/earnings">{t.zui.seeEarnings} →</a>
+                </div>
+                <div className="z-kpis" style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))", marginBottom: 8 }}>
+                  <div className="z-kpi"><span>{t.zui.pending}</span><strong style={{ fontSize: 20 }}>{sumText(earnings, "pending")}</strong></div>
+                  <div className="z-kpi"><span>{t.zui.ready}</span><strong style={{ fontSize: 20 }}>{sumText(earnings, "ready")}</strong></div>
+                  <div className="z-kpi"><span>{t.zui.paid}</span><strong style={{ fontSize: 20 }}>{sumText(earnings, "paid")}</strong></div>
+                </div>
+                <p className="z-muted">{t.zui.earnLead}</p>
+              </section>
+
+              {!docsComplete ? (
+                <section className="z-panel">
+                  <div className="z-panel-head">
+                    <h2>{t.home.faster}</h2>
+                    <a className="z-link" href="/agents/settings">{t.home.docsLink}</a>
+                  </div>
+                  <DocChecklist agent={agent} />
+                </section>
+              ) : null}
+            </div>
+
+            <div className="z-col">
+              <QrPanel agent={agent} />
+              <ListingPanel agent={agent} />
+            </div>
+          </div>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="agent-page">
@@ -184,34 +278,6 @@ export default function Home() {
             </>
           ) : null}
 
-          {mode === "active" ? (
-            <>
-              <div className="agent-summary">
-                <div>
-                  <span>{t.home.pilgrims}</span>
-                  <strong>{stats ? stats.pilgrim_count : "…"}</strong>
-                </div>
-                <div>
-                  <span>{t.home.contacts}</span>
-                  <strong>{stats ? stats.leads_this_month : "…"}</strong>
-                </div>
-                <div>
-                  <span>{t.home.plan}</span>
-                  <strong>{agent.plan === "pro" || agent.plan === "featured" ? t.settings.featured : t.settings.listed}</strong>
-                </div>
-                <div>
-                  <span>{t.home.paidUntil}</span>
-                  <strong>{agent.paid_until ? formatDate(agent.paid_until) : t.settings.notSet}</strong>
-                </div>
-              </div>
-              <div className="agent-actions">
-                <a className="agent-btn agent-btn--gold" href="/agents/dashboard#qr">{t.home.shareQr}</a>
-                <a className="agent-btn agent-btn--line" href="/agents/billing">{t.pay.tab}</a>
-                <a className="agent-btn agent-btn--navy" href="/agents/dashboard#announcement">{t.home.postAnnouncement}</a>
-              </div>
-            </>
-          ) : null}
-
           <AgentHowItWorks
             compact
             done={[
@@ -219,8 +285,8 @@ export default function Home() {
               docsComplete,
               Boolean(agent.verified),
               Boolean(agent.paid_until && agent.paid_until.slice(0, 10) >= new Date().toISOString().slice(0, 10)),
-              mode === "active" && Boolean(stats && (stats.leads_this_month > 0 || stats.pilgrim_count > 0)),
-              mode === "active",
+              false, // first pilgrims/contacts: only possible once active
+              false, // live: this page only shows before the agency is active
             ]}
           />
         </div>
