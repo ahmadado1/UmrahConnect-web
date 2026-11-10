@@ -7,7 +7,7 @@ import { getSupabase } from "@/lib/supabaseBrowser"
 import { useAgentSession } from "../../useAgentSession"
 import { formatDate } from "@/lib/agentFormat"
 import { ZONE_CSS } from "../zoneUi"
-import { QrPanel, RenewAlert, ZoneHead } from "../ZoneBits"
+import { QrPanel, RenewAlert, ZoneHead, ZoneSkeleton } from "../ZoneBits"
 
 function AdminHomeCard() {
   const { t } = useT()
@@ -106,7 +106,7 @@ export default function Dashboard() {
   }
 
   if (loading) {
-    return <main className="agent-page"><p className="agent-status-line">{t.dash.loading}</p></main>
+    return <ZoneSkeleton />
   }
 
   if (!agent) {

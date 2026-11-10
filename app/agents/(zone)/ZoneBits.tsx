@@ -9,6 +9,7 @@ import { fill, useT } from "@/lib/i18n/I18nProvider"
 import { getSupabase } from "@/lib/supabaseBrowser"
 import { downloadAgentPoster, useAgentQr } from "../poster"
 import VerifiedCheck from "../VerifiedCheck"
+import { ZONE_CSS } from "./zoneUi"
 
 export const isFeatured = (agent: Pick<OwnAgent, "plan">) => agent.plan === "pro" || agent.plan === "featured"
 
@@ -182,4 +183,42 @@ export function sumText(rows: EarnSummary[] | null, key: "pending" | "ready" | "
   if (!rows) return "…"
   const parts = rows.filter((r) => r[key] > 0).map((r) => money(r[key], r.currency))
   return parts.length ? parts.join(" + ") : money(0, "USD")
+}
+
+// ─── Loading placeholder: grey shapes in the page's layout (instead of a "Loading…" line) ───
+export function ZoneSkeleton() {
+  return (
+    <main className="z-page" aria-busy="true" aria-label="Loading">
+      <style>{ZONE_CSS}</style>
+      <style>{`
+        @keyframes z-shimmer { 0% { background-position: -400px 0 } 100% { background-position: 400px 0 } }
+        .z-sk { background: linear-gradient(90deg, #E8EDF3 0px, #F3F6F9 120px, #E8EDF3 240px); background-size: 800px 100%; animation: z-shimmer 1.2s infinite linear; border-radius: 12px; }
+      `}</style>
+      <div className="z-wrap">
+        <div className="z-head">
+          <div className="z-head-left">
+            <div className="z-sk" style={{ width: 52, height: 52, borderRadius: 14 }} />
+            <div>
+              <div className="z-sk" style={{ width: 220, height: 22, marginBottom: 8 }} />
+              <div className="z-sk" style={{ width: 140, height: 14 }} />
+            </div>
+          </div>
+        </div>
+        <div className="z-kpis">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="z-sk" style={{ height: 92, borderRadius: 16 }} />
+          ))}
+        </div>
+        <div className="z-grid">
+          <div className="z-col">
+            <div className="z-sk" style={{ height: 220, borderRadius: 18 }} />
+            <div className="z-sk" style={{ height: 160, borderRadius: 18 }} />
+          </div>
+          <div className="z-col">
+            <div className="z-sk" style={{ height: 320, borderRadius: 18 }} />
+          </div>
+        </div>
+      </div>
+    </main>
+  )
 }

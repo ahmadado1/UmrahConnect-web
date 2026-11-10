@@ -17,6 +17,19 @@ export default function AgentZoneShell({ children }: { children: React.ReactNode
   const [email, setEmail] = useState("")
   const [verified, setVerified] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
+  // Don't show any menu until we know if this is an admin or an agency (no flash of the
+  // agency menu for admins). Remembered for this browser so it's instant next time.
+  const [roleKnown, setRoleKnown] = useState(false)
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("agent_zone_role")
+      if (saved === "admin" || saved === "agent") {
+        setIsAdmin(saved === "admin")
+        setRoleKnown(true)
+      }
+    } catch {}
+  }, [])
 
   useEffect(() => {
     setOpen(false)
@@ -31,7 +44,14 @@ export default function AgentZoneShell({ children }: { children: React.ReactNode
         if (!session || cancelled) return
         if (!cancelled) setEmail(session.user.email || "")
         const { data: profile } = await supabase.from("profiles").select("role").eq("id", session.user.id).maybeSingle()
-        if (!cancelled) setIsAdmin(profile?.role === "admin")
+        if (!cancelled) {
+          const admin = profile?.role === "admin"
+          setIsAdmin(admin)
+          setRoleKnown(true)
+          try {
+            window.localStorage.setItem("agent_zone_role", admin ? "admin" : "agent")
+          } catch {}
+        }
         const agent = await loadOwnAgent(supabase)
         if (!cancelled) {
           setBusinessName(agent?.business_name || "")
@@ -41,6 +61,7 @@ export default function AgentZoneShell({ children }: { children: React.ReactNode
         if (!cancelled) {
           setBusinessName("")
           setVerified(false)
+          setRoleKnown(true) // show the normal menu rather than none
         }
       }
     }
@@ -51,6 +72,9 @@ export default function AgentZoneShell({ children }: { children: React.ReactNode
   }, [pathname])
 
   async function logOut() {
+    try {
+      window.localStorage.removeItem("agent_zone_role")
+    } catch {}
     const supabase = getSupabase()
     await supabase.auth.signOut()
     router.replace("/agents/login")
@@ -82,7 +106,7 @@ export default function AgentZoneShell({ children }: { children: React.ReactNode
 
   const tabs = (
     <>
-      {links.map((link) => (
+      {(roleKnown ? links : []).map((link) => (
         <a key={link.href} href={link.href} aria-current={pathname === link.href ? "page" : undefined}>
           {link.label}
         </a>

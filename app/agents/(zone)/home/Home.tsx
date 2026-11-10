@@ -13,7 +13,7 @@ import AgentHowItWorks from "../../AgentHowItWorks"
 import { WIZARD_CSS } from "../../agentStyles"
 import { ZONE_CSS } from "../zoneUi"
 import AdminHome from "./AdminHome"
-import { ListingPanel, QrPanel, RenewAlert, ZoneHead, sumText, useEarnings } from "../ZoneBits"
+import { ListingPanel, QrPanel, RenewAlert, ZoneHead, sumText, useEarnings, ZoneSkeleton } from "../ZoneBits"
 
 type HomeStats = {
   pilgrim_count: number
@@ -119,7 +119,7 @@ export default function Home() {
   }, [agent])
 
   if (loading) {
-    return <main className="agent-page"><p className="agent-status-line">{t.home.loading}</p></main>
+    return <ZoneSkeleton />
   }
 
   // Admins (UmrahConnect team) see the admin dashboard, never the agency tools.

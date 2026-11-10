@@ -8,7 +8,7 @@ import { useT } from "@/lib/i18n/I18nProvider"
 import { getSupabase } from "@/lib/supabaseBrowser"
 import { useAgentSession } from "../../useAgentSession"
 import { ZONE_CSS } from "../zoneUi"
-import { RenewAlert, ZoneHead, money, sumText, useEarnings } from "../ZoneBits"
+import { RenewAlert, ZoneHead, money, sumText, useEarnings, ZoneSkeleton } from "../ZoneBits"
 
 type Commission = {
   id: string
@@ -51,7 +51,7 @@ export default function Earnings() {
     }
   }, [agent])
 
-  if (loading) return <main className="agent-page"><p className="agent-status-line">{t.dash.loading}</p></main>
+  if (loading) return <ZoneSkeleton />
   if (!agent) return <main className="agent-page">{error ? <p className="agent-error">{error}</p> : null}</main>
 
   const premiumCount = totals ? totals.reduce((n, r) => n + r.premium_pilgrims, 0) : null
