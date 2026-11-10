@@ -4,7 +4,6 @@ import { cookies, headers } from "next/headers";
 import { I18nProvider } from "@/lib/i18n/I18nProvider";
 import { isRtl, resolveLang } from "@/lib/i18n/languages";
 import TravelpayoutsScript from "./component/TravelpayoutsScript";
-import HubSpotChat from "./component/HubSpotChat";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -50,7 +49,6 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <I18nProvider initialLang={lang}>{children}</I18nProvider>
         <TravelpayoutsScript />
-        <HubSpotChat />
       </body>
     </html>
   );

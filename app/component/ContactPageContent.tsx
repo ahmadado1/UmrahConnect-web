@@ -3,6 +3,7 @@
 import ContactForm from './contact';
 import ContactInfo from './ContactInfo';
 import { Reveal } from './Reveal';
+import HubSpotChat from './HubSpotChat';
 
 export default function ContactPageContent() {
   return (
@@ -29,6 +30,19 @@ export default function ContactPageContent() {
         </div>
 
         <ContactInfo />
+
+        {/* Live chat with the UmrahConnect team (HubSpot), right on this page */}
+        <Reveal threshold={0.1} slideFrom="up" delay={80}>
+          <div style={{ textAlign: 'center', margin: '8px 0 20px' }}>
+            <h2 style={{ color: '#1E3A5F', fontSize: '22px', fontWeight: '600', margin: '0 0 8px' }}>
+              Chat with us
+            </h2>
+            <p style={{ color: '#666', fontSize: '15px', lineHeight: '1.7', margin: 0 }}>
+              Ask anything about UmrahConnect, Premium or agencies. If we're offline, leave your email and we'll reply.
+            </p>
+          </div>
+        </Reveal>
+        <HubSpotChat />
 
         <Reveal threshold={0.1} slideFrom="up" delay={100}>
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
