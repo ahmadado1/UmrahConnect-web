@@ -292,7 +292,7 @@ export default function Billing() {
             {isAdmin ? (
               <section className="agent-card">
                 <h2>{t.home.adminTitle}</h2>
-                <a className="agent-btn agent-btn--navy" href="/admin/agents#payments">{t.home.manage}</a>
+                <a className="agent-btn agent-btn--navy" href="/agents/admin#payments">{t.home.manage}</a>
               </section>
             ) : null}
           </div>

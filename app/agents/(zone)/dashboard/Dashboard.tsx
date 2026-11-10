@@ -17,7 +17,7 @@ function AdminHomeCard() {
         <div className="page-container agent-dashboard">
           <section className="agent-card">
             <h2>{t.home.adminTitle}</h2>
-            <a className="agent-btn agent-btn--navy" href="/admin/agents">{t.home.manage}</a>
+            <a className="agent-btn agent-btn--navy" href="/agents/admin">{t.home.manage}</a>
           </section>
         </div>
       </section>

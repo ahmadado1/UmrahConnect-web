@@ -95,7 +95,7 @@ export default function AdminHome({ email }: { email: string }) {
             <h1>UmrahConnect admin</h1>
             <p>{email}</p>
           </div>
-          <a className="z-btn z-btn--gold" href="/admin/agents">Manage agencies →</a>
+          <a className="z-btn z-btn--gold" href="/agents/admin">Manage agencies →</a>
         </div>
         {error ? <p className="agent-error">{error}</p> : null}
 
@@ -113,7 +113,7 @@ export default function AdminHome({ email }: { email: string }) {
             <section className="z-panel">
               <div className="z-panel-head">
                 <h2>Waiting for review</h2>
-                <a className="z-link" href="/admin/agents">Review →</a>
+                <a className="z-link" href="/agents/admin">Review →</a>
               </div>
               {pending.length === 0 ? (
                 <div className="z-empty">No agencies waiting. 🎉</div>
@@ -186,11 +186,11 @@ export default function AdminHome({ email }: { email: string }) {
             <section className="z-panel">
               <div className="z-panel-head"><h2>Shortcuts</h2></div>
               <div className="z-actions">
-                <a className="z-action" href="/admin/agents">
+                <a className="z-action" href="/agents/admin">
                   <strong>Agencies</strong>
                   <small>Verify, plans, extend, suspend</small>
                 </a>
-                <a className="z-action" href="/admin/agents#payments">
+                <a className="z-action" href="/agents/admin#payments">
                   <strong>Payments</strong>
                   <small>Confirm manual transfers</small>
                 </a>
@@ -198,7 +198,7 @@ export default function AdminHome({ email }: { email: string }) {
                   <strong>My profile</strong>
                   <small>Name and details</small>
                 </a>
-                <a className="z-action" href="/admin/agents#announce">
+                <a className="z-action" href="/agents/admin#announce">
                   <strong>Announcements</strong>
                   <small>Message all agencies</small>
                 </a>

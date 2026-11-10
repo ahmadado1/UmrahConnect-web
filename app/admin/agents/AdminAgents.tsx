@@ -110,7 +110,12 @@ function AdminHeader() {
   )
 }
 
-export default function AdminAgents() {
+/**
+ * The agencies admin page.
+ * embedded = shown inside the Agent Zone (same header and menu as Home/Profile), so admins
+ * never leave it. Without it (old /admin/agents link) it keeps its own small header.
+ */
+export default function AdminAgents({ embedded = false }: { embedded?: boolean }) {
   const [ready, setReady] = useState(false)
   const [allowed, setAllowed] = useState(false)
   const [agents, setAgents] = useState<AdminAgent[]>([])
@@ -315,8 +320,8 @@ export default function AdminAgents() {
   }
 
   return (
-    <div className="agent-zone">
-      <AdminHeader />
+    <div className={embedded ? undefined : "agent-zone"}>
+      {embedded ? null : <AdminHeader />}
       <main className="agent-page">
       <section className="agent-section">
         <div className="page-container agent-dashboard">
@@ -328,9 +333,13 @@ export default function AdminAgents() {
               {toast.message}
             </p>
           ) : null}
-          <AdminPayments onChanged={() => { loadAgents().catch(() => undefined) }} />
-          <AdminPremiumPayments />
-          <AdminAnnounce />
+          <div id="payments">
+            <AdminPayments onChanged={() => { loadAgents().catch(() => undefined) }} />
+            <AdminPremiumPayments />
+          </div>
+          <div id="announce">
+            <AdminAnnounce />
+          </div>
           <label className="agent-filter">
             Status
             <select value={filter} onChange={(event) => setFilter(event.target.value as (typeof FILTERS)[number])}>

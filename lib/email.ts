@@ -489,7 +489,7 @@ export async function sendAdminPaymentNotice(info: { businessName: string; amoun
       (${escapeHtml(info.planName)}, ${info.months} month${info.months === 1 ? "" : "s"}).</p>
     <p style="margin:0 0 8px;color:${BRAND.muted};">Reference: ${escapeHtml(info.reference || "—")}</p>
     <p style="margin:0 0 8px;color:${BRAND.muted};">Check your ${escapeHtml(info.method)} account, then confirm or reject it.</p>
-    ${ctaButton("Open payments", `${SITE_URL}/admin/agents#payments`)}
+    ${ctaButton("Open payments", `${SITE_URL}/agents/admin#payments`)}
     `,
     { title: "New payment", preheader: `${info.businessName} paid ${info.amount} by ${info.method}` },
   )
@@ -564,7 +564,7 @@ export async function sendAdminInfoUpdatedNotice(info: { businessName: string; r
     <h1 style="margin:0 0 16px;font-size:22px;color:${BRAND.navy};">Application updated</h1>
     <p style="margin:0 0 8px;color:${BRAND.text};"><strong>${escapeHtml(info.businessName)}</strong> updated its application.</p>
     <p style="margin:0 0 8px;color:${BRAND.muted};">You had asked: ${escapeHtml(info.request)}</p>
-    ${ctaButton("Review agents", `${SITE_URL}/admin/agents`)}
+    ${ctaButton("Review agents", `${SITE_URL}/agents/admin`)}
     `,
     { title: "Application updated", preheader: `${info.businessName} updated its application` },
   )

@@ -1,9 +1,6 @@
-import AdminAgents from "./AdminAgents"
+import { redirect } from "next/navigation"
 
-export const metadata = {
-  title: "Agent admin | UmrahConnect",
-}
-
+// The admin page now lives inside the Agent Zone (same menu), at /agents/admin.
 export default function AdminAgentsPage() {
-  return <AdminAgents />
+  redirect("/agents/admin")
 }

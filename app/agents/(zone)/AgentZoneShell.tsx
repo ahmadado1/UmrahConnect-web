@@ -61,7 +61,7 @@ export default function AgentZoneShell({ children }: { children: React.ReactNode
     ? [
         // Admins: no agency tools (pilgrims, earnings, QR, billing).
         { href: "/agents/home", label: t.zui.navHome },
-        { href: "/admin/agents", label: t.zone.admin },
+        { href: "/agents/admin", label: t.zone.admin },
         { href: "/agents/settings", label: t.zui.navProfile },
       ]
     : [
