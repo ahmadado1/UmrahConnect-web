@@ -57,14 +57,27 @@ export default function AgentZoneShell({ children }: { children: React.ReactNode
   }
 
   // Main sections first; plan & billing last (it's not something agents use every day).
-  const links = [
-    { href: "/agents/home", label: t.zui.navHome },
-    { href: "/agents/dashboard", label: t.zui.navPilgrims },
-    { href: "/agents/earnings", label: t.zui.navEarnings },
-    { href: "/agents/settings", label: t.zui.navProfile },
-    { href: "/agents/billing", label: t.zui.navPlan },
-    ...(isAdmin ? [{ href: "/admin/agents", label: t.zone.admin }] : []),
-  ]
+  const links = isAdmin
+    ? [
+        // Admins: no agency tools (pilgrims, earnings, QR, billing).
+        { href: "/agents/home", label: t.zui.navHome },
+        { href: "/admin/agents", label: t.zone.admin },
+        { href: "/agents/settings", label: t.zui.navProfile },
+      ]
+    : [
+        { href: "/agents/home", label: t.zui.navHome },
+        { href: "/agents/dashboard", label: t.zui.navPilgrims },
+        { href: "/agents/earnings", label: t.zui.navEarnings },
+        { href: "/agents/settings", label: t.zui.navProfile },
+        { href: "/agents/billing", label: t.zui.navPlan },
+      ]
+
+  // Admins opening an agency-only page (old link/bookmark) go to their dashboard.
+  useEffect(() => {
+    if (isAdmin && ["/agents/dashboard", "/agents/earnings", "/agents/billing"].includes(pathname)) {
+      router.replace("/agents/home")
+    }
+  }, [isAdmin, pathname, router])
   const displayName = businessName || email
 
   const tabs = (
@@ -89,24 +102,27 @@ export default function AgentZoneShell({ children }: { children: React.ReactNode
     <div className="agent-zone">
       <style>{`
         /* Soft grey page so the white cards stand out (app look) on every Agent Zone page. */
-        .agent-zone { background: #F4F6FA; min-height: 100vh; }
+        .agent-zone { background: #F4F6FA; min-height: 100vh; font-family: var(--font-geist-sans), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
         .agent-zone .agent-page { background: transparent; }
         .agent-zone .agent-card { box-shadow: none; border: 1px solid #E3E8EF; border-radius: 18px; }
         .agent-zone-header { background: #1E3A5F; color: #fff; position: sticky; top: 0; z-index: 50; }
         .agent-zone-header a, .agent-zone-header button { color: #fff; background: transparent; text-decoration: none; }
-        .agent-zone-header-inner { width: min(1100px, calc(100% - 32px)); margin: 0 auto; min-height: 64px; display: flex; align-items: center; gap: 20px; }
+        .agent-zone-header-inner { width: min(1200px, calc(100% - 32px)); margin: 0 auto; min-height: 64px; display: flex; align-items: center; gap: 16px; }
         .agent-zone-brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; font-weight: 700; color: #fff; }
         .agent-zone-brand img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
         .agent-zone-tabs { display: flex; align-items: center; gap: 4px; }
-        .agent-zone-tabs a, .agent-zone-menu a { padding: 10px 14px; border-bottom: 2px solid transparent; font-weight: 650; font-size: 15px; color: #fff; }
+        .agent-zone-tabs a, .agent-zone-menu a { padding: 10px 12px; border-bottom: 2px solid transparent; font-weight: 650; font-size: 15px; color: #fff; white-space: nowrap; }
         .agent-zone-header a[aria-current="page"] { color: #C9A84C; border-bottom-color: #C9A84C; }
-        .agent-zone-side { margin-inline-start: auto; display: flex; align-items: center; gap: 16px; }
-        .agent-zone-name { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; color: #fff; }
+        .agent-zone-side { margin-inline-start: auto; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+        .agent-zone-name { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; color: #fff; }
         .agent-zone-identity { display: flex; align-items: center; gap: 8px; min-width: 0; }
         .agent-zone-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; background: #C9A84C; color: #1E3A5F; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.4; }
-        .agent-zone-header button { border: 1px solid rgba(255,255,255,0.55); border-radius: 999px; padding: 8px 16px; font: inherit; font-weight: 650; color: #fff; background: transparent; cursor: pointer; }
+        .agent-zone-header button { border: 1px solid rgba(255,255,255,0.55); border-radius: 999px; padding: 7px 14px; font: inherit; font-size: 14px; font-weight: 650; line-height: 1.2; color: #fff; background: transparent; cursor: pointer; white-space: nowrap; }
         .agent-zone-menu-btn, .agent-zone-menu { display: none; }
-        @media (max-width: 760px) {
+        @media (max-width: 1080px) {
+          .agent-zone-name { display: none; }
+        }
+        @media (max-width: 900px) {
           .agent-zone-tabs, .agent-zone-side { display: none; }
           .agent-zone-menu-btn { display: inline-flex; margin-inline-start: auto; }
           .agent-zone-menu { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 8px 16px 16px; border-top: 1px solid rgba(255,255,255,0.15); }

@@ -68,7 +68,7 @@ export default function AgentCodeCard({ code }: { code: string }) {
     async function load() {
       const supabase = getSupabase()
       const { data, error } = await supabase
-        .from("active_agents")
+        .from("agent_lookup")
         .select("business_name, country, cities, description, agent_code, plan, verified")
         .eq("agent_code", code)
         .limit(1)

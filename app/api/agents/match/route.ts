@@ -31,7 +31,7 @@ export async function GET(request: Request) {
     if (!click) return NextResponse.json({ match: null })
 
     const { data: agent } = await admin
-      .from("active_agents")
+      .from("agent_lookup")
       .select("agent_code, business_name")
       .eq("id", click.agent_id)
       .maybeSingle()

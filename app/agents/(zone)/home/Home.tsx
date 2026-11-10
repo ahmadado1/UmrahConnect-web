@@ -12,6 +12,7 @@ import PlanCard from "../../PlanCard"
 import AgentHowItWorks from "../../AgentHowItWorks"
 import { WIZARD_CSS } from "../../agentStyles"
 import { ZONE_CSS } from "../zoneUi"
+import AdminHome from "./AdminHome"
 import { ListingPanel, QrPanel, RenewAlert, ZoneHead, sumText, useEarnings } from "../ZoneBits"
 
 type HomeStats = {
@@ -74,7 +75,7 @@ function DocChecklist({ agent }: { agent: NonNullable<ReturnType<typeof useAgent
 
 export default function Home() {
   const { t } = useT()
-  const { agent, isAdmin, loading, error } = useAgentSession()
+  const { agent, isAdmin, loading, error, loginEmail } = useAgentSession()
   const [stats, setStats] = useState<HomeStats | null>(null)
   const earnings = useEarnings(agent && agentHomeMode(agent) === "active" ? agent.id : null)
 
@@ -120,6 +121,9 @@ export default function Home() {
   if (loading) {
     return <main className="agent-page"><p className="agent-status-line">{t.home.loading}</p></main>
   }
+
+  // Admins (UmrahConnect team) see the admin dashboard, never the agency tools.
+  if (isAdmin) return <AdminHome email={loginEmail} />
 
   if (!agent) {
     if (isAdmin) return <AdminHomeCard />

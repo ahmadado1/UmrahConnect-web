@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const admin = getSupabaseAdmin()
     // Only real, active agencies.
     const { data: agent } = await admin
-      .from("active_agents")
+      .from("agent_lookup")
       .select("id, agent_code")
       .eq("agent_code", code)
       .maybeSingle()
