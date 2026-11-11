@@ -68,7 +68,7 @@ const fr: Dictionary = {
     p5: "Alerte Miqat et widget de prière",
     p6: "Guide IA illimité",
     cta: "Voir Premium",
-    price: "À partir de 1,99 $ par mois",
+    price: "0,99 $ par mois",
     free: "L'audio du Coran, les horaires de prière et les guides Omra et Hajj restent gratuits pour tous.",
   },
   agentsBand: {
@@ -547,16 +547,26 @@ const fr: Dictionary = {
     loop: "Vos pèlerins rejoignent avec votre code → ils utilisent l’app et donnent leur avis → vous montez dans le classement → de nouveaux pèlerins vous trouvent.",
     whatsapp: "WhatsApp reste. UmrahConnect est l’outil qui vous apporte de nouveaux clients et une réputation, pas un remplacement de vos discussions.",
   },
+  founding: {
+    label: "AGENCES FONDATRICES",
+    title: "Gratuit pour les 100 premières agences",
+    lead: "Inscrivez-vous tant que c'est gratuit. Créez votre compte, envoyez vos documents, et votre agence apparaît dans l'application dès qu'elle est vérifiée.",
+    price: "Gratuit",
+    priceNote: "Sans carte, sans frais mensuels",
+    cta: "S'inscrire gratuitement",
+    spots: "Offre limitée aux 100 premières agences",
+    homeNote: "Votre agence est vérifiée. Les agences fondatrices sont gratuites : vous n'avez rien à payer. Si votre fiche n'est pas encore en ligne, contactez-nous et nous l'activerons.",
+  },
   agentHow: {
     done: "Fait",
     next: "Étape suivante",
     "title": "Comment ça marche",
     "lead": "De l’inscription à vos premiers pèlerins en six étapes.",
     "howLink": "Comment ça marche",
-    "pricingLink": "Tarifs",
+    "pricingLink": "Offre gratuite",
     "faqLink": "FAQ",
     "seePricing": "Voir les tarifs et le fonctionnement",
-    "faqTitle": "Questions sur les tarifs",
+    "faqTitle": "Questions fréquentes",
     "steps": [
       {
         "title": "Créez votre compte",
@@ -571,50 +581,38 @@ const fr: Dictionary = {
         "body": "Nous vérifions vos documents sous 2 jours ouvrables et vous envoyons un e-mail. Vous recevez le badge bleu ✓."
       },
       {
-        "title": "Choisissez une formule et payez",
-        "body": "Choisissez Listed ou Featured. Payez chaque mois par carte (automatique) ou par virement OPay ou Nita. Votre agence apparaît alors dans l’app."
+        "title": "En ligne, gratuitement",
+        "body": "Dès que vous êtes vérifié, votre agence apparaît dans l'application. Les agences fondatrices ne paient rien : ni carte, ni frais mensuels."
       },
       {
         "title": "Amenez vos pèlerins",
         "body": "Partagez votre code agent et votre affiche QR. Les pèlerins vous trouvent, vous appellent ou vous écrivent sur WhatsApp, et vous voyez chaque contact dans votre tableau de bord."
       },
       {
-        "title": "Restez visible",
-        "body": "Les paiements par carte se renouvellent seuls. Pour les virements, nous vous rappelons 7 jours et 1 jour avant votre date. Annulez quand vous voulez."
+        "title": "Gardez votre profil à jour",
+        "body": "Mettez à jour vos forfaits, prix et photos à tout moment dans l'Espace agence, et publiez des annonces pour vos pèlerins."
       }
     ],
     "faq": [
       {
-        "q": "Combien ça coûte ?",
-        "a": "Listed coûte {listed} par mois et Featured {featured} par mois. Les agences au Nigeria et au Niger peuvent aussi payer en naira ou en CFA."
+        "q": "C'est vraiment gratuit ?",
+        "a": "Oui. Les 100 premières agences inscrites sont gratuites : ni carte, ni frais mensuels."
       },
       {
-        "q": "Faut-il un compte PayPal ?",
-        "a": "Non. Vous pouvez payer avec n’importe quelle carte bancaire sur la page PayPal. Le paiement se renouvelle automatiquement chaque mois."
-      },
-      {
-        "q": "Comment annuler ?",
-        "a": "Dans l’Espace agent → Payer / Renouveler, appuyez sur « Annuler le paiement mensuel ». Vous pouvez aussi annuler dans votre compte PayPal (Paramètres → Paiements → Gérer les paiements automatiques). Vous restez visible jusqu’à votre date de fin et vous n’êtes plus débité."
-      },
-      {
-        "q": "Puis-je changer de formule ?",
-        "a": "Oui. Dans Payer / Renouveler, abonnez-vous à l’autre formule. Nous arrêtons l’ancien paiement mensuel pour vous."
-      },
-      {
-        "q": "Comment fonctionnent les virements ?",
-        "a": "Choisissez la formule et le nombre de mois, envoyez le montant exact au compte OPay ou Nita indiqué, puis ajoutez le reçu. Nous le confirmons sous 1 jour ouvrable et vous envoyons un e-mail."
-      },
-      {
-        "q": "Que se passe-t-il si je ne renouvelle pas ?",
-        "a": "Nous vous rappelons 7 jours et 1 jour avant. Après la date, votre annonce est masquée dans l’app, mais votre profil est conservé. Payez à nouveau quand vous voulez pour revenir."
-      },
-      {
-        "q": "Puis-je être remboursé ?",
-        "a": "Si vous avez été débité par erreur, contactez-nous sous 14 jours et nous vous rembourserons. Un mois déjà commencé n’est pas remboursé."
+        "q": "De quoi ai-je besoin pour m'inscrire ?",
+        "a": "Votre registre de commerce, votre licence Hajj/Omra, la pièce d'identité du propriétaire et une photo de votre bureau. Vous les envoyez dans l'Espace agence et ils restent privés."
       },
       {
         "q": "Quand les pèlerins voient-ils mon agence ?",
-        "a": "Après la vérification de vos documents et le paiement de votre formule. Les agences Featured apparaissent en premier dans leur pays."
+        "a": "Dès que nous avons vérifié vos documents, en général sous 2 jours ouvrés. Nous vous envoyons un e-mail dès que vous êtes en ligne."
+      },
+      {
+        "q": "Et après les 100 premières ?",
+        "a": "Des formules payantes pourront arriver plus tard pour les nouvelles agences. Si quelque chose change pour les agences fondatrices, nous vous prévenons au moins 30 jours avant."
+      },
+      {
+        "q": "Puis-je perdre ma fiche ?",
+        "a": "Seulement si vos documents s'avèrent faux ou si vous enfreignez nos règles. Gardez vos informations à jour et votre fiche reste en ligne."
       }
     ]
   },

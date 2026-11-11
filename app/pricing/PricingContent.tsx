@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { AGENT_PLANS } from "@/lib/agentPlans"
 import { useT } from "@/lib/i18n/I18nProvider"
-import PlanCard from "../agents/PlanCard"
+import FoundingOffer from "../agents/FoundingOffer"
 import PremiumCard from "../account/PremiumCard"
 import PlanCompare from "./PlanCompare"
 import AgentFaq from "../agents/AgentFaq"
@@ -60,7 +59,7 @@ export default function PricingContent() {
         <div className="page-container">
           {tab === "pilgrims" ? (
             <>
-              {/* Free + the two Premium cards, side by side */}
+              {/* Free + Premium (monthly only), side by side */}
               <div className="plan-cards">
                 <article className="plan-card">
                   <p className="plan-card-brand">UmrahConnect</p>
@@ -91,19 +90,13 @@ export default function PricingContent() {
                   <Link className="plan-card-cta" href="/#download">{t.pricing.getApp}</Link>
                 </article>
                 <PremiumCard plan="monthly" href="/account" />
-                <PremiumCard plan="yearly" href="/account" />
               </div>
               {/* Free vs Premium, feature by feature */}
               <PlanCompare />
             </>
           ) : (
             <>
-              <div className="plan-cards">
-                {AGENT_PLANS.map((plan) => (
-                  <PlanCard key={plan.id} plan={plan.id} href="/agents/signup" />
-                ))}
-              </div>
-              <a className="agent-btn agent-btn--navy" href="/agents/signup">{t.pricing.agencyCta}</a>
+              <FoundingOffer />
               <AgentFaq />
             </>
           )}

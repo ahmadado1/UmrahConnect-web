@@ -68,7 +68,7 @@ const tr: Dictionary = {
     p5: "Mikat uyarısı ve namaz widget'ı",
     p6: "Sınırsız yapay zeka rehberi",
     cta: "Premium'u görün",
-    price: "Aylık 1,99 $'dan başlayan",
+    price: "Aylık 0,99 $",
     free: "Kur'an sesi, namaz vakitleri ve umre ile hac rehberleri herkes için ücretsizdir.",
   },
   agentsBand: {
@@ -547,16 +547,26 @@ const tr: Dictionary = {
     loop: "Hacı adaylarınız kodunuzla katılır → uygulamayı kullanır ve yorum bırakır → siz yükselirsiniz → yeni hacı adayları sizi bulur.",
     whatsapp: "WhatsApp kalıyor. UmrahConnect size yeni müşteri ve itibar kazandıran araçtır, sohbetin yerine geçmez.",
   },
+  founding: {
+    label: "KURUCU ACENTELER",
+    title: "İlk 100 acenteye ücretsiz",
+    lead: "Ücretsizken hemen katılın. Kaydolun, belgelerinizi yükleyin; doğrulandığınız anda acenteniz uygulamada görünür.",
+    price: "Ücretsiz",
+    priceNote: "Kart yok, aylık ücret yok",
+    cta: "Ücretsiz katıl",
+    spots: "İlk 100 acenteyle sınırlı",
+    homeNote: "Acenteniz doğrulandı. Kurucu acenteler ücretsizdir, ödemeniz gereken bir şey yok. İlanınız henüz yayında değilse bize ulaşın, hemen açalım.",
+  },
   agentHow: {
     done: "Tamam",
     next: "Sıradaki adım",
     "title": "Nasıl çalışır",
     "lead": "Kayıttan ilk hacı adaylarınıza altı adımda.",
     "howLink": "Nasıl çalışır",
-    "pricingLink": "Fiyatlar",
+    "pricingLink": "Ücretsiz teklif",
     "faqLink": "SSS",
     "seePricing": "Fiyatları ve işleyişi görün",
-    "faqTitle": "Fiyatlarla ilgili sorular",
+    "faqTitle": "Sık sorulan sorular",
     "steps": [
       {
         "title": "Hesabınızı oluşturun",
@@ -571,50 +581,38 @@ const tr: Dictionary = {
         "body": "Belgelerinizi 2 iş günü içinde kontrol eder ve size e-posta göndeririz. Mavi ✓ rozeti alırsınız."
       },
       {
-        "title": "Paket seçin ve ödeyin",
-        "body": "Listed veya Featured seçin. Her ay kartla (otomatik) ya da OPay veya Nita havalesiyle ödeyin. Acenteniz uygulamada yayına girer."
+        "title": "Ücretsiz yayına girin",
+        "body": "Doğrulandığınız anda acenteniz uygulamada görünür. Kurucu acenteler hiçbir ücret ödemez: kart yok, aylık ücret yok."
       },
       {
         "title": "Hacı adaylarınızı getirin",
         "body": "Acente kodunuzu ve QR afişinizi paylaşın. Hacı adayları sizi bulur, arar veya WhatsApp'tan yazar; her iletişimi panelinizde görürsünüz."
       },
       {
-        "title": "Listede kalın",
-        "body": "Kart ödemeleri kendiliğinden yenilenir. Havalelerde tarihinizden 7 gün ve 1 gün önce hatırlatırız. İstediğiniz zaman iptal edin."
+        "title": "Profilinizi güncel tutun",
+        "body": "Paketlerinizi, fiyatlarınızı ve fotoğraflarınızı Acente Alanı'ndan istediğiniz zaman güncelleyin ve hacılarınıza duyuru paylaşın."
       }
     ],
     "faq": [
       {
-        "q": "Ücreti ne kadar?",
-        "a": "Listed aylık {listed}, Featured aylık {featured}. Nijerya ve Nijer'deki acenteler naira veya CFA ile de ödeyebilir."
+        "q": "Gerçekten ücretsiz mi?",
+        "a": "Evet. Katılan ilk 100 acente ücretsizdir: kart yok, aylık ücret yok."
       },
       {
-        "q": "PayPal hesabı gerekir mi?",
-        "a": "Hayır. PayPal sayfasında herhangi bir banka veya kredi kartıyla ödeyebilirsiniz. Her ay otomatik yenilenir."
+        "q": "Katılmak için neye ihtiyacım var?",
+        "a": "Ticaret sicil belgeniz, Hac/Umre lisansınız, sahibin kimliği ve ofisinizin bir fotoğrafı. Bunları Acente Alanı'na yüklersiniz ve gizli kalır."
       },
       {
-        "q": "Nasıl iptal ederim?",
-        "a": "Acente Alanı → Öde / Yenile bölümünde “Aylık ödemeyi iptal et”e dokunun. PayPal hesabınızdan da iptal edebilirsiniz (Ayarlar → Ödemeler → Otomatik ödemeleri yönet). Ödeme bitiş tarihinize kadar listede kalırsınız ve tekrar ücret alınmaz."
+        "q": "Hacılar acentemi ne zaman görür?",
+        "a": "Belgelerinizi doğruladığımız anda, genellikle 2 iş günü içinde. Yayına girdiğinizde size e-posta göndeririz."
       },
       {
-        "q": "Paketimi değiştirebilir miyim?",
-        "a": "Evet. Öde / Yenile bölümünde diğer pakete abone olun. Eski aylık ödemeyi sizin için durdururuz."
+        "q": "İlk 100'den sonra ne olacak?",
+        "a": "Yeni acenteler için ileride ücretli planlar gelebilir. Kurucu acenteler için bir şey değişirse sizi en az 30 gün önceden bilgilendiririz."
       },
       {
-        "q": "Havale nasıl çalışır?",
-        "a": "Paketi ve ay sayısını seçin, tam tutarı gösterilen OPay veya Nita hesabına gönderin, ardından dekontu yükleyin. 1 iş günü içinde onaylar ve size e-posta göndeririz."
-      },
-      {
-        "q": "Yenilemezsem ne olur?",
-        "a": "7 gün ve 1 gün önce hatırlatırız. Tarihten sonra ilanınız uygulamada gizlenir ama profiliniz saklanır. Geri dönmek için istediğiniz zaman yeniden ödeyin."
-      },
-      {
-        "q": "İade alabilir miyim?",
-        "a": "Yanlışlıkla ücret alındıysa 14 gün içinde bize ulaşın, iade ederiz. Başlamış bir ay iade edilmez."
-      },
-      {
-        "q": "Hacı adayları acentemi ne zaman görür?",
-        "a": "Belgeleriniz doğrulandıktan ve paketiniz ödendikten sonra. Featured acenteler kendi ülkelerinde ilk sırada görünür."
+        "q": "İlanımı kaybedebilir miyim?",
+        "a": "Yalnızca belgelerinizin gerçeğe aykırı çıkması veya kurallarımızı ihlal etmeniz durumunda. Bilgilerinizi güncel tutun, ilanınız yayında kalsın."
       }
     ]
   },

@@ -1,6 +1,7 @@
 import "server-only"
 import { Resend } from "resend"
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin"
+import { FREE_FOR_AGENCIES } from "@/lib/agentPlans"
 
 const BRAND = {
   navy: "#1E3A5F",
@@ -17,8 +18,8 @@ const LOGO_URL = "https://cdn.jsdelivr.net/gh/ahmadado1/unrahconnect@main/assets
 const SITE_URL = "https://myumrahconnect.com"
 const INFO_EMAIL = "info@myumrahconnect.com"
 const SUPPORT_EMAIL = "support@myumrahconnect.com"
-const WHATSAPP_NUMBER = "+201041436778"
-const WHATSAPP_URL = "https://wa.me/201041436778"
+const WHATSAPP_NUMBER = "+20 122 215 1335"
+const WHATSAPP_URL = "https://wa.me/201222151335"
 
 export type AgentEmailType =
   | "application_received"
@@ -207,7 +208,8 @@ function buildEmail(agent: AgentMail) {
   }
 
   if (agent.type === "account_activated") {
-    const paidAhead = Boolean(agent.paid_until && agent.paid_until.slice(0, 10) >= new Date().toISOString().slice(0, 10))
+    // Founding offer: verified agencies are live right away, there is nothing to pay.
+    const paidAhead = FREE_FOR_AGENCIES || Boolean(agent.paid_until && agent.paid_until.slice(0, 10) >= new Date().toISOString().slice(0, 10))
     return {
       subject: "Your UmrahConnect agent account is verified ✓",
       html: wrapEmail(
@@ -230,7 +232,7 @@ function buildEmail(agent: AgentMail) {
             </td>
           </tr>
         </table>
-        ${paidAhead ? renewLine() : ""}
+        ${paidAhead && !FREE_FOR_AGENCIES ? renewLine() : ""}
         ${paidAhead ? ctaButton("Open Agent Zone", `${SITE_URL}/agents/home`) : ctaButton("Choose a plan and pay", `${SITE_URL}/agents/billing`)}
         <p style="margin:18px 0 0;color:${BRAND.navy};font-size:14px;font-weight:600;">
           Barak Allahu feekum,<br />

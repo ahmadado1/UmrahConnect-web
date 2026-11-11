@@ -93,7 +93,7 @@ export default function AgentZoneShell({ children }: { children: React.ReactNode
         { href: "/agents/dashboard", label: t.zui.navPilgrims },
         { href: "/agents/earnings", label: t.zui.navEarnings },
         { href: "/agents/settings", label: t.zui.navProfile },
-        { href: "/agents/billing", label: t.zui.navPlan },
+        // "Plan & billing" is hidden while agencies are free (founding offer).
       ]
 
   // Admins opening an agency-only page (old link/bookmark) go to their dashboard.

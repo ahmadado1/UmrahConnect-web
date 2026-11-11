@@ -4,9 +4,12 @@ export type PremiumPlanId = "monthly" | "yearly"
 
 export const PREMIUM_PLANS: PremiumPlanId[] = ["monthly", "yearly"]
 
+/** Plans offered to new buyers. Yearly is no longer sold; it stays above for existing payments. */
+export const PREMIUM_PLANS_FOR_SALE: PremiumPlanId[] = ["monthly"]
+
 /** Prices in USD. Change here and in PayPal together. */
 export const PREMIUM_PRICES: Record<PremiumPlanId, number> = {
-  monthly: 1.99,
+  monthly: 0.99,
   yearly: 21.99,
 }
 
@@ -44,7 +47,7 @@ export function formatUsd(amount: number) {
 
 /** Prices for OPay (Naira) and MyNita (CFA) transfers. One payment = PREMIUM_MONTHS of Premium. */
 export const PREMIUM_LOCAL_PRICES: Record<PremiumPlanId, { NGN: number; XOF: number }> = {
-  monthly: { NGN: 3000, XOF: 1200 },
+  monthly: { NGN: 1500, XOF: 600 },
   yearly: { NGN: 33000, XOF: 13000 },
 }
 

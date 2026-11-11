@@ -10,6 +10,7 @@ import { getSupabase } from "@/lib/supabaseBrowser"
 import { downloadAgentPoster, useAgentQr } from "../poster"
 import VerifiedCheck from "../VerifiedCheck"
 import { ZONE_CSS } from "./zoneUi"
+import { FREE_FOR_AGENCIES } from "@/lib/agentPlans"
 
 export const isFeatured = (agent: Pick<OwnAgent, "plan">) => agent.plan === "pro" || agent.plan === "featured"
 
@@ -55,7 +56,6 @@ export function ZoneHead({ agent, subtitle }: { agent: OwnAgent; subtitle?: stri
           </div>
         </div>
       </div>
-      <a className="z-plan-link" href="/agents/billing">{t.zui.managePlan}</a>
     </div>
   )
 }
@@ -63,6 +63,8 @@ export function ZoneHead({ agent, subtitle }: { agent: OwnAgent; subtitle?: stri
 // ─── Renew reminder: only when the plan ends within 14 days ───
 export function RenewAlert({ agent }: { agent: OwnAgent }) {
   const { t } = useT()
+  // Agencies are free for now (founding offer): nothing to renew.
+  if (FREE_FOR_AGENCIES) return null
   const left = daysLeft(agent.paid_until)
   if (left === null || left > 14) return null
   return (

@@ -4,6 +4,7 @@ import { oneMonthFrom } from "@/lib/agentFormat"
 import { sendAgentLifecycleEmail, sendInfoRequestEmail } from "@/lib/email"
 import { userFromBearer } from "@/lib/requestUser"
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin"
+import { FREE_FOR_AGENCIES } from "@/lib/agentPlans"
 
 const ACTIONS = new Set(["suspend", "set_plan", "verify", "extend", "notes", "request_info"])
 
@@ -57,8 +58,8 @@ export async function POST(request: Request) {
   }
 
   if (action === "verify") {
-    // Verify first, pay later: the agent goes live once they pay.
-    // An optional "free until" date lets the admin give free time.
+    // Founding offer: agencies are free, so verifying makes the agency live straight away
+    // (status active, no paid-until date). Any time an agency already paid for is kept.
     if (body.paidUntil && !isDate(body.paidUntil)) {
       return NextResponse.json({ error: "The free-until date is not valid." }, { status: 400 })
     }
@@ -84,7 +85,7 @@ export async function POST(request: Request) {
       .update({
         status: "active",
         verified: true,
-        paid_until: keepOrFreeUntil(current.paid_until, body.paidUntil),
+        paid_until: FREE_FOR_AGENCIES ? null : keepOrFreeUntil(current.paid_until, body.paidUntil),
         info_request: null,
         info_requested_at: null,
       })

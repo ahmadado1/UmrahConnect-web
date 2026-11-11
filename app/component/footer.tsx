@@ -32,7 +32,6 @@ export default function Footer() {
             <a href="/#download">{t.nav.download}</a>
             <a href="/contact">{t.nav.contact}</a>
             <a href="/agents">{t.nav.agents}</a>
-            <a href="/advertise">{t.footer.advertise}</a>
             <a href="/privacy-policy">{t.footer.privacy}</a>
             <a href="/delete-account">{t.footer.deleteAccount}</a>
           </div>

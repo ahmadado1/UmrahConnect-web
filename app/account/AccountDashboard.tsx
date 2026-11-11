@@ -13,7 +13,7 @@ import {
   PREMIUM_LOCAL_PRICES,
   premiumPayCode,
   PREMIUM_PAYPAL_PLAN_IDS,
-  PREMIUM_PLANS,
+  PREMIUM_PLANS_FOR_SALE,
   type PremiumPlanId,
 } from "@/lib/premiumPlans"
 import { getSupabase, waitForSession } from "@/lib/supabaseBrowser"
@@ -85,7 +85,7 @@ export default function AccountDashboard() {
   const [userId, setUserId] = useState("")
   const [who, setWho] = useState("")
   const [info, setInfo] = useState<AccountInfo | null>(null)
-  const [plan, setPlan] = useState<PremiumPlanId>("yearly")
+  const [plan, setPlan] = useState<PremiumPlanId>("monthly")
   const [error, setError] = useState("")
   const [notice, setNotice] = useState("")
   const [busy, setBusy] = useState(false)
@@ -357,7 +357,7 @@ export default function AccountDashboard() {
             <section className="agent-card">
               <h2 style={{ marginTop: 0 }}>{a.getPremium}</h2>
               <div className="plan-cards">
-                {PREMIUM_PLANS.map((id) => (
+                {PREMIUM_PLANS_FOR_SALE.map((id) => (
                   <PremiumCard key={id} plan={id} selected={plan === id} onSelect={() => setPlan(id)} />
                 ))}
               </div>

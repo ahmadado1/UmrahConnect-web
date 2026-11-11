@@ -66,7 +66,7 @@ const en = {
     p5: "Miqat alert and home-screen prayer widget",
     p6: "Unlimited AI guide",
     cta: "See Premium",
-    price: "From $1.99 a month",
+    price: "$0.99 a month",
     free: "Quran audio, prayer times and the Umrah and Hajj guides stay free for everyone.",
   },
   agentsBand: {
@@ -545,16 +545,26 @@ const en = {
     loop: "Your pilgrims join with your code → they use the app and review you → you rank higher → more new pilgrims find you.",
     whatsapp: "WhatsApp stays. UmrahConnect is the tool that brings you new customers and reputation, not a replacement for chatting.",
   },
+  founding: {
+    label: "FOUNDING AGENCIES",
+    title: "Free for the first 100 agencies",
+    lead: "Join now while it's free. Sign up, upload your documents, and your agency goes live in the app as soon as we verify you.",
+    price: "Free",
+    priceNote: "No card, no monthly fee",
+    cta: "Join free",
+    spots: "Limited to the first 100 agencies",
+    homeNote: "Your agency is verified. Founding agencies are free, so there's nothing to pay. If your listing isn't live yet, contact us and we'll switch it on.",
+  },
   agentHow: {
     done: "Done",
     next: "Next step",
     "title": "How it works",
     "lead": "From sign-up to your first pilgrims in six steps.",
     "howLink": "How it works",
-    "pricingLink": "Pricing",
+    "pricingLink": "Free offer",
     "faqLink": "FAQ",
     "seePricing": "See pricing and how it works",
-    "faqTitle": "Questions about pricing",
+    "faqTitle": "Questions",
     "steps": [
       {
         "title": "Create your account",
@@ -569,50 +579,38 @@ const en = {
         "body": "We check your documents within 2 working days and email you. You get the blue ✓ badge."
       },
       {
-        "title": "Choose a plan and pay",
-        "body": "Pick Listed or Featured. Pay monthly by card (automatic) or by OPay or Nita transfer. Your agency goes live in the app."
+        "title": "Go live, free",
+        "body": "Once you're verified, your agency appears in the app straight away. Founding agencies pay nothing: no card, no monthly fee."
       },
       {
         "title": "Bring your pilgrims",
         "body": "Share your agent code and QR poster. Pilgrims find you, call or WhatsApp you, and you see every contact in your dashboard."
       },
       {
-        "title": "Stay listed",
-        "body": "Card payments renew by themselves. For transfers, we remind you 7 days and 1 day before your date. Cancel any time."
+        "title": "Keep your profile fresh",
+        "body": "Update your packages, prices and photos any time in Agent Zone, and post announcements to your pilgrims."
       }
     ],
     "faq": [
       {
-        "q": "How much does it cost?",
-        "a": "Listed is {listed} per month and Featured is {featured} per month. Agencies in Nigeria and Niger can also pay in naira or CFA."
+        "q": "Is it really free?",
+        "a": "Yes. The first 100 agencies to join are free: no card and no monthly fee."
       },
       {
-        "q": "Do I need a PayPal account?",
-        "a": "No. You can pay with any debit or credit card on the PayPal page. It renews automatically every month."
-      },
-      {
-        "q": "How do I cancel?",
-        "a": "In Agent Zone → Pay / Renew, tap \"Cancel monthly payment\". You can also cancel in your PayPal account (Settings → Payments → Manage automatic payments). You stay listed until your paid-until date and you are not charged again."
-      },
-      {
-        "q": "Can I change my plan?",
-        "a": "Yes. In Pay / Renew, subscribe to the other plan. We stop the old monthly payment for you."
-      },
-      {
-        "q": "How do transfers work?",
-        "a": "Choose the plan and number of months, send the exact amount to the OPay or Nita account shown, then upload the receipt. We confirm it within 1 working day and email you."
-      },
-      {
-        "q": "What happens if I don't renew?",
-        "a": "We remind you 7 days and 1 day before. After the date your listing is hidden from the app, but your profile is kept. Pay again any time to come back."
-      },
-      {
-        "q": "Can I get a refund?",
-        "a": "If you were charged by mistake, contact us within 14 days and we will refund it. A month that has already started is not refunded."
+        "q": "What do I need to join?",
+        "a": "Your business registration, your Hajj/Umrah licence, the owner's ID and a photo of your office. You upload them in Agent Zone and they stay private."
       },
       {
         "q": "When do pilgrims see my agency?",
-        "a": "After we verify your documents and your plan is paid. Featured agencies appear first in their country."
+        "a": "As soon as we verify your documents, usually within 2 working days. We email you when you're live."
+      },
+      {
+        "q": "What happens after the first 100?",
+        "a": "Paid plans may come later for new agencies. If anything changes for founding agencies, we will tell you at least 30 days before."
+      },
+      {
+        "q": "Can I lose my listing?",
+        "a": "Only if your documents turn out to be false or you break our rules. Keep your details up to date and your listing stays live."
       }
     ]
   },

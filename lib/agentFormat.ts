@@ -36,9 +36,14 @@ export function oneMonthFrom(value?: string | null) {
   return dateInputValue(next)
 }
 
-/** Active listing with a paid-until date. Pending, expired, suspended, and never-paid stay out. */
+/**
+ * Active listing. Agencies are free for now (founding offer): a verified agency is set to
+ * "active" with no paid-until date. A paid-until date in the past still means expired.
+ */
 export function isActiveAgent(agent: Pick<OwnAgent, "status" | "paid_until">) {
-  return (agent.status || "").toLowerCase() === "active" && Boolean(agent.paid_until)
+  if ((agent.status || "").toLowerCase() !== "active") return false
+  if (!agent.paid_until) return true
+  return agent.paid_until.slice(0, 10) >= new Date().toISOString().slice(0, 10)
 }
 
 export function agentHomeMode(agent: Pick<OwnAgent, "status" | "paid_until">) {

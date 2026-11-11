@@ -3,12 +3,11 @@
 import { useEffect, useState } from "react"
 import { VERIFICATION_DOC_FIELDS, verificationGaps } from "@/lib/agentAccount"
 import VerifiedCheck from "../../VerifiedCheck"
-import { AGENT_PLANS, AGENT_RENEW, currencyForCountry } from "@/lib/agentPlans"
+import { AGENT_RENEW } from "@/lib/agentPlans"
 import { agentHomeMode, formatDate } from "@/lib/agentFormat"
 import { useT } from "@/lib/i18n/I18nProvider"
 import { getSupabase } from "@/lib/supabaseBrowser"
 import { useAgentSession } from "../../useAgentSession"
-import PlanCard from "../../PlanCard"
 import AgentHowItWorks from "../../AgentHowItWorks"
 import { WIZARD_CSS } from "../../agentStyles"
 import { ZONE_CSS } from "../zoneUi"
@@ -36,20 +35,16 @@ function AdminHomeCard() {
   )
 }
 
-function HowToPay() {
-  const { t } = useT()
-  const parts = t.home.payBody.split(/\{email\}|\{whatsapp\}/)
+/** Email and WhatsApp contacts (agencies are free for now, so there is nothing to pay). */
+function ContactUs({ note }: { note: string }) {
   return (
     <section className="agent-renew">
-      <h2>{t.home.howToPay}</h2>
+      <p>{note}</p>
       <p>
-        {parts[0]}
         <a href={`mailto:${AGENT_RENEW.email}`}>{AGENT_RENEW.email}</a>
-        {parts[1]}
+        {" · WhatsApp "}
         <a href={AGENT_RENEW.whatsappUrl}>{AGENT_RENEW.whatsappDisplay}</a>
-        {parts[2]}
       </p>
-      <a className="agent-btn agent-btn--gold" href="/agents/billing">{t.pay.tab}</a>
     </section>
   )
 }
@@ -265,20 +260,14 @@ export default function Home() {
 
           {mode === "suspended" ? (
             <>
-              <p className="agent-note">{t.home.suspended}</p>
-              <HowToPay />
+              <ContactUs note={t.home.suspended} />
             </>
           ) : null}
 
           {mode === "pay" ? (
             <>
-              <p className="agent-lead">{t.home.payLead}</p>
-              <div className="plan-cards">
-                {AGENT_PLANS.map((plan) => (
-                  <PlanCard key={plan.id} plan={plan.id} localCurrency={currencyForCountry(agent.country)} href="/agents/billing" />
-                ))}
-              </div>
-              <HowToPay />
+              {/* Verified but not switched on yet (e.g. an old expired listing): free, just ask us */}
+              <ContactUs note={t.founding.homeNote} />
             </>
           ) : null}
 
@@ -288,7 +277,7 @@ export default function Home() {
               true,
               docsComplete,
               Boolean(agent.verified),
-              Boolean(agent.paid_until && agent.paid_until.slice(0, 10) >= new Date().toISOString().slice(0, 10)),
+              Boolean(agent.verified), // free: verified = live
               false, // first pilgrims/contacts: only possible once active
               false, // live: this page only shows before the agency is active
             ]}

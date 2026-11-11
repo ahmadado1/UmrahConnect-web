@@ -1,9 +1,8 @@
 "use client"
 
-import { AGENT_PLANS } from "@/lib/agentPlans"
 import { useT } from "@/lib/i18n/I18nProvider"
 import AgentFaq from "./AgentFaq"
-import PlanCard from "./PlanCard"
+import FoundingOffer from "./FoundingOffer"
 import AgentHowItWorks from "./AgentHowItWorks"
 
 export default function AgentsMarketing() {
@@ -22,6 +21,10 @@ export default function AgentsMarketing() {
           <div className="section-label">{t.agentsPage.label}</div>
           <h1>{t.agentsPage.title}</h1>
           <p>{t.agentsPage.lead}</p>
+          {/* Launch offer badge */}
+          <p style={{ display: "inline-block", margin: "4px 0 14px", padding: "6px 14px", borderRadius: 999, background: "#c9a84c", color: "#1e3a5f", fontWeight: 700, fontSize: 15 }}>
+            🎁 {t.founding.title} · {t.founding.priceNote}
+          </p>
           <div className="agent-hero-actions">
             <a className="agent-btn agent-btn--gold" href="/agents/signup">{t.agentsPage.become}</a>
             <a className="agent-btn agent-btn--ghost" href="/agents/login">{t.agentsPage.login}</a>
@@ -81,15 +84,11 @@ export default function AgentsMarketing() {
 
       <section id="pricing" className="agent-section agent-section--plans">
         <div className="page-container">
-          <h2>{t.agentsPage.plans}</h2>
-          <p className="agent-lead">{t.agentsPage.plansLead}</p>
-          <div className="plan-cards">
-            {AGENT_PLANS.map((plan) => (
-              <PlanCard key={plan.id} plan={plan.id} href="/agents/signup" />
-            ))}
-          </div>
+          {/* Launch offer: the first 100 agencies join free */}
+          <h2>{t.founding.title}</h2>
+          <p className="agent-lead">{t.founding.lead}</p>
+          <FoundingOffer />
           <div className="agent-hero-actions">
-            <a className="agent-btn agent-btn--navy" href="/agents/signup">{t.agentsPage.become}</a>
             <a className="agent-btn agent-btn--line" href="/agents/login">{t.agentsPage.login}</a>
           </div>
         </div>

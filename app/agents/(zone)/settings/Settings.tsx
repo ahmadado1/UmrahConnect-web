@@ -21,6 +21,7 @@ import { fill, useT } from "@/lib/i18n/I18nProvider"
 import { getSupabase } from "@/lib/supabaseBrowser"
 import { useAgentSession } from "../../useAgentSession"
 import VerificationFields from "../../VerificationFields"
+import { FREE_FOR_AGENCIES } from "@/lib/agentPlans"
 
 function AdminHomeCard() {
   const { t } = useT()
@@ -333,10 +334,12 @@ export default function Settings() {
               <span>{t.settings.verified}</span>
               <strong>{agent.verified ? t.common.yes : t.common.no}</strong>
             </div>
-            <div>
-              <span>{t.settings.paidUntil}</span>
-              <strong>{agent.paid_until ? formatDate(agent.paid_until) : t.settings.notSet}</strong>
-            </div>
+            {FREE_FOR_AGENCIES ? null : (
+              <div>
+                <span>{t.settings.paidUntil}</span>
+                <strong>{agent.paid_until ? formatDate(agent.paid_until) : t.settings.notSet}</strong>
+              </div>
+            )}
           </div>
           <p className="agent-lead">{t.settings.locked}</p>
 

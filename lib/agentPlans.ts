@@ -1,5 +1,11 @@
 /** Agent plans, prices and payment details. Edit the values here to change what agents see. */
 
+/**
+ * Launch offer: the first 100 agencies join free. A verified agency goes live with no payment,
+ * and the website hides all agency prices and the Pay / Renew page. Set to false to bring paid plans back.
+ */
+export const FREE_FOR_AGENCIES = true
+
 export type PlanId = "listed" | "featured"
 export type Currency = "USD" | "NGN" | "XOF"
 export type ManualMethod = "opay" | "nita"
@@ -122,8 +128,8 @@ export const AGENT_PLANS = [
 
 export const AGENT_RENEW = {
   email: "info@myumrahconnect.com",
-  whatsappDisplay: "+201041436778",
-  whatsappUrl: "https://wa.me/201041436778",
+  whatsappDisplay: "+20 122 215 1335",
+  whatsappUrl: "https://wa.me/201222151335",
 }
 
 export const SITE_URL = "https://myumrahconnect.com"

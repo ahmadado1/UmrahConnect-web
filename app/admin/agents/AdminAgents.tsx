@@ -9,6 +9,7 @@ import { getSupabase } from "@/lib/supabaseBrowser"
 import AdminPayments from "./AdminPayments"
 import AdminPremiumPayments from "./AdminPremiumPayments"
 import AdminAnnounce from "./AdminAnnounce"
+import { FREE_FOR_AGENCIES } from "@/lib/agentPlans"
 
 type AdminAgent = {
   id: string
@@ -275,7 +276,7 @@ export default function AdminAgents({ embedded = false }: { embedded?: boolean }
 
   function onVerify(event: FormEvent, agent: AdminAgent) {
     event.preventDefault()
-    const date = paidUntil[agent.id] || defaultPaidUntil(agent.paid_until)
+    const date = FREE_FOR_AGENCIES ? "" : paidUntil[agent.id] || defaultPaidUntil(agent.paid_until)
     // Documents missing? Ask before verifying anyway.
     const missing = verificationGaps(agent)
     if (missing.length && !window.confirm(`${agent.business_name || "This agency"} is missing: ${missing.join(", ")}.\n\nVerify anyway?`)) {
@@ -425,17 +426,17 @@ export default function AdminAgents({ embedded = false }: { embedded?: boolean }
                         <div className="admin-actions">
                           {canVerify ? (
                             <form className="admin-approve" onSubmit={(event) => onVerify(event, agent)}>
-                              <input
+                              {FREE_FOR_AGENCIES ? null : <input
                                 type="date"
                                 value={paidUntil[agent.id] || defaultPaidUntil(agent.paid_until)}
                                 onChange={(event) => setPaidUntil((current) => ({ ...current, [agent.id]: event.target.value }))}
                                 aria-label={`Free until (optional) for ${name}`}
                                 title="Optional: give free time. Leave empty so the agent goes live after paying."
-                              />
+                              />}
                               <button className="agent-btn agent-btn--gold" type="submit" disabled={busy === `${agent.id}:verify`}>
                                 {missing.length ? "Verify anyway" : "Verify"}
                               </button>
-                              <span>{agent.paid_until ? `Paid until ${formatDate(agent.paid_until)}` : "Not paid yet: goes live after paying (date = optional free time)"}</span>
+                              <span>{FREE_FOR_AGENCIES ? "Free (founding offer): goes live as soon as you verify." : agent.paid_until ? `Paid until ${formatDate(agent.paid_until)}` : "Not paid yet: goes live after paying (date = optional free time)"}</span>
                               {missing.length ? <span>Missing: {missing.join(", ")}</span> : null}
                             </form>
                           ) : null}

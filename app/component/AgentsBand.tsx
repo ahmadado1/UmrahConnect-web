@@ -25,6 +25,10 @@ export default function AgentsBand() {
           <div className="section-label">{a.label}</div>
           <h2 className="section-title agents-band-title">{a.title}</h2>
           <p>{a.lead}</p>
+          {/* Launch offer badge */}
+          <p style={{ display: "inline-block", margin: "4px 0 14px", padding: "6px 14px", borderRadius: 999, background: "#c9a84c", color: "#1e3a5f", fontWeight: 700, fontSize: 15 }}>
+            🎁 {t.founding.title}
+          </p>
           <Link href="/agents" className="agents-band-cta">{a.cta} →</Link>
         </Reveal>
         <div className="agents-band-points">
