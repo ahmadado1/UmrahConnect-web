@@ -5,7 +5,7 @@ import { AIGuideIcon, TravelAgentsIcon } from './Icons';
 import { Reveal } from './Reveal';
 
 const WHATSAPP_URL =
-  'https://wa.me/2347037124869?text=Hi%2C%20I%27m%20interested%20in%20Featured%20listing%20for%20my%20Umrah%20agency%20on%20UmrahConnect.';
+  'https://wa.me/201222151335?text=Hi%2C%20I%27m%20interested%20in%20Featured%20listing%20for%20my%20Umrah%20agency%20on%20UmrahConnect.';
 
 const PRICING_TIERS = [
   {
@@ -181,7 +181,7 @@ export default function AdvertisePageContent() {
               >
                 Message us on WhatsApp
               </a>
-              <span className="advertise-whatsapp-number">+234 703 712 4869</span>
+              <span className="advertise-whatsapp-number">+20 122 215 1335</span>
             </div>
           </Reveal>
 

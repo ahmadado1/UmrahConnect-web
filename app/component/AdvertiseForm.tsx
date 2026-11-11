@@ -124,7 +124,7 @@ export default function AdvertiseForm() {
               required
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="+234 703 712 4869"
+              placeholder="+234 800 000 0000"
               style={inputStyle}
             />
           </div>

@@ -19,11 +19,11 @@ const infoItems: InfoItem[] = [
     label: 'Phone / WhatsApp',
     content: (
       <>
-        <a href="tel:+2347037124869" className="contact-info-value contact-info-value--strong">
-          +234 703 712 4869
+        <a href="tel:+201222151335" className="contact-info-value contact-info-value--strong">
+          +20 122 215 1335
         </a>
         <a
-          href="https://wa.me/2347037124869"
+          href="https://wa.me/201222151335"
           target="_blank"
           rel="noopener noreferrer"
           className="contact-info-whatsapp"
