@@ -241,7 +241,11 @@ export default function AdminAgents({ embedded = false }: { embedded?: boolean }
   }
 
   async function viewDocument(agentId: string, field: VerificationDocKey) {
-    const tab = window.open("about:blank", "_blank", "noopener,noreferrer")
+    // Open the new tab right away (inside the click, so pop-up blockers allow it), then send it to the
+    // document once we have the secure link. No "noopener" here: with it, window.open returns null,
+    // which left an empty about:blank tab and opened the document in this tab instead.
+    const tab = window.open("", "_blank")
+    if (tab) tab.opener = null
     setBusy(`${agentId}:doc`)
     setToast(null)
     try {
