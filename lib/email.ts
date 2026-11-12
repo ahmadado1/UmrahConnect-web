@@ -2,6 +2,7 @@ import "server-only"
 import { Resend } from "resend"
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin"
 import { FREE_FOR_AGENCIES } from "@/lib/agentPlans"
+import { EMAIL_TEXT, emailLang, isRtlLang, type EmailLang } from "@/lib/emailText"
 
 const BRAND = {
   navy: "#1E3A5F",
@@ -37,6 +38,8 @@ type AgentMail = {
   plan: string | null
   paid_until: string | null
   type: AgentEmailType
+  /** Language the agency chose on the website (agents.language). Missing = English. */
+  language?: string | null
 }
 
 const LIFECYCLE = new Set<AgentEmailType>(["application_received", "account_activated"])
@@ -50,12 +53,17 @@ function escapeHtml(value: unknown) {
     .replace(/'/g, "&#39;")
 }
 
-function wrapEmail(bodyHtml: string, options: { preheader?: string; title?: string } = {}) {
+function wrapEmail(bodyHtml: string, options: { preheader?: string; title?: string; lang?: EmailLang } = {}) {
   const preheader = escapeHtml(options.preheader || "")
+  // Language of the email: text, and right-to-left for Arabic and Urdu
+  const lang = options.lang || "en"
+  const tx = EMAIL_TEXT[lang]
+  const dir = isRtlLang(lang) ? "rtl" : "ltr"
+  const align = isRtlLang(lang) ? "right" : "left"
   const year = new Date().getFullYear()
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${lang}" dir="${dir}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -76,12 +84,12 @@ function wrapEmail(bodyHtml: string, options: { preheader?: string; title?: stri
             <td style="background:${BRAND.navy};padding:28px 32px 24px;text-align:center;">
               <img src="${LOGO_URL}" alt="UmrahConnect" width="88" height="88" style="display:block;margin:0 auto 14px;border-radius:16px;border:1px solid rgba(201,168,76,0.35);" />
               <div style="font-family:Georgia,'Times New Roman',serif;font-size:22px;letter-spacing:0.5px;color:${BRAND.white};font-weight:700;">UmrahConnect</div>
-              <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:12px;color:${BRAND.goldSoft};margin-top:6px;letter-spacing:0.4px;">Your Umrah &amp; Hajj companion</div>
+              <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:12px;color:${BRAND.goldSoft};margin-top:6px;letter-spacing:0.4px;">${escapeHtml(tx.tagline)}</div>
               <div style="height:3px;width:56px;background:${BRAND.gold};margin:18px auto 0;border-radius:2px;"></div>
             </td>
           </tr>
           <tr>
-            <td style="padding:36px 32px 28px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${BRAND.text};font-size:15px;line-height:1.65;">
+            <td dir="${dir}" style="direction:${dir};text-align:${align};padding:36px 32px 28px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${BRAND.text};font-size:15px;line-height:1.65;">
               ${bodyHtml}
             </td>
           </tr>
@@ -89,7 +97,7 @@ function wrapEmail(bodyHtml: string, options: { preheader?: string; title?: stri
             <td style="background:#F1F4F8;padding:24px 32px;border-top:1px solid ${BRAND.border};text-align:center;">
               <p style="margin:0 0 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:13px;color:${BRAND.navy};font-weight:600;">UmrahConnect</p>
               <p style="margin:0 0 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:12px;color:${BRAND.muted};line-height:1.5;">
-                Supporting pilgrims with guides, prayer times, Quran, and trusted services.
+                ${escapeHtml(tx.footerAbout)}
               </p>
               <p style="margin:0 0 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:12px;">
                 <a href="mailto:${INFO_EMAIL}" style="color:${BRAND.navy};text-decoration:none;font-weight:600;">${INFO_EMAIL}</a>
@@ -100,8 +108,8 @@ function wrapEmail(bodyHtml: string, options: { preheader?: string; title?: stri
                 <a href="${SITE_URL}" style="color:${BRAND.navy};text-decoration:none;font-weight:600;">myumrahconnect.com</a>
               </p>
               <p style="margin:16px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:11px;color:#8A97A5;">
-                © ${year} UmrahConnect. All rights reserved.<br />
-                This is an automated message related to your UmrahConnect account.
+                © ${year} UmrahConnect. ${escapeHtml(tx.footerRights)}<br />
+                ${escapeHtml(tx.footerAuto)}
               </p>
             </td>
           </tr>
@@ -156,22 +164,29 @@ function newWayToPayLine() {
   `
 }
 
+/** Fill {name}-style placeholders. Values must already be escaped. */
+function fillText(text: string, values: Record<string, string>) {
+  return escapeHtml(text).replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "")
+}
+
 /** Contact box without any payment talk (agencies are free for now). */
-function helpLine() {
+function helpLine(lang: EmailLang = "en") {
+  const tx = EMAIL_TEXT[lang]
   return `
     <p style="margin:20px 0 0;padding:14px 16px;background:${BRAND.cream};border:1px solid ${BRAND.border};border-radius:10px;color:${BRAND.text};">
-      <strong style="color:${BRAND.navy};">Need help?</strong>
-      Email <a href="mailto:${INFO_EMAIL}" style="color:${BRAND.navy};font-weight:600;text-decoration:none;">${INFO_EMAIL}</a>
-      or WhatsApp <a href="${WHATSAPP_URL}" style="color:${BRAND.navy};font-weight:600;text-decoration:none;">${WHATSAPP_NUMBER}</a>.
+      <strong style="color:${BRAND.navy};">${escapeHtml(tx.helpStrong)}</strong>
+      ${escapeHtml(tx.helpEmail)} <a href="mailto:${INFO_EMAIL}" style="color:${BRAND.navy};font-weight:600;text-decoration:none;">${INFO_EMAIL}</a>
+      ${escapeHtml(tx.helpOr)} <a href="${WHATSAPP_URL}" style="color:${BRAND.navy};font-weight:600;text-decoration:none;" dir="ltr">${WHATSAPP_NUMBER}</a>.
     </p>
   `
 }
 
 /** Founding offer note: the first 100 agencies join free. */
-function foundingLine() {
+function foundingLine(lang: EmailLang = "en") {
+  const tx = EMAIL_TEXT[lang]
   return `
     <p style="margin:16px 0 0;padding:12px 16px;background:#EEF6EE;border:1px solid #B7DFC0;border-radius:10px;color:${BRAND.text};">
-      <strong style="color:#2F855A;">Founding agency: free.</strong> The first 100 agencies join UmrahConnect for free. No card and no monthly fee.
+      <strong style="color:#2F855A;">${escapeHtml(tx.foundingStrong)}</strong> ${escapeHtml(tx.foundingBody)}
     </p>
   `
 }
@@ -188,11 +203,94 @@ function renewLine() {
   `
 }
 
-function greeting(name: string) {
-  return `<p style="margin:0 0 16px;color:${BRAND.muted};">Assalamu Alaikum <strong style="color:${BRAND.navy};">${name}</strong>,</p>`
+function greeting(name: string, lang: EmailLang = "en") {
+  const hello = escapeHtml(EMAIL_TEXT[lang].hello)
+  if (!name) return `<p style="margin:0 0 16px;color:${BRAND.muted};">${hello},</p>`
+  return `<p style="margin:0 0 16px;color:${BRAND.muted};">${hello} <strong style="color:${BRAND.navy};">${name}</strong>,</p>`
+}
+
+function localSignOff(lang: EmailLang) {
+  const tx = EMAIL_TEXT[lang]
+  return `<p style="margin:18px 0 0;color:${BRAND.navy};font-size:14px;font-weight:600;">
+    ${escapeHtml(tx.signOff)}<br />
+    <span style="font-weight:500;color:${BRAND.muted};">${escapeHtml(tx.team)}</span>
+  </p>`
+}
+
+function smallLabel(text: string) {
+  return `<p style="margin:0 0 6px;font-size:13px;color:${BRAND.gold};font-weight:700;letter-spacing:0.6px;text-transform:uppercase;">${escapeHtml(text)}</p>`
+}
+
+function title(text: string) {
+  return `<h1 style="margin:0 0 16px;font-size:24px;line-height:1.3;color:${BRAND.navy};font-weight:700;">${escapeHtml(text)}</h1>`
+}
+
+function para(html: string) {
+  return `<p style="margin:0 0 16px;color:${BRAND.muted};">${html}</p>`
+}
+
+const strong = (text: string) => `<strong style="color:${BRAND.navy};">${text}</strong>`
+
+/**
+ * "Application received" and "You're verified" in the agency's language (founding offer: free).
+ */
+function buildLifecycleLocalized(agent: AgentMail) {
+  const lang = emailLang(agent.language)
+  const tx = EMAIL_TEXT[lang]
+  const name = escapeHtml(agent.owner_name?.trim() || tx.there)
+  const business = strong(escapeHtml(agent.business_name?.trim() || tx.yourAgency))
+  const code = escapeHtml(agent.agent_code || "")
+
+  if (agent.type === "application_received") {
+    return {
+      subject: tx.appSubject,
+      html: wrapEmail(
+        `
+        ${smallLabel(tx.appLabel)}
+        ${title(tx.appTitle)}
+        ${greeting(name, lang)}
+        ${para(fillText(tx.appBody, { business }))}
+        ${para(escapeHtml(tx.appNext))}
+        ${ctaButton(tx.login, `${SITE_URL}/agents/login`)}
+        ${foundingLine(lang)}
+        ${helpLine(lang)}
+        ${localSignOff(lang)}
+        `,
+        { title: tx.appTitle, preheader: tx.appPreheader, lang },
+      ),
+    }
+  }
+
+  return {
+    subject: tx.actSubject,
+    html: wrapEmail(
+      `
+      ${smallLabel(tx.actLabel)}
+      ${title(tx.actTitle)}
+      ${greeting(name, lang)}
+      ${para(fillText(tx.actBody, { business }))}
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BRAND.cream};border:1px solid ${BRAND.border};border-radius:10px;margin:0 0 8px;">
+        <tr>
+          <td style="padding:18px 20px;">
+            <p style="margin:0 0 6px;font-size:12px;color:${BRAND.muted};text-transform:uppercase;letter-spacing:0.5px;font-weight:700;">${escapeHtml(tx.codeLabel)}</p>
+            <p dir="ltr" style="margin:0 0 14px;color:${BRAND.navy};font-size:22px;font-weight:700;letter-spacing:2px;">${code}</p>
+            <p style="margin:0 0 6px;font-size:12px;color:${BRAND.muted};text-transform:uppercase;letter-spacing:0.5px;font-weight:700;">${escapeHtml(tx.planLabel)}</p>
+            <p style="margin:0;color:${BRAND.text};font-weight:600;">${escapeHtml(tx.planFree)}</p>
+          </td>
+        </tr>
+      </table>
+      ${ctaButton(tx.openZone, `${SITE_URL}/agents/home`)}
+      ${helpLine(lang)}
+      ${localSignOff(lang)}
+      `,
+      { title: tx.actTitle, preheader: fillText(tx.actPreheader, { code: agent.agent_code || "" }), lang },
+    ),
+  }
 }
 
 function buildEmail(agent: AgentMail) {
+  // Founding offer: application + verified emails go out in the agency's own language.
+  if (FREE_FOR_AGENCIES && LIFECYCLE.has(agent.type)) return buildLifecycleLocalized(agent)
   const name = escapeHtml(agent.owner_name?.trim() || "there")
   const business = escapeHtml(agent.business_name?.trim() || "your agency")
   const code = escapeHtml(agent.agent_code || "")
@@ -416,6 +514,7 @@ export async function sendAgentLifecycleEmail(
     ? mailFromRow({ ...row, email: fallbackEmail.trim() }, type)
     : null)
   if (!mail) return { agent_id: agentId, type, status: "no email" } satisfies SendResult
+  mail.language = await agentLanguage(agentId)
   return sendLogged(mail)
 }
 
@@ -556,26 +655,38 @@ export async function sendSubscriptionStoppedEmail(mail: {
 // ─── "Need more info" emails ────────────────────────────────────────────────
 
 /** Sent when the admin asks an agency for more information or better documents. */
-export async function sendInfoRequestEmail(mail: { to: string; ownerName: string | null; businessName: string | null; message: string }) {
-  const name = escapeHtml(mail.ownerName?.trim() || "there")
-  const business = escapeHtml(mail.businessName?.trim() || "your agency")
+export async function sendInfoRequestEmail(mail: { to: string; ownerName: string | null; businessName: string | null; message: string; language?: string | null }) {
+  // The agency's language for everything around your message (your message is sent as you wrote it).
+  const lang = emailLang(mail.language)
+  const tx = EMAIL_TEXT[lang]
+  const name = escapeHtml(mail.ownerName?.trim() || tx.there)
+  const business = strong(escapeHtml(mail.businessName?.trim() || tx.yourAgency))
   const message = escapeHtml(mail.message.trim()).replace(/\n/g, "<br />")
   const html = wrapEmail(
     `
-    <p style="margin:0 0 6px;font-size:13px;color:${BRAND.gold};font-weight:700;letter-spacing:0.6px;text-transform:uppercase;">Verification</p>
-    <h1 style="margin:0 0 16px;font-size:24px;line-height:1.3;color:${BRAND.navy};font-weight:700;">We need a little more information</h1>
-    ${greeting(name)}
-    <p style="margin:0 0 16px;color:${BRAND.muted};">
-      We are reviewing <strong style="color:${BRAND.navy};">${business}</strong> and need the following before we can verify it:
-    </p>
+    ${smallLabel(tx.infoLabel)}
+    ${title(tx.infoTitle)}
+    ${greeting(name, lang)}
+    ${para(fillText(tx.infoBody, { business }))}
     <p style="margin:0 0 16px;padding:14px 16px;background:${BRAND.cream};border:1px solid ${BRAND.border};border-radius:10px;color:${BRAND.text};">${message}</p>
-    <p style="margin:0 0 16px;color:${BRAND.muted};">Log in, update your details or documents and press Save. We will review it again straight away.</p>
-    ${ctaButton("Update my application", `${SITE_URL}/agents/settings`)}
-    ${signOff()}
+    ${para(escapeHtml(tx.infoAfter))}
+    ${ctaButton(tx.infoBtn, `${SITE_URL}/agents/settings`)}
+    ${localSignOff(lang)}
     `,
-    { title: "More information needed", preheader: "We need a little more information to verify your agency." },
+    { title: tx.infoTitle, preheader: tx.infoPreheader, lang },
   )
-  await deliver(mail.to, "More information needed | UmrahConnect", html)
+  await deliver(mail.to, tx.infoSubject, html)
+}
+
+/** The agency's saved website language (agents.language), or null if unknown / column missing. */
+export async function agentLanguage(agentId: string): Promise<string | null> {
+  try {
+    const { data, error } = await getSupabaseAdmin().from("agents").select("language").eq("id", agentId).maybeSingle()
+    if (error) return null
+    return (data as { language?: string | null } | null)?.language ?? null
+  } catch {
+    return null
+  }
 }
 
 /** Tells the admin that an agency updated its application after a "need more info" message. */

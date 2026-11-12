@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { verificationGaps } from "@/lib/agentAccount"
 import { oneMonthFrom } from "@/lib/agentFormat"
-import { sendAgentLifecycleEmail, sendInfoRequestEmail } from "@/lib/email"
+import { agentLanguage, sendAgentLifecycleEmail, sendInfoRequestEmail } from "@/lib/email"
 import { userFromBearer } from "@/lib/requestUser"
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin"
 import { FREE_FOR_AGENCIES } from "@/lib/agentPlans"
@@ -137,6 +137,7 @@ export async function POST(request: Request) {
         ownerName: data.owner_name,
         businessName: data.business_name || data.agency_name,
         message,
+        language: await agentLanguage(data.id), // email in the agency's own language
       })
       return NextResponse.json({ ok: true, message: "Request sent by email. The agency sees it in Agent Home." })
     } catch (err) {
