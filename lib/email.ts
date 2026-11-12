@@ -156,6 +156,26 @@ function newWayToPayLine() {
   `
 }
 
+/** Contact box without any payment talk (agencies are free for now). */
+function helpLine() {
+  return `
+    <p style="margin:20px 0 0;padding:14px 16px;background:${BRAND.cream};border:1px solid ${BRAND.border};border-radius:10px;color:${BRAND.text};">
+      <strong style="color:${BRAND.navy};">Need help?</strong>
+      Email <a href="mailto:${INFO_EMAIL}" style="color:${BRAND.navy};font-weight:600;text-decoration:none;">${INFO_EMAIL}</a>
+      or WhatsApp <a href="${WHATSAPP_URL}" style="color:${BRAND.navy};font-weight:600;text-decoration:none;">${WHATSAPP_NUMBER}</a>.
+    </p>
+  `
+}
+
+/** Founding offer note: the first 100 agencies join free. */
+function foundingLine() {
+  return `
+    <p style="margin:16px 0 0;padding:12px 16px;background:#EEF6EE;border:1px solid #B7DFC0;border-radius:10px;color:${BRAND.text};">
+      <strong style="color:#2F855A;">Founding agency: free.</strong> The first 100 agencies join UmrahConnect for free. No card and no monthly fee.
+    </p>
+  `
+}
+
 function renewLine() {
   return `
     <p style="margin:20px 0 0;padding:14px 16px;background:${BRAND.cream};border:1px solid ${BRAND.border};border-radius:10px;color:${BRAND.text};">
@@ -189,13 +209,13 @@ function buildEmail(agent: AgentMail) {
         ${greeting(name)}
         <p style="margin:0 0 16px;color:${BRAND.muted};">
           We received the agent application for <strong style="color:${BRAND.navy};">${business}</strong>.
-          It is pending review. We will email you when the account is activated.
+          It is pending review. We will email you as soon as you are verified and live in the app.
         </p>
         <p style="margin:0 0 16px;color:${BRAND.muted};">
           Next step: log in to your dashboard and upload your documents (business registration, Hajj/Umrah licence, owner ID, office photo) so we can verify you.
         </p>
         ${ctaButton("Log in", "https://myumrahconnect.com/agents/login")}
-        ${renewLine()}
+        ${FREE_FOR_AGENCIES ? `${foundingLine()}${helpLine()}` : renewLine()}
         ${ctaButton("Email us", `mailto:${INFO_EMAIL}`)}
         <p style="margin:18px 0 0;color:${BRAND.navy};font-size:14px;font-weight:600;">
           Barak Allahu feekum,<br />
@@ -228,11 +248,11 @@ function buildEmail(agent: AgentMail) {
               <p style="margin:0 0 6px;font-size:12px;color:${BRAND.muted};text-transform:uppercase;letter-spacing:0.5px;font-weight:700;">Agent code</p>
               <p style="margin:0 0 14px;color:${BRAND.navy};font-size:22px;font-weight:700;letter-spacing:2px;">${code}</p>
               <p style="margin:0 0 6px;font-size:12px;color:${BRAND.muted};text-transform:uppercase;letter-spacing:0.5px;font-weight:700;">Plan</p>
-              <p style="margin:0;color:${BRAND.text};font-weight:600;">${plan}</p>
+              <p style="margin:0;color:${BRAND.text};font-weight:600;">${FREE_FOR_AGENCIES ? "Founding agency (free)" : plan}</p>
             </td>
           </tr>
         </table>
-        ${paidAhead && !FREE_FOR_AGENCIES ? renewLine() : ""}
+        ${FREE_FOR_AGENCIES ? helpLine() : paidAhead ? renewLine() : ""}
         ${paidAhead ? ctaButton("Open Agent Zone", `${SITE_URL}/agents/home`) : ctaButton("Choose a plan and pay", `${SITE_URL}/agents/billing`)}
         <p style="margin:18px 0 0;color:${BRAND.navy};font-size:14px;font-weight:600;">
           Barak Allahu feekum,<br />
