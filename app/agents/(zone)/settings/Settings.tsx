@@ -61,7 +61,7 @@ function valuesFromAgent(agent: OwnAgent): AgentFormValues {
   }
 }
 
-/** If the admin asked for more info, this clears the message and emails the admin. */
+/** After saving: clears a "need more info" request and, the first time all documents are in, emails the agency + the team. */
 async function notifyInfoUpdated() {
   try {
     const { data: { session } } = await getSupabase().auth.getSession()
@@ -134,7 +134,7 @@ export default function Settings() {
       if (logo) logoUrl = await uploadAgentLogo(supabase, user.id, logo)
       const { error: updateError } = await supabase.from("agents").update(agentWritePayload(form, logoUrl)).eq("id", agent.id)
       if (updateError) throw new Error(updateError.message)
-      if (agent.info_request) await notifyInfoUpdated()
+      await notifyInfoUpdated() // clears a "need more info" request, and tells us once all documents are in
       await refresh()
       setLogo(null)
       setSaved(true)
@@ -169,7 +169,7 @@ export default function Settings() {
         .update(verificationWritePayload(verification, uploaded))
         .eq("id", agent.id)
       if (updateError) throw new Error(updateError.message)
-      if (agent.info_request) await notifyInfoUpdated()
+      await notifyInfoUpdated() // clears a "need more info" request, and tells us once all documents are in
       await refresh()
       setDocFiles({})
       setDocFormKey((key) => key + 1)

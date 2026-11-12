@@ -2,9 +2,12 @@
 
 /**
  * Launch offer: the first 100 agencies join free. A verified agency goes live with no payment,
- * and the website hides all agency prices and the Pay / Renew page. Set to false to bring paid plans back.
+ * and the website hides all agency prices and the Pay / Renew page.
+ *
+ * To bring paid plans back (no code change): in Vercel set NEXT_PUBLIC_AGENCIES_FREE = false and
+ * redeploy, and in Supabase run: update public.agency_settings set agencies_free = false;
  */
-export const FREE_FOR_AGENCIES = true
+export const FREE_FOR_AGENCIES = process.env.NEXT_PUBLIC_AGENCIES_FREE !== "false"
 
 export type PlanId = "listed" | "featured"
 export type Currency = "USD" | "NGN" | "XOF"

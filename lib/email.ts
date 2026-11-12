@@ -234,8 +234,8 @@ const strong = (text: string) => `<strong style="color:${BRAND.navy};">${text}</
 /**
  * "Application received" and "You're verified" in the agency's language (founding offer: free).
  */
-function buildLifecycleLocalized(agent: AgentMail) {
-  const lang = emailLang(agent.language)
+function buildLifecycleLocalized(agent: AgentMail, langOverride?: EmailLang) {
+  const lang = langOverride ?? emailLang(agent.language)
   const tx = EMAIL_TEXT[lang]
   const name = escapeHtml(agent.owner_name?.trim() || tx.there)
   const business = strong(escapeHtml(agent.business_name?.trim() || tx.yourAgency))
@@ -412,16 +412,50 @@ function buildEmail(agent: AgentMail) {
   }
 }
 
-async function deliver(to: string, subject: string, html: string) {
+/** Team inbox(es) for notices. ADMIN_NOTIFY_EMAIL can list several, separated by commas. */
+function adminRecipients() {
+  const list = (process.env.ADMIN_NOTIFY_EMAIL || INFO_EMAIL).split(",").map((e) => e.trim()).filter(Boolean)
+  return list.length ? list : [INFO_EMAIL]
+}
+
+const LANG_NAMES: Record<EmailLang, string> = {
+  en: "English", ar: "Arabic", fr: "French", tr: "Turkish", ur: "Urdu", bn: "Bengali",
+}
+
+/**
+ * Sends an agency email in the agency's language. If that isn't English, the team gets an
+ * English copy instead of a hidden copy in French/Arabic/…, so you can always read what was sent.
+ */
+async function deliverToAgency(
+  to: string,
+  lang: EmailLang,
+  build: (lang: EmailLang) => { subject: string; html: string },
+) {
+  const message = build(lang)
+  if (lang === "en") {
+    await deliver(to, message.subject, message.html)
+    return
+  }
+  await deliver(to, message.subject, message.html, { bcc: false })
+  try {
+    const english = build("en")
+    await deliver(INFO_EMAIL, `[Copy, sent in ${LANG_NAMES[lang]} to ${to}] ${english.subject}`, english.html, { bcc: false })
+  } catch (err) {
+    console.error("English copy failed", err)
+  }
+}
+
+async function deliver(to: string | string[], subject: string, html: string, options: { bcc?: boolean } = {}) {
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) throw new Error("RESEND_API_KEY is not set")
   const resend = new Resend(apiKey)
   const from = process.env.RESEND_FROM_EMAIL || "UmrahConnect <noreply@myumrahconnect.com>"
   const { error } = await resend.emails.send({
     from,
-    to: [to],
+    to: Array.isArray(to) ? to : [to],
     replyTo: [INFO_EMAIL, SUPPORT_EMAIL],
-    bcc: [INFO_EMAIL],
+    // Hidden copy to the team inbox (off for translated emails: those get an English copy instead)
+    ...(options.bcc === false ? {} : { bcc: [INFO_EMAIL] }),
     subject,
     html,
   })
@@ -450,10 +484,15 @@ async function sendLogged(agent: AgentMail): Promise<SendResult> {
   }
 
   try {
-    const message = buildEmail(agent)
     const label = agent.type === "account_activated" ? "activated" : agent.type
     console.log(`agent email: sending ${label} to ${agent.email}`)
-    await deliver(agent.email, message.subject, message.html)
+    if (FREE_FOR_AGENCIES && LIFECYCLE.has(agent.type)) {
+      // In the agency's language; the team gets an English copy
+      await deliverToAgency(agent.email, emailLang(agent.language), (lang) => buildLifecycleLocalized(agent, lang))
+    } else {
+      const message = buildEmail(agent)
+      await deliver(agent.email, message.subject, message.html)
+    }
     return { agent_id: agent.agent_id, type: agent.type, status: "sent" }
   } catch (error) {
     const match: { agent_id: string; type: string; paid_until?: string | null } = {
@@ -601,7 +640,7 @@ export async function sendPaymentRejectedEmail(mail: PaymentMail & { note: strin
 
 /** Tells the admin that an agent says they paid by OPay or Nita. */
 export async function sendAdminPaymentNotice(info: { businessName: string; amount: string; method: string; reference: string; planName: string; months: number }) {
-  const to = process.env.ADMIN_NOTIFY_EMAIL || INFO_EMAIL
+  const to = adminRecipients()
   const html = wrapEmail(
     `
     <h1 style="margin:0 0 16px;font-size:22px;color:${BRAND.navy};">New payment to confirm</h1>
@@ -656,26 +695,66 @@ export async function sendSubscriptionStoppedEmail(mail: {
 
 /** Sent when the admin asks an agency for more information or better documents. */
 export async function sendInfoRequestEmail(mail: { to: string; ownerName: string | null; businessName: string | null; message: string; language?: string | null }) {
-  // The agency's language for everything around your message (your message is sent as you wrote it).
-  const lang = emailLang(mail.language)
-  const tx = EMAIL_TEXT[lang]
-  const name = escapeHtml(mail.ownerName?.trim() || tx.there)
-  const business = strong(escapeHtml(mail.businessName?.trim() || tx.yourAgency))
-  const message = escapeHtml(mail.message.trim()).replace(/\n/g, "<br />")
+  // Everything around your message is in the agency's language (your message is sent as you wrote it).
+  const build = (lang: EmailLang) => {
+    const tx = EMAIL_TEXT[lang]
+    const name = escapeHtml(mail.ownerName?.trim() || tx.there)
+    const business = strong(escapeHtml(mail.businessName?.trim() || tx.yourAgency))
+    const message = escapeHtml(mail.message.trim()).replace(/\n/g, "<br />")
+    const html = wrapEmail(
+      `
+      ${smallLabel(tx.infoLabel)}
+      ${title(tx.infoTitle)}
+      ${greeting(name, lang)}
+      ${para(fillText(tx.infoBody, { business }))}
+      <p style="margin:0 0 16px;padding:14px 16px;background:${BRAND.cream};border:1px solid ${BRAND.border};border-radius:10px;color:${BRAND.text};">${message}</p>
+      ${para(escapeHtml(tx.infoAfter))}
+      ${ctaButton(tx.infoBtn, `${SITE_URL}/agents/settings`)}
+      ${localSignOff(lang)}
+      `,
+      { title: tx.infoTitle, preheader: tx.infoPreheader, lang },
+    )
+    return { subject: tx.infoSubject, html }
+  }
+  await deliverToAgency(mail.to, emailLang(mail.language), build)
+}
+
+/** Sent once when an agency has uploaded all its documents: "we received them, we'll review". */
+export async function sendDocsReceivedEmail(mail: { to: string; ownerName: string | null; businessName: string | null; language?: string | null }) {
+  const build = (lang: EmailLang) => {
+    const tx = EMAIL_TEXT[lang]
+    const name = escapeHtml(mail.ownerName?.trim() || tx.there)
+    const business = strong(escapeHtml(mail.businessName?.trim() || tx.yourAgency))
+    const html = wrapEmail(
+      `
+      ${smallLabel(tx.infoLabel)}
+      ${title(tx.docsTitle)}
+      ${greeting(name, lang)}
+      ${para(fillText(tx.docsBody, { business }))}
+      ${foundingLine(lang)}
+      ${helpLine(lang)}
+      ${localSignOff(lang)}
+      `,
+      { title: tx.docsTitle, preheader: tx.docsPreheader, lang },
+    )
+    return { subject: tx.docsSubject, html }
+  }
+  await deliverToAgency(mail.to, emailLang(mail.language), build)
+}
+
+/** Tells the team (always in English) that an agency's documents are ready to review. */
+export async function sendAdminDocsReadyNotice(info: { businessName: string; country: string | null; language?: string | null }) {
+  const lang = emailLang(info.language)
   const html = wrapEmail(
     `
-    ${smallLabel(tx.infoLabel)}
-    ${title(tx.infoTitle)}
-    ${greeting(name, lang)}
-    ${para(fillText(tx.infoBody, { business }))}
-    <p style="margin:0 0 16px;padding:14px 16px;background:${BRAND.cream};border:1px solid ${BRAND.border};border-radius:10px;color:${BRAND.text};">${message}</p>
-    ${para(escapeHtml(tx.infoAfter))}
-    ${ctaButton(tx.infoBtn, `${SITE_URL}/agents/settings`)}
-    ${localSignOff(lang)}
+    <h1 style="margin:0 0 16px;font-size:22px;color:${BRAND.navy};">Documents ready to review</h1>
+    <p style="margin:0 0 8px;color:${BRAND.text};"><strong>${escapeHtml(info.businessName)}</strong>${info.country ? ` (${escapeHtml(info.country)})` : ""} uploaded all its documents.</p>
+    <p style="margin:0 0 8px;color:${BRAND.muted};">Agency language: ${LANG_NAMES[lang]}. Open Admin, check each document with View, then press Verify. Verified agencies go live in the app straight away.</p>
+    ${ctaButton("Review agents", `${SITE_URL}/agents/admin`)}
     `,
-    { title: tx.infoTitle, preheader: tx.infoPreheader, lang },
+    { title: "Documents ready to review", preheader: `${info.businessName} is ready to verify` },
   )
-  await deliver(mail.to, tx.infoSubject, html)
+  await deliver(adminRecipients(), `Ready to verify: ${info.businessName}`, html, { bcc: false })
 }
 
 /** The agency's saved website language (agents.language), or null if unknown / column missing. */
@@ -691,7 +770,7 @@ export async function agentLanguage(agentId: string): Promise<string | null> {
 
 /** Tells the admin that an agency updated its application after a "need more info" message. */
 export async function sendAdminInfoUpdatedNotice(info: { businessName: string; request: string }) {
-  const to = process.env.ADMIN_NOTIFY_EMAIL || INFO_EMAIL
+  const to = adminRecipients()
   const html = wrapEmail(
     `
     <h1 style="margin:0 0 16px;font-size:22px;color:${BRAND.navy};">Application updated</h1>
@@ -701,7 +780,7 @@ export async function sendAdminInfoUpdatedNotice(info: { businessName: string; r
     `,
     { title: "Application updated", preheader: `${info.businessName} updated its application` },
   )
-  await deliver(to, `Application updated: ${info.businessName}`, html)
+  await deliver(to, `Application updated: ${info.businessName}`, html, { bcc: false })
 }
 
 // ─── Pilgrim Premium emails ─────────────────────────────────────────────────

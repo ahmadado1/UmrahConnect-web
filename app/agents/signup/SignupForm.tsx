@@ -253,6 +253,18 @@ export default function SignupForm() {
         .update(verificationWritePayload(verification, uploaded))
         .eq("id", agent.id)
       if (updateError) throw new Error(updateError.message)
+      // All documents in? This emails the agency (their language) and the team (English), once.
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session) {
+          await fetch("/api/agents/info-updated", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          })
+        }
+      } catch (notifyError) {
+        console.error(notifyError)
+      }
       router.replace("/agents/home")
     } catch (err) {
       setError(err instanceof Error ? err.message : t.signup.saveError)
