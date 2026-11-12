@@ -138,6 +138,14 @@ export default function Home() {
           <ZoneHead agent={agent} subtitle={t.zui.welcome} />
           {error ? <p className="agent-error">{error}</p> : null}
           <RenewAlert agent={agent} />
+          {agent.info_request && !agent.verified ? (
+            <section className="agent-card agent-info-request">
+              <h2>{t.home.infoTitle}</h2>
+              <p>{t.home.infoBody}</p>
+              <blockquote>{agent.info_request}</blockquote>
+              <a className="agent-btn agent-btn--navy" href="/agents/settings">{t.home.infoBtn}</a>
+            </section>
+          ) : null}
 
           {/* Numbers at a glance */}
           <div className="z-kpis">

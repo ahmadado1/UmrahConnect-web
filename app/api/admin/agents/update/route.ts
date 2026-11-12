@@ -65,14 +65,15 @@ export async function POST(request: Request) {
     }
     const { data: current, error: readError } = await admin
       .from("agents")
-      .select("id, status, paid_until, email, user_id, owner_user_id, licence_number, doc_business_reg, doc_licence, doc_owner_id, doc_office_photo")
+      .select("id, status, verified, paid_until, email, user_id, owner_user_id, licence_number, doc_business_reg, doc_licence, doc_owner_id, doc_office_photo")
       .eq("id", agentId)
       .maybeSingle()
     if (readError) return NextResponse.json({ error: readError.message }, { status: 500 })
     if (!current) return NextResponse.json({ error: "Agent not found." }, { status: 404 })
     const status = (current.status || "").toLowerCase()
-    if (status !== "pending" && status !== "expired") {
-      return NextResponse.json({ error: "Only a pending or expired agent can be verified." }, { status: 400 })
+    // Pending, expired, or an old active listing that was never verified.
+    if (status === "suspended" || (status !== "pending" && status !== "expired" && current.verified)) {
+      return NextResponse.json({ error: "Only a pending, expired or unverified agent can be verified." }, { status: 400 })
     }
     // Missing documents block verifying, unless the admin confirmed "verify anyway".
     const missing = verificationGaps(current)

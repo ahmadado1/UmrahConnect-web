@@ -365,7 +365,9 @@ export default function AdminAgents({ embedded = false }: { embedded?: boolean }
                   const name = agent.business_name || agent.agency_name || "Unnamed agency"
                   const status = (agent.status || "").toLowerCase()
                   const missing = verificationGaps(agent)
-                  const canVerify = status === "pending" || status === "expired"
+                  // Old listings can be "active" without ever being verified: let the admin verify them
+                  // and ask them for documents too. Suspended agencies are left alone.
+                  const canVerify = status === "pending" || status === "expired" || (!agent.verified && status !== "suspended")
                   return (
                     <tr key={agent.id}>
                       <td>
