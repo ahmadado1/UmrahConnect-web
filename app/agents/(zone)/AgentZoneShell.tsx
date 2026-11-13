@@ -86,6 +86,7 @@ export default function AgentZoneShell({ children }: { children: React.ReactNode
         // Admins: no agency tools (pilgrims, earnings, QR, billing).
         { href: "/agents/home", label: t.zui.navHome },
         { href: "/agents/admin", label: t.zone.admin },
+        { href: "/agents/reports", label: "Reports" },
         { href: "/agents/settings", label: t.zui.navProfile },
       ]
     : [
@@ -97,11 +98,15 @@ export default function AgentZoneShell({ children }: { children: React.ReactNode
       ]
 
   // Admins opening an agency-only page (old link/bookmark) go to their dashboard.
+  // Agencies opening an admin-only page (Reports) go home too.
   useEffect(() => {
     if (isAdmin && ["/agents/dashboard", "/agents/earnings", "/agents/billing"].includes(pathname)) {
       router.replace("/agents/home")
     }
-  }, [isAdmin, pathname, router])
+    if (roleKnown && !isAdmin && pathname === "/agents/reports") {
+      router.replace("/agents/home")
+    }
+  }, [isAdmin, roleKnown, pathname, router])
   const displayName = businessName || email
 
   const tabs = (
