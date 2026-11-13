@@ -55,7 +55,14 @@ function formFromAgent(agent: OwnAgent): AgentFormValues {
   }
 }
 
-export default function SignupForm() {
+/** Where the in-app browser sends people back to the app (closes the browser). */
+const APP_RETURN_URL = "umrahconnect://agent/apply"
+
+/**
+ * `inApp`: opened from the UmrahConnect app (in-app browser). The person is already logged in,
+ * the "account" step is hidden, and finishing (or "later") returns to the app instead of Agent Home.
+ */
+export default function SignupForm({ inApp = false }: { inApp?: boolean } = {}) {
   const { t, lang } = useT()
   const router = useRouter()
   const [step, setStep] = useState<Step>("account")
@@ -71,6 +78,15 @@ export default function SignupForm() {
   const [checking, setChecking] = useState(true)
   const [error, setError] = useState("")
   const [notice, setNotice] = useState("")
+
+  // Done (or "later"): website → Agent Home; app → close the browser and go back to the app
+  function finish(done: boolean) {
+    if (inApp) {
+      window.location.href = `${APP_RETURN_URL}?${done ? "done=1" : "later=1"}`
+      return
+    }
+    router.replace("/agents/home")
+  }
 
   // Where should this person be? No login → account. Logged in, no agency → details.
   // Agency saved but documents missing → documents. Everything sent → Agent Home.
@@ -90,7 +106,7 @@ export default function SignupForm() {
         if (cancelled) return
         if (existing) {
           if (verificationGaps(existing).length === 0) {
-            router.replace("/agents/home")
+            finish(true)
             return
           }
           setAgent(existing)
@@ -265,7 +281,7 @@ export default function SignupForm() {
       } catch (notifyError) {
         console.error(notifyError)
       }
-      router.replace("/agents/home")
+      finish(true)
     } catch (err) {
       setError(err instanceof Error ? err.message : t.signup.saveError)
     } finally {
@@ -277,11 +293,13 @@ export default function SignupForm() {
     return <main className="agent-page"><p className="agent-status-line">{t.signup.loading}</p></main>
   }
 
-  const steps: { id: Step; label: string }[] = [
+  const allSteps: { id: Step; label: string }[] = [
     { id: "account", label: t.signup.stepAccount },
     { id: "details", label: t.signup.stepDetails },
     { id: "docs", label: t.signup.stepDocs },
   ]
+  // In the app the person is already logged in: show only the two forms
+  const steps = inApp && step !== "account" ? allSteps.filter((item) => item.id !== "account") : allSteps
   const currentIndex = steps.findIndex((item) => item.id === step)
 
   return (
@@ -401,7 +419,7 @@ export default function SignupForm() {
                 <button className="agent-btn agent-btn--navy" type="submit" disabled={loading}>
                   {loading ? t.common.saving : t.signup.submitDocs}
                 </button>
-                <button className="agent-text-btn" type="button" disabled={loading} onClick={() => router.replace("/agents/home")}>
+                <button className="agent-text-btn" type="button" disabled={loading} onClick={() => finish(false)}>
                   {t.signup.later}
                 </button>
               </div>
