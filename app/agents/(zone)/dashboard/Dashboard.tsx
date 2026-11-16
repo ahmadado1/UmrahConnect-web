@@ -94,6 +94,8 @@ export default function Dashboard() {
         .select("id, title, body, created_at")
         .single()
       if (insertError) throw new Error(insertError.message)
+      // Also send it as a phone notification to the agency's pilgrims (UmrahConnect app)
+      void supabase.functions.invoke("announce-push", { body: { announcementId: (data as Announcement).id } }).catch(() => {})
       setAnnouncements((current) => [data as Announcement, ...current])
       setTitle("")
       setBody("")
