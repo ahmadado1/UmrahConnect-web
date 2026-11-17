@@ -80,3 +80,6 @@ begin
   return new;
 end;
 $$;
+
+-- Reminder for agencies that haven't answered a "need more info" request (sent at most every 2 days).
+alter table public.agents add column if not exists info_reminded_at timestamptz;

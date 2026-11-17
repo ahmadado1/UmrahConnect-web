@@ -332,6 +332,29 @@ export default function AdminAgents({ embedded = false }: { embedded?: boolean }
         <div className="page-container agent-dashboard">
           <div className="section-label">ADMIN</div>
           <h1>Agents · {pendingCount} pending</h1>
+          <p>
+            <button
+              type="button"
+              className="agent-btn agent-btn--line"
+              disabled={busy === "all:remind"}
+              onClick={() =>
+                run("all", "remind", async () => {
+                  const supabase = getSupabase()
+                  const { data: { session } } = await supabase.auth.getSession()
+                  if (!session) throw new Error("Log in again.")
+                  const response = await fetch("/api/admin/agents/remind-info", {
+                    method: "POST",
+                    headers: { Authorization: `Bearer ${session.access_token}` },
+                  })
+                  const payload = await response.json().catch(() => null)
+                  if (!response.ok) throw new Error(payload?.error || "Could not send reminders.")
+                  return payload?.message || "Done."
+                })
+              }
+            >
+              {busy === "all:remind" ? "Sending…" : "Remind agencies we asked for info (2+ days ago)"}
+            </button>
+          </p>
           {error ? <p className="agent-error">{error}</p> : null}
           {toast ? (
             <p className={`admin-toast ${toast.ok ? "agent-note" : "agent-error"}`} role="status">

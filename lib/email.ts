@@ -694,7 +694,16 @@ export async function sendSubscriptionStoppedEmail(mail: {
 // ─── "Need more info" emails ────────────────────────────────────────────────
 
 /** Sent when the admin asks an agency for more information or better documents. */
-export async function sendInfoRequestEmail(mail: { to: string; ownerName: string | null; businessName: string | null; message: string; language?: string | null }) {
+const REMINDER_WORD: Record<EmailLang, string> = {
+  en: "Reminder",
+  fr: "Rappel",
+  ar: "تذكير",
+  tr: "Hatırlatma",
+  ur: "یاد دہانی",
+  bn: "রিমাইন্ডার",
+}
+
+export async function sendInfoRequestEmail(mail: { to: string; ownerName: string | null; businessName: string | null; message: string; language?: string | null; reminder?: boolean }) {
   // Everything around your message is in the agency's language (your message is sent as you wrote it).
   const build = (lang: EmailLang) => {
     const tx = EMAIL_TEXT[lang]
@@ -714,7 +723,8 @@ export async function sendInfoRequestEmail(mail: { to: string; ownerName: string
       `,
       { title: tx.infoTitle, preheader: tx.infoPreheader, lang },
     )
-    return { subject: tx.infoSubject, html }
+    // Reminder: same email, subject starts with "Reminder:" in the agency's language
+    return { subject: mail.reminder ? `${REMINDER_WORD[lang]}: ${tx.infoSubject}` : tx.infoSubject, html }
   }
   await deliverToAgency(mail.to, emailLang(mail.language), build)
 }
