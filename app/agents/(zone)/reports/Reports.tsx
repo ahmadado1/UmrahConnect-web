@@ -44,7 +44,17 @@ const CSS = `
 .r-axis { display: flex; justify-content: space-between; font-size: 11px; color: #5C6B7A; margin-top: 6px; }
 .r-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .r-note { color: #5C6B7A; font-size: 13px; line-height: 1.6; }
-@media (max-width: 560px) { .r-bar { grid-template-columns: 90px 1fr 40px; } }
+.r-donut { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.r-legend { display: grid; gap: 8px; flex: 1; min-width: 220px; }
+.r-legend div { display: grid; grid-template-columns: 12px 1fr auto 44px; gap: 10px; align-items: center; font-size: 14px; color: #1A2332; }
+.r-legend i { width: 12px; height: 12px; border-radius: 3px; display: block; }
+.r-legend b { color: #1E3A5F; }
+.r-legend em { font-style: normal; color: #5C6B7A; text-align: right; font-size: 13px; }
+.r-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 14px; }
+.r-days div { background: #F5F7FA; border-radius: 10px; padding: 8px 4px; text-align: center; }
+.r-days span { display: block; font-size: 11px; color: #5C6B7A; }
+.r-days b { font-size: 16px; color: #1E3A5F; }
+@media (max-width: 560px) { .r-bar { grid-template-columns: 90px 1fr 40px; } .r-days { grid-template-columns: repeat(4, 1fr); } }
 `
 
 const fmt = (n: number | undefined | null) => (typeof n === "number" ? n.toLocaleString("en-US") : "–")
@@ -55,6 +65,50 @@ function Kpi({ label, value, sub, navy = false }: { label: string; value: number
       <span>{label}</span>
       <strong>{typeof value === "number" ? fmt(value) : value ?? "–"}</strong>
       {sub ? <small>{sub}</small> : null}
+    </div>
+  )
+}
+
+const PIE_COLORS = ["#1E3A5F", "#C9A84C", "#2F855A", "#B83280", "#2B6CB0", "#9AA9BA", "#C05621", "#4A5568"]
+const pieRows = (rows: { label: string; value: number }[]) =>
+  rows.sort((a, b) => b.value - a.value).map((r, i) => ({ ...r, color: PIE_COLORS[i % PIE_COLORS.length] }))
+
+/** Pie (donut) chart with a legend that shows each number and its share. */
+function Donut({ rows, total }: { rows: { label: string; value: number; color: string }[]; total?: number }) {
+  const sum = Math.max(1, rows.reduce((t, r) => t + r.value, 0))
+  const R = 54
+  const C = 2 * Math.PI * R
+  let offset = 0
+  return (
+    <div className="r-donut">
+      <svg viewBox="0 0 140 140" width="150" height="150" role="img">
+        <circle cx="70" cy="70" r={R} fill="none" stroke="#EEF2F7" strokeWidth="22" />
+        {rows.map((r) => {
+          const len = (r.value / sum) * C
+          const el = (
+            <circle
+              key={r.label}
+              cx="70" cy="70" r={R} fill="none" stroke={r.color} strokeWidth="22"
+              strokeDasharray={`${len} ${C - len}`} strokeDashoffset={-offset}
+              transform="rotate(-90 70 70)"
+            />
+          )
+          offset += len
+          return el
+        })}
+        <text x="70" y="68" textAnchor="middle" fontSize="20" fontWeight="800" fill="#1E3A5F">{fmt(total ?? sum)}</text>
+        <text x="70" y="86" textAnchor="middle" fontSize="10" fill="#5C6B7A">total</text>
+      </svg>
+      <div className="r-legend">
+        {rows.map((r) => (
+          <div key={r.label}>
+            <i style={{ background: r.color }} />
+            <span>{r.label}</span>
+            <b>{fmt(r.value)}</b>
+            <em>{Math.round((r.value / sum) * 100)}%</em>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -128,17 +182,43 @@ export default function Reports() {
 
         {s ? (
           <>
-            {/* ─── Users ─────────────────────────────────────────────── */}
+            {/* ─── 1. The main facts ─────────────────────────────────── */}
             <section className="r-section">
-              <h2>Users</h2>
+              <h2>At a glance</h2>
               <div className="r-kpis">
-                <Kpi navy label="Accounts" value={s.users.total} sub={`+${fmt(s.users.new_today)} today`} />
-                <Kpi label="New, last 7 days" value={s.users.new_7d} sub={`${fmt(s.users.new_30d)} in 30 days`} />
-                <Kpi label="Signed in, 7 days" value={s.users.signed_in_7d} sub={`${fmt(s.users.signed_in_30d)} in 30 days`} />
-                <Kpi label="Pilgrims" value={s.users.pilgrims} sub="chose Pilgrim" />
-                <Kpi label="Agency accounts" value={s.users.agents} sub="chose Travel agent" />
-                <Kpi label="Unfinished sign-up" value={s.users.unfinished ?? 0} sub="never chose Pilgrim or Agent" />
-                <Kpi label="Admins" value={s.users.admins ?? s.admins} />
+                <Kpi navy label="Total accounts" value={s.users.total} sub={`+${fmt(s.users.new_today)} today`} />
+                <Kpi label="Pilgrims" value={s.users.pilgrims} />
+                <Kpi label="Agency accounts" value={s.users.agents} />
+                <Kpi label="Agencies live in the app" value={s.agencies.live} />
+                {s.premium ? <Kpi label="Premium now" value={s.premium.active} /> : null}
+              </div>
+            </section>
+
+            {/* ─── 2. Who our users are (pie + numbers that add up) ─── */}
+            <section className="r-section z-panel">
+              <h2>Who our users are</h2>
+              <Donut
+                rows={[
+                  { label: "Pilgrims", value: s.users.pilgrims, color: "#1E3A5F" },
+                  { label: "Agency accounts", value: s.users.agents, color: "#C9A84C" },
+                  { label: "Didn't finish sign-up", value: (s.users.unfinished ?? Math.max(0, s.users.total - s.users.pilgrims - s.users.agents - (s.users.admins ?? s.admins))), color: "#9AA9BA" },
+                  { label: "Admins (our team)", value: s.users.admins ?? s.admins, color: "#2F855A" },
+                ]}
+                total={s.users.total}
+              />
+              <p className="r-note" style={{ marginBottom: 0 }}>
+                {fmt(s.users.pilgrims)} pilgrims + {fmt(s.users.agents)} agencies + {fmt((s.users.unfinished ?? Math.max(0, s.users.total - s.users.pilgrims - s.users.agents - (s.users.admins ?? s.admins))))} unfinished + {fmt(s.users.admins ?? s.admins)} admins ={" "}
+                <b>{fmt(s.users.total)} accounts</b>. &quot;Didn&apos;t finish sign-up&quot; = made an account but closed the app before choosing Pilgrim or Travel agent.
+              </p>
+            </section>
+
+            {/* ─── 3. Growth ─────────────────────────────────────────── */}
+            <section className="r-section">
+              <h2>New accounts</h2>
+              <div className="r-kpis">
+                <Kpi label="Today" value={s.users.new_today} />
+                <Kpi label="Last 7 days" value={s.users.new_7d} />
+                <Kpi label="Last 30 days" value={s.users.new_30d} />
               </div>
             </section>
 
@@ -158,16 +238,34 @@ export default function Reports() {
                 <span>{daily[0] ? new Date(daily[0].day).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : ""}</span>
                 <span>Today</span>
               </div>
+              <div className="r-days">
+                {daily.slice(-7).map((d) => (
+                  <div key={d.day}>
+                    <span>{new Date(d.day).toLocaleDateString("en-GB", { weekday: "short", day: "numeric" })}</span>
+                    <b>{fmt(d.count)}</b>
+                  </div>
+                ))}
+              </div>
             </section>
 
+            {/* ─── 4. Activity ───────────────────────────────────────── */}
+            <section className="r-section">
+              <h2>Active people</h2>
+              <div className="r-kpis">
+                <Kpi label="Signed in, last 7 days" value={s.users.signed_in_7d} sub="new and returning users" />
+                <Kpi label="Signed in, last 30 days" value={s.users.signed_in_30d} />
+              </div>
+            </section>
+
+            {/* ─── 5. Details ────────────────────────────────────────── */}
             <div className="r-section r-two">
               <section className="z-panel">
                 <h2>App language</h2>
-                <Bars rows={Object.entries(s.languages).map(([k, v]) => ({ label: LANG_NAMES[k] || k, value: v }))} />
+                <Donut rows={pieRows(Object.entries(s.languages).map(([k, v]) => ({ label: LANG_NAMES[k] || k, value: v })))} />
               </section>
               <section className="z-panel">
                 <h2>Sign-in method</h2>
-                <Bars rows={Object.entries(s.providers).map(([k, v]) => ({ label: PROVIDER_NAMES[k] || k, value: v }))} />
+                <Donut rows={pieRows(Object.entries(s.providers).map(([k, v]) => ({ label: PROVIDER_NAMES[k] || k, value: v })))} />
               </section>
               <section className="z-panel">
                 <h2>Nationality (top 12)</h2>
