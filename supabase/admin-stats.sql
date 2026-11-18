@@ -20,13 +20,18 @@ begin
     'new_30d', count(*) filter (where created_at > now() - interval '30 days'),
     'signed_in_7d', count(*) filter (where last_sign_in_at > now() - interval '7 days'),
     'signed_in_30d', count(*) filter (where last_sign_in_at > now() - interval '30 days'),
-    'agents', count(*) filter (where is_agency),
-    'pilgrims', count(*) filter (where not is_agency and not is_admin)
+    -- Every account is in exactly ONE group, so admins + agencies + pilgrims + unfinished = total.
+    'admins', count(*) filter (where is_admin),
+    'agents', count(*) filter (where not is_admin and is_agency),
+    'pilgrims', count(*) filter (where not is_admin and not is_agency and has_type),
+    'unfinished', count(*) filter (where not is_admin and not is_agency and not has_type)
   ) into j from (
-    -- An agency account: chose "Travel agent" in the app, or owns an agency (website sign-up)
+    -- Agency: chose "Travel agent" in the app, or owns an agency (website sign-up).
+    -- Unfinished: created an account but never picked Pilgrim / Travel agent (left the sign-up screen).
     select u.*,
-      (u.raw_user_meta_data->>'user_type' = 'agent'
+      (coalesce(u.raw_user_meta_data->>'user_type', '') = 'agent'
         or exists (select 1 from public.agents a where a.owner_user_id = u.id or a.user_id = u.id)) as is_agency,
+      coalesce(u.raw_user_meta_data->>'user_type', '') <> '' as has_type,
       exists (select 1 from public.profiles p where p.id = u.id and p.role = 'admin') as is_admin
     from auth.users u
   ) users;

@@ -7,7 +7,7 @@ import { ZONE_CSS } from "../zoneUi"
 /** Shape of public.admin_stats() (see supabase/admin-stats.sql). Missing parts are optional. */
 type Stats = {
   generated_at: string
-  users: { total: number; new_today: number; new_7d: number; new_30d: number; signed_in_7d: number; signed_in_30d: number; agents: number; pilgrims: number }
+  users: { total: number; new_today: number; new_7d: number; new_30d: number; signed_in_7d: number; signed_in_30d: number; agents: number; pilgrims: number; admins?: number; unfinished?: number }
   providers: Record<string, number>
   languages: Record<string, number>
   nationalities: { name: string; count: number }[]
@@ -135,9 +135,10 @@ export default function Reports() {
                 <Kpi navy label="Accounts" value={s.users.total} sub={`+${fmt(s.users.new_today)} today`} />
                 <Kpi label="New, last 7 days" value={s.users.new_7d} sub={`${fmt(s.users.new_30d)} in 30 days`} />
                 <Kpi label="Signed in, 7 days" value={s.users.signed_in_7d} sub={`${fmt(s.users.signed_in_30d)} in 30 days`} />
-                <Kpi label="Pilgrims" value={s.users.pilgrims} />
-                <Kpi label="Agency accounts" value={s.users.agents} />
-                <Kpi label="Admins" value={s.admins} />
+                <Kpi label="Pilgrims" value={s.users.pilgrims} sub="chose Pilgrim" />
+                <Kpi label="Agency accounts" value={s.users.agents} sub="chose Travel agent" />
+                <Kpi label="Unfinished sign-up" value={s.users.unfinished ?? 0} sub="never chose Pilgrim or Agent" />
+                <Kpi label="Admins" value={s.users.admins ?? s.admins} />
               </div>
             </section>
 
