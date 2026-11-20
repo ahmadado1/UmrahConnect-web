@@ -916,3 +916,92 @@ export async function sendNewWayToPayEmail(mail: { to: string; name: string | nu
   )
   await deliver(mail.to, "New: pay UmrahConnect by card, bank transfer or OPay", html)
 }
+
+
+// ─── "Finish setting up your account" (made an account, never chose Pilgrim / Travel agent) ───
+
+const FINISH_TEXT: Record<EmailLang, { subject: string; label: string; title: string; body: string; list: string[]; btn: string; agency: string; pre: string }> = {
+  en: {
+    subject: "Finish setting up your UmrahConnect account",
+    label: "Almost there",
+    title: "Your account is one step away",
+    body: "You created an UmrahConnect account but didn't finish setting it up. Open the app, log in and choose <b>Pilgrim</b>. It takes a few seconds, and then you get:",
+    list: ["Prayer times and Adhan wherever you are", "The step-by-step Umrah and Hajj guide with duas", "The Quran with many reciters", "Hotels near the Haram with live prices, airport taxi and tours"],
+    btn: "Open UmrahConnect",
+    agency: "Are you a travel agency? Choose <b>Travel agent</b> instead to list your agency for free.",
+    pre: "Open the app and choose Pilgrim to finish. It takes a few seconds.",
+  },
+  fr: {
+    subject: "Terminez la configuration de votre compte UmrahConnect",
+    label: "Presque fini",
+    title: "Votre compte est à une étape près",
+    body: "Vous avez créé un compte UmrahConnect sans terminer sa configuration. Ouvrez l'app, connectez-vous et choisissez <b>Pèlerin</b>. Cela prend quelques secondes, et vous aurez :",
+    list: ["Les heures de prière et l'Adhan où que vous soyez", "Le guide de la Omra et du Hajj étape par étape, avec les douas", "Le Coran avec de nombreux récitateurs", "Des hôtels près du Haram aux prix en direct, taxi aéroport et visites"],
+    btn: "Ouvrir UmrahConnect",
+    agency: "Vous êtes une agence de voyage ? Choisissez plutôt <b>Agent de voyage</b> pour inscrire votre agence gratuitement.",
+    pre: "Ouvrez l'app et choisissez Pèlerin pour terminer.",
+  },
+  ar: {
+    subject: "أكمل إعداد حسابك في UmrahConnect",
+    label: "خطوة أخيرة",
+    title: "حسابك على بُعد خطوة واحدة",
+    body: "لقد أنشأت حسابًا في UmrahConnect ولم تُكمل إعداده. افتح التطبيق وسجّل الدخول واختر <b>معتمر/حاج</b>. يستغرق ذلك ثوانٍ، وستحصل على:",
+    list: ["مواقيت الصلاة والأذان أينما كنت", "دليل العمرة والحج خطوة بخطوة مع الأدعية", "القرآن الكريم بأصوات قرّاء كثيرين", "فنادق قرب الحرم بأسعار مباشرة، وتاكسي المطار والجولات"],
+    btn: "افتح UmrahConnect",
+    agency: "هل أنت وكالة سفر؟ اختر <b>وكيل سفر</b> لإدراج وكالتك مجانًا.",
+    pre: "افتح التطبيق واختر معتمر/حاج لإكمال الإعداد.",
+  },
+  tr: {
+    subject: "UmrahConnect hesabınızın kurulumunu tamamlayın",
+    label: "Neredeyse bitti",
+    title: "Hesabınız bir adım uzakta",
+    body: "Bir UmrahConnect hesabı oluşturdunuz ancak kurulumu tamamlamadınız. Uygulamayı açın, giriş yapın ve <b>Hacı</b> seçin. Birkaç saniye sürer, ardından:",
+    list: ["Nerede olursanız olun namaz vakitleri ve Ezan", "Dualarla adım adım Umre ve Hac rehberi", "Birçok kâriden Kur'an", "Harem'e yakın oteller (canlı fiyatlar), havalimanı taksisi ve turlar"],
+    btn: "UmrahConnect'i aç",
+    agency: "Seyahat acentesi misiniz? Acentenizi ücretsiz listelemek için <b>Seyahat acentesi</b> seçin.",
+    pre: "Tamamlamak için uygulamayı açıp Hacı seçin.",
+  },
+  ur: {
+    subject: "اپنا UmrahConnect اکاؤنٹ مکمل کریں",
+    label: "تقریباً مکمل",
+    title: "آپ کا اکاؤنٹ بس ایک قدم دور ہے",
+    body: "آپ نے UmrahConnect اکاؤنٹ بنایا لیکن سیٹ اپ مکمل نہیں کیا۔ ایپ کھولیں، لاگ ان کریں اور <b>زائر</b> منتخب کریں۔ چند سیکنڈ لگیں گے، پھر آپ کو ملے گا:",
+    list: ["جہاں بھی ہوں نماز کے اوقات اور اذان", "دعاؤں کے ساتھ عمرہ اور حج کی مرحلہ وار رہنمائی", "بہت سے قاریوں کی آواز میں قرآن", "حرم کے قریب ہوٹل (تازہ قیمتیں)، ایئرپورٹ ٹیکسی اور ٹورز"],
+    btn: "UmrahConnect کھولیں",
+    agency: "کیا آپ ٹریول ایجنسی ہیں؟ اپنی ایجنسی مفت لسٹ کرنے کے لیے <b>ٹریول ایجنٹ</b> منتخب کریں۔",
+    pre: "مکمل کرنے کے لیے ایپ کھولیں اور زائر منتخب کریں۔",
+  },
+  bn: {
+    subject: "আপনার UmrahConnect অ্যাকাউন্ট সেটআপ শেষ করুন",
+    label: "প্রায় শেষ",
+    title: "আপনার অ্যাকাউন্ট মাত্র এক ধাপ দূরে",
+    body: "আপনি একটি UmrahConnect অ্যাকাউন্ট খুলেছেন কিন্তু সেটআপ শেষ করেননি। অ্যাপ খুলুন, লগ ইন করুন এবং <b>হাজী</b> বেছে নিন। কয়েক সেকেন্ড লাগবে, তারপর পাবেন:",
+    list: ["যেখানেই থাকুন নামাজের সময় ও আযান", "দোয়াসহ ধাপে ধাপে উমরাহ ও হজ গাইড", "অনেক কারীর কণ্ঠে কুরআন", "হারামের কাছে হোটেল (লাইভ দাম), এয়ারপোর্ট ট্যাক্সি ও ট্যুর"],
+    btn: "UmrahConnect খুলুন",
+    agency: "আপনি কি ট্রাভেল এজেন্সি? বিনামূল্যে এজেন্সি তালিকাভুক্ত করতে <b>ট্রাভেল এজেন্ট</b> বেছে নিন।",
+    pre: "শেষ করতে অ্যাপ খুলে হাজী বেছে নিন।",
+  },
+}
+
+/** Sent to people who created an account but never chose Pilgrim / Travel agent. */
+export async function sendFinishSetupEmail(mail: { to: string; name: string | null; language?: string | null }) {
+  const lang = emailLang(mail.language)
+  const tx = FINISH_TEXT[lang]
+  const name = escapeHtml(mail.name?.trim() || EMAIL_TEXT[lang].there)
+  const html = wrapEmail(
+    `
+    ${smallLabel(tx.label)}
+    ${title(tx.title)}
+    ${greeting(name, lang)}
+    ${para(tx.body)}
+    <ul style="margin:0 0 16px;padding-${isRtlLang(lang) ? "right" : "left"}:18px;color:${BRAND.muted};line-height:1.7;">
+      ${tx.list.map((li) => `<li>${escapeHtml(li)}</li>`).join("")}
+    </ul>
+    ${ctaButton(tx.btn, `${SITE_URL}/get`)}
+    ${para(tx.agency)}
+    ${localSignOff(lang)}
+    `,
+    { title: tx.title, preheader: tx.pre, lang },
+  )
+  await deliver(mail.to, tx.subject, html, { bcc: false })
+}

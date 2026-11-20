@@ -156,6 +156,26 @@ export default function Reports() {
     void load()
   }, [load])
 
+  // "Finish setting up your account" email to people who never chose Pilgrim / Travel agent
+  const [nudging, setNudging] = useState(false)
+  const [nudgeMsg, setNudgeMsg] = useState("")
+  const emailUnfinished = async () => {
+    setNudging(true)
+    setNudgeMsg("")
+    try {
+      const { data: { session } } = await getSupabase().auth.getSession()
+      if (!session) throw new Error("Log in again.")
+      const res = await fetch("/api/admin/users/finish-setup", { method: "POST", headers: { Authorization: `Bearer ${session.access_token}` } })
+      const body = await res.json().catch(() => null)
+      if (!res.ok) throw new Error(body?.error || "Could not send.")
+      setNudgeMsg(body?.message || "Done.")
+    } catch (err) {
+      setNudgeMsg(err instanceof Error ? err.message : "Could not send.")
+    } finally {
+      setNudging(false)
+    }
+  }
+
   const s = stats
   const daily = s?.signups_daily ?? []
   const maxDay = Math.max(1, ...daily.map((d) => d.count))
@@ -206,6 +226,12 @@ export default function Reports() {
                 ]}
                 total={s.users.total}
               />
+              <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap", margin: "8px 0" }}>
+                <button className="z-btn z-btn--gold" type="button" onClick={emailUnfinished} disabled={nudging}>
+                  {nudging ? "Sending…" : "Email people who didn't finish sign-up"}
+                </button>
+                {nudgeMsg ? <span className="r-note">{nudgeMsg}</span> : null}
+              </div>
               <p className="r-note" style={{ marginBottom: 0 }}>
                 {fmt(s.users.pilgrims)} pilgrims + {fmt(s.users.agents)} agencies + {fmt((s.users.unfinished ?? Math.max(0, s.users.total - s.users.pilgrims - s.users.agents - (s.users.admins ?? s.admins))))} unfinished + {fmt(s.users.admins ?? s.admins)} admins ={" "}
                 <b>{fmt(s.users.total)} accounts</b>. &quot;Didn&apos;t finish sign-up&quot; = made an account but closed the app before choosing Pilgrim or Travel agent.
