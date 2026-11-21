@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { getSupabase } from "@/lib/supabaseBrowser"
 import { ZONE_CSS } from "../zoneUi"
+import Downloads from "./Downloads"
 
 /** Shape of public.admin_stats() (see supabase/admin-stats.sql). Missing parts are optional. */
 type Stats = {
@@ -213,6 +214,9 @@ export default function Reports() {
                 {s.premium ? <Kpi label="Premium now" value={s.premium.active} /> : null}
               </div>
             </section>
+
+            {/* ─── Downloads (typed in from the stores) ─── */}
+            <Downloads accounts={s.users.total} />
 
             {/* ─── 2. Who our users are (pie + numbers that add up) ─── */}
             <section className="r-section z-panel">
