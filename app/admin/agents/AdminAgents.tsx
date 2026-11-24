@@ -353,6 +353,27 @@ export default function AdminAgents({ embedded = false }: { embedded?: boolean }
               }
             >
               {busy === "all:remind" ? "Sending…" : "Remind agencies we asked for info (2+ days ago)"}
+            </button>{" "}
+            <button
+              type="button"
+              className="agent-btn agent-btn--line"
+              disabled={busy === "all:bio"}
+              onClick={() =>
+                run("all", "bio", async () => {
+                  const supabase = getSupabase()
+                  const { data: { session } } = await supabase.auth.getSession()
+                  if (!session) throw new Error("Log in again.")
+                  const response = await fetch("/api/admin/agents/bio-nudge", {
+                    method: "POST",
+                    headers: { Authorization: `Bearer ${session.access_token}` },
+                  })
+                  const payload = await response.json().catch(() => null)
+                  if (!response.ok) throw new Error(payload?.error || "Could not send the emails.")
+                  return payload?.message || "Done."
+                })
+              }
+            >
+              {busy === "all:bio" ? "Sending…" : "Ask verified agencies without a description to write one"}
             </button>
           </p>
           {error ? <p className="agent-error">{error}</p> : null}

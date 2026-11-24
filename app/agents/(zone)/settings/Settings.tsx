@@ -383,7 +383,7 @@ export default function Settings() {
                 {t.signup.website}
                 <input value={form.website} onChange={(event) => setField("website", event.target.value)} />
               </label>
-              <label>
+              <label id="about">
                 {t.signup.description}
                 <textarea value={form.description} onChange={(event) => setField("description", event.target.value)} rows={4} />
               </label>

@@ -350,6 +350,13 @@ function buildEmail(agent: AgentMail) {
             </td>
           </tr>
         </table>
+        <p style="margin:16px 0 16px;color:${BRAND.muted};">
+          <strong style="color:${BRAND.navy};">Next step: tell pilgrims about your agency.</strong>
+          Write a short description on your profile: who you are, the packages and services you offer, the cities you serve
+          and how long you have been taking pilgrims. Pilgrims read it before they connect with you, and agencies with a
+          description get far more pilgrims. You can write it in the app (Agency dashboard → About your agency) or here:
+        </p>
+        ${ctaButton("Write my description", `${SITE_URL}/agents/settings#about`)}
         ${FREE_FOR_AGENCIES ? helpLine() : paidAhead ? renewLine() : ""}
         ${paidAhead ? ctaButton("Open Agent Zone", `${SITE_URL}/agents/home`) : ctaButton("Choose a plan and pay", `${SITE_URL}/agents/billing`)}
         <p style="margin:18px 0 0;color:${BRAND.navy};font-size:14px;font-weight:600;">
@@ -999,6 +1006,92 @@ export async function sendFinishSetupEmail(mail: { to: string; name: string | nu
     </ul>
     ${ctaButton(tx.btn, `${SITE_URL}/get`)}
     ${para(tx.agency)}
+    ${localSignOff(lang)}
+    `,
+    { title: tx.title, preheader: tx.pre, lang },
+  )
+  await deliver(mail.to, tx.subject, html, { bcc: false })
+}
+
+const BIO_TEXT: Record<EmailLang, { subject: string; label: string; title: string; body: string; list: string[]; btn: string; app: string; pre: string }> = {
+  en: {
+    subject: "Pilgrims are looking at your agency: add your description",
+    label: "Your profile",
+    title: "Tell pilgrims about your agency",
+    body: "Pilgrims can now open your agency profile in UmrahConnect, but it has no description yet. Write a few lines so they know who you are:",
+    list: ["Who you are and since when you take pilgrims", "Your Umrah and Hajj packages and services (visa, flights, hotels, ziyarah)", "The cities you serve"],
+    btn: "Write my description",
+    app: "You can also write it in the app: Agency dashboard → About your agency.",
+    pre: "Agencies with a description get far more pilgrims.",
+  },
+  fr: {
+    subject: "Les pèlerins consultent votre agence : ajoutez votre description",
+    label: "Votre profil",
+    title: "Présentez votre agence aux pèlerins",
+    body: "Les pèlerins peuvent maintenant ouvrir le profil de votre agence dans UmrahConnect, mais il n'a pas encore de description. Écrivez quelques lignes :",
+    list: ["Qui vous êtes et depuis quand vous accompagnez des pèlerins", "Vos forfaits Omra et Hajj et vos services (visa, vols, hôtels, ziyarah)", "Les villes que vous desservez"],
+    btn: "Écrire ma description",
+    app: "Vous pouvez aussi l'écrire dans l'app : Tableau de bord agence → À propos de votre agence.",
+    pre: "Les agences avec une description attirent bien plus de pèlerins.",
+  },
+  ar: {
+    subject: "المعتمرون يتصفحون وكالتك: أضف وصفًا لها",
+    label: "ملفك",
+    title: "عرّف المعتمرين بوكالتك",
+    body: "يمكن للمعتمرين الآن فتح ملف وكالتك في UmrahConnect، لكنه بلا وصف حتى الآن. اكتب بضعة أسطر ليعرفوا من أنتم:",
+    list: ["من أنتم ومنذ متى تخدمون المعتمرين", "باقات العمرة والحج والخدمات (تأشيرة، طيران، فنادق، زيارات)", "المدن التي تخدمونها"],
+    btn: "اكتب الوصف",
+    app: "يمكنك أيضًا كتابته في التطبيق: لوحة الوكالة ← عن وكالتك.",
+    pre: "الوكالات التي لديها وصف تجذب معتمرين أكثر بكثير.",
+  },
+  tr: {
+    subject: "Hacılar acentenize bakıyor: açıklamanızı ekleyin",
+    label: "Profiliniz",
+    title: "Acentenizi hacılara tanıtın",
+    body: "Hacılar artık UmrahConnect'te acente profilinizi açabiliyor, ancak henüz açıklaması yok. Sizi tanımaları için birkaç satır yazın:",
+    list: ["Kim olduğunuz ve kaç yıldır hacı götürdüğünüz", "Umre ve Hac paketleriniz ve hizmetleriniz (vize, uçuş, otel, ziyaret)", "Hizmet verdiğiniz şehirler"],
+    btn: "Açıklamamı yaz",
+    app: "Uygulamada da yazabilirsiniz: Acente paneli → Acenteniz hakkında.",
+    pre: "Açıklaması olan acenteler çok daha fazla hacı çeker.",
+  },
+  ur: {
+    subject: "زائرین آپ کی ایجنسی دیکھ رہے ہیں: اپنا تعارف شامل کریں",
+    label: "آپ کا پروفائل",
+    title: "زائرین کو اپنی ایجنسی کے بارے میں بتائیں",
+    body: "زائرین اب UmrahConnect میں آپ کی ایجنسی کا پروفائل کھول سکتے ہیں، لیکن اس میں ابھی تعارف نہیں۔ چند سطریں لکھیں:",
+    list: ["آپ کون ہیں اور کب سے زائرین کو لے جا رہے ہیں", "عمرہ و حج پیکیج اور خدمات (ویزا، فلائٹس، ہوٹل، زیارات)", "جن شہروں میں آپ خدمت دیتے ہیں"],
+    btn: "اپنا تعارف لکھیں",
+    app: "آپ ایپ میں بھی لکھ سکتے ہیں: ایجنسی ڈیش بورڈ ← آپ کی ایجنسی کے بارے میں۔",
+    pre: "تعارف والی ایجنسیوں کو کہیں زیادہ زائرین ملتے ہیں۔",
+  },
+  bn: {
+    subject: "হাজীরা আপনার এজেন্সি দেখছেন: বিবরণ যোগ করুন",
+    label: "আপনার প্রোফাইল",
+    title: "হাজীদের আপনার এজেন্সি সম্পর্কে জানান",
+    body: "হাজীরা এখন UmrahConnect-এ আপনার এজেন্সির প্রোফাইল খুলতে পারেন, কিন্তু এতে এখনও কোনো বিবরণ নেই। কয়েক লাইন লিখুন:",
+    list: ["আপনি কে এবং কত বছর ধরে হাজী নিয়ে যাচ্ছেন", "উমরাহ ও হজ প্যাকেজ এবং সেবা (ভিসা, ফ্লাইট, হোটেল, যিয়ারত)", "যে শহরগুলোতে আপনি সেবা দেন"],
+    btn: "আমার বিবরণ লিখুন",
+    app: "অ্যাপেও লিখতে পারেন: এজেন্সি ড্যাশবোর্ড → আপনার এজেন্সি সম্পর্কে।",
+    pre: "বিবরণসহ এজেন্সিগুলো অনেক বেশি হাজী পায়।",
+  },
+}
+
+/** Asks a verified agency with an empty profile to write its description. */
+export async function sendAgencyBioEmail(mail: { to: string; name: string | null; language?: string | null }) {
+  const lang = emailLang(mail.language)
+  const tx = BIO_TEXT[lang]
+  const name = escapeHtml(mail.name?.trim() || EMAIL_TEXT[lang].there)
+  const html = wrapEmail(
+    `
+    ${smallLabel(tx.label)}
+    ${title(tx.title)}
+    ${greeting(name, lang)}
+    ${para(tx.body)}
+    <ul style="margin:0 0 16px;padding-${isRtlLang(lang) ? "right" : "left"}:18px;color:${BRAND.muted};line-height:1.7;">
+      ${tx.list.map((li) => `<li>${escapeHtml(li)}</li>`).join("")}
+    </ul>
+    ${ctaButton(tx.btn, `${SITE_URL}/agents/settings#about`)}
+    ${para(escapeHtml(tx.app))}
     ${localSignOff(lang)}
     `,
     { title: tx.title, preheader: tx.pre, lang },
